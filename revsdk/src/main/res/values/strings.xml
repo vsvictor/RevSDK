@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RevSDK</string>
+    <string name="read_write_prmission"><![CDATA[Wrire & Read permission denied]]></string>
+    <string name="read_phone_state">Read phone state</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_network">No network</string>
+    <string name="wifi">WiFi</string>
+    <string name="g2">2G</string>
+    <string name="g3">3G</string>
+    <string name="g4">4G</string>
+    <string name="permission_denied">Permission denied</string>
+</resources>

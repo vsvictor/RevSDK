@@ -23,6 +23,12 @@ import com.rev.revsdk.config.serialization.ListStringDeserializer;
 import com.rev.revsdk.config.serialization.ListStrintgSerialize;
 import com.rev.revsdk.config.serialization.OperationModeDeserialize;
 import com.rev.revsdk.config.serialization.OperationModeSerialize;
+import com.rev.revsdk.config.serialization.TransportProtocolDeserialize;
+import com.rev.revsdk.config.serialization.TransportProtocolSerialize;
+import com.rev.revsdk.protocols.ListProtocol;
+import com.rev.revsdk.protocols.Protocol;
+import com.rev.revsdk.protocols.ProtocolTester;
+import com.rev.revsdk.protocols.TestResult;
 import com.rev.revsdk.statistic.Phone;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.serialize.PhoneSerialize;
@@ -35,12 +41,32 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Created by victor on 05.02.17.
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
  */
 
 public class RevApplication extends Application {
     private static final String TAG = RevApplication.class.getSimpleName();
+    private static RevApplication instance;
+
     private  String sdkKey;
     private  String version;
     private  Config config;
@@ -52,20 +78,24 @@ public class RevApplication extends Application {
 
     private Updater updater;
     private boolean updateRunning;
+    private Tester tester;
     private volatile int configRefreshInterval = 0;
     private volatile String configURL = Constants.BASE_URL;
 
     private String transportMonitorURL;
+    private Protocol best = Protocol.STANDART;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         firstActivity = true;
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
 
         gsonBuilder = new GsonBuilder().registerTypeAdapter(ConfigsList.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigsList.class, new ConfigListSerialize())
                 .registerTypeAdapter(ConfigParamenetrs.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigParamenetrs.class, new ConfigParametersSerialize())
                 .registerTypeAdapter(ListString.class, new ListStringDeserializer()).registerTypeAdapter(ListString.class, new ListStrintgSerialize())
+                .registerTypeAdapter(ListProtocol.class, new TransportProtocolDeserialize()).registerTypeAdapter(ListProtocol.class, new TransportProtocolSerialize())
                 .registerTypeAdapter(OperationMode.class, new OperationModeDeserialize()).registerTypeAdapter(OperationMode.class, new OperationModeSerialize())
                 .registerTypeAdapter(Phone.class, new PhoneSerialize()).registerTypeAdapter(Statistic.class, new StatisticSerializer());
         gson = gsonBuilder.create();
@@ -210,6 +240,8 @@ public class RevApplication extends Application {
                                     transportMonitorURL = config.getParam().get(0).getTransportMonitoringUrl();
                                     configRefreshInterval = config.getParam().get(0).getConfigurationRefreshIntervalSec()*1000;
                                     config.setLastUpdate(System.currentTimeMillis());
+                                    tester = new Tester();
+                                    tester.start();
                                     //configRefreshInterval = 10*1000;
                                     //Log.i(TAG, "Real:"+String.valueOf(configRefreshInterval)+", Fic:"+String.valueOf(configRefreshIntervalReaf));
                                 } else {
@@ -238,4 +270,32 @@ public class RevApplication extends Application {
             }
         }
     }
+    private class Tester extends Thread{
+        private ProtocolTester tester;
+        public Tester(){
+            tester = new ProtocolTester(config.getParam().get(0).getAllowedTransportProtocols(), transportMonitorURL);
+        }
+        @Override
+        public void run(){
+            best = Protocol.STANDART;
+            try {
+                Log.i(TAG, "Test...");
+                Thread.sleep(10000L);
+                Log.i(TAG, "Tested! Best protocol: " + best.toString());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static RevApplication getInstance(){
+        return instance;
+    }
+    public String getSDKKey(){
+        return sdkKey;
+    }
+    public Protocol getBest(){
+        return best;
+    }
+    public Config getConfig(){return config;}
 }

@@ -1,13 +1,4 @@
-package com.rev.revsdk.config.serialization;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.rev.revsdk.config.ListString;
-
-import java.lang.reflect.Type;
+package com.rev.revsdk.protocols;
 
 /*
  * ************************************************************************
@@ -31,15 +22,19 @@ import java.lang.reflect.Type;
  * /
  */
 
-public class ListStringDeserializer implements JsonDeserializer<ListString>{
+public enum Protocol {
+    STANDART,
+    QUIC,
+    REV;
+
     @Override
-    public ListString deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        ListString result  = new ListString();
-        JsonArray arr = json.getAsJsonArray();
-        for(JsonElement elem : arr){
-            String s = elem.getAsString();
-            result.add(s);
+    public String toString() {
+        switch (this){
+            case STANDART: return "standard";
+            case QUIC: return "quic";
+            case REV: return "rmp";
         }
-        return result;
+        return super.toString();
     }
 }
+

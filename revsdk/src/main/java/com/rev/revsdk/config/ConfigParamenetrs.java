@@ -1,8 +1,29 @@
 package com.rev.revsdk.config;
 
-/**
- * Created by victor on 03.02.17.
+import com.rev.revsdk.protocols.ListProtocol;
+
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
  */
+
 public class ConfigParamenetrs {
     private String sdk_release_version;
     private String logging_level;
@@ -12,7 +33,7 @@ public class ConfigParamenetrs {
     private int configuration_stale_timeout_sec;
     private String edge_host;
     private OperationMode operation_mode;
-    private ListString allowed_transport_protocols;
+    private ListProtocol allowed_transport_protocols;
     private String initial_transport_protocol;
     private String transport_monitoring_url;
     private String stats_reporting_url;
@@ -96,11 +117,11 @@ public class ConfigParamenetrs {
         this.operation_mode = operationMode;
     }
 
-    public ListString getAllowedTransportProtocols() {
+    public ListProtocol getAllowedTransportProtocols() {
         return allowed_transport_protocols;
     }
 
-    public void setAllowedTransportProtocols(ListString allowedTransportProtocols) {
+    public void setAllowedTransportProtocols(ListProtocol allowedTransportProtocols) {
         this.allowed_transport_protocols = allowedTransportProtocols;
     }
 

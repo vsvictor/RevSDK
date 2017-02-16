@@ -1,10 +1,12 @@
 package com.rev.revsdk.config.serialization;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.rev.revsdk.config.OperationMode;
+import com.rev.revsdk.protocols.ListProtocol;
+import com.rev.revsdk.protocols.Protocol;
 
 import java.lang.reflect.Type;
 
@@ -30,16 +32,19 @@ import java.lang.reflect.Type;
  * /
  */
 
-public class OperationModeSerialize implements JsonSerializer<OperationMode> {
+public class TransportProtocolSerialize implements JsonSerializer<ListProtocol> {
     @Override
-    public JsonElement serialize(OperationMode src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject result = new JsonObject();
-        String res = "";
-        if(src == OperationMode.transfer_and_report) res="transfer_and_report";
-        else if(src == OperationMode.transfer_only) res = "transfer_only";
-        else if(src == OperationMode.report_only) res = "report_only";
-        else res = "off";
-        result.addProperty("operation_mode", res);
+    public JsonElement serialize(ListProtocol src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonArray result = new JsonArray();
+        for(Protocol protocol : src){
+            String s = null;
+            switch (protocol){
+                case  STANDART: {s="standard";break;}
+                case  QUIC: {s="quic";break;}
+                case  REV: {s="rmp";break;}
+            }
+            result.add(s);
+        }
         return result;
     }
 }

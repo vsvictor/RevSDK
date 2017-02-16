@@ -10,8 +10,26 @@ import com.rev.revsdk.config.OperationMode;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by victor on 03.02.17.
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
  */
 
 public class ConfigParametersSerialize implements JsonSerializer<ConfigParamenetrs> {
@@ -20,6 +38,7 @@ public class ConfigParametersSerialize implements JsonSerializer<ConfigParamenet
         JsonObject result = new JsonObject();
         OperationModeSerialize serMode = new OperationModeSerialize();
         ListStrintgSerialize serArr = new ListStrintgSerialize();
+        TransportProtocolSerialize serTransport = new TransportProtocolSerialize();
 
         result.addProperty("sdk_release_version", src.getSdkReleaseVersion());
         result.addProperty("logging_level", src.getLoggingLevel());
@@ -29,7 +48,7 @@ public class ConfigParametersSerialize implements JsonSerializer<ConfigParamenet
         result.addProperty("configuration_stale_timeout_sec", src.getConfigurationStaleTimeoutSec());
         result.addProperty("edge_host", src.getEdgeHost());
         result.add("operation_mode", serMode.serialize(src.getOperationMode(),OperationMode.class, context));
-        result.add("allowed_transport_protocols", serArr.serialize(src.getAllowedTransportProtocols(), ListString.class, context));
+        result.add("allowed_transport_protocols", serTransport.serialize(src.getAllowedTransportProtocols(), ListString.class, context));
         result.addProperty("initial_transport_protocol", src.getInitialTransportProtocol());
         result.addProperty("transport_monitoring_url", src.getTransportMonitoringUrl());
         result.addProperty("stats_reporting_url", src.getStatsReportingUrl());

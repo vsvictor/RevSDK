@@ -11,8 +11,26 @@ import com.rev.revsdk.config.OperationMode;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by victor on 03.02.17.
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
  */
 
 public class ConfigParametersDeserialize implements JsonDeserializer<ConfigParamenetrs> {
@@ -23,7 +41,11 @@ public class ConfigParametersDeserialize implements JsonDeserializer<ConfigParam
 
         OperationModeDeserialize opDeser = new OperationModeDeserialize();
         ListStringDeserializer lsDeser = new ListStringDeserializer();
-        JsonObject obj = json.getAsJsonObject();
+        TransportProtocolDeserialize trDeser = new TransportProtocolDeserialize();
+        JsonObject obj = /**Created by
+ * Created by victor on 05.02.17.
+ */
+json.getAsJsonObject();
         if(obj == null) return config;
 
         config.setSdkReleaseVersion(obj.get("sdk_release_version").getAsString());
@@ -34,7 +56,7 @@ public class ConfigParametersDeserialize implements JsonDeserializer<ConfigParam
         config.setConfigurationStaleTimeoutSec(obj.get("configuration_stale_timeout_sec").getAsInt());
         config.setEdgeHost(obj.get("edge_host").getAsString());
         config.setOperationMode(opDeser.deserialize(obj.get("operation_mode"), OperationMode.class, context));
-        config.setAllowedTransportProtocols(lsDeser.deserialize(obj.get("allowed_transport_protocols").getAsJsonArray(), ListString.class, context));
+        config.setAllowedTransportProtocols(trDeser.deserialize(obj.get("allowed_transport_protocols").getAsJsonArray(), ListString.class, context));
         config.setInitialTransportProtocol(obj.get("initial_transport_protocol").getAsString());
         config.setTransportMonitoringUrl(obj.get("transport_monitoring_url").getAsString());
         config.setStatsReportingUrl(obj.get("stats_reporting_url").getAsString());

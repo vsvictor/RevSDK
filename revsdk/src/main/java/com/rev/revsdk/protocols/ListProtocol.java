@@ -1,4 +1,4 @@
-package com.rev.revsdk.config;
+package com.rev.revsdk.protocols;
 
 import java.util.ArrayList;
 
@@ -23,5 +23,6 @@ import java.util.ArrayList;
  *
  * /
  */
-public class ConfigsList extends ArrayList<ConfigParamenetrs> {
+
+public class ListProtocol extends ArrayList<Protocol> {
 }

@@ -4,10 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.rev.revsdk.config.ConfigParamenetrs;
-import com.rev.revsdk.config.ConfigsList;
+import com.rev.revsdk.protocols.ListProtocol;
+import com.rev.revsdk.protocols.Protocol;
 
 import java.lang.reflect.Type;
 
@@ -33,17 +32,16 @@ import java.lang.reflect.Type;
  * /
  */
 
-public class ConfigListDeserialize implements JsonDeserializer<ConfigsList> {
+public class TransportProtocolDeserialize implements JsonDeserializer<ListProtocol> {
     @Override
-    public ConfigsList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        ConfigsList config = new ConfigsList();
+    public ListProtocol deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        ListProtocol result = new ListProtocol();
         JsonArray arr = json.getAsJsonArray();
-        ConfigParametersDeserialize deser = new ConfigParametersDeserialize();
-        for(JsonElement elem : arr){
-            JsonObject obj = elem.getAsJsonObject();
-            ConfigParamenetrs current = deser.deserialize(obj, ConfigParamenetrs.class, context);
-            config.add(current);
+        for(JsonElement el : arr){
+            if(el.getAsString().toLowerCase().equals("standard")) result.add(Protocol.STANDART);
+            else if(el.getAsString().toLowerCase().equals("quic")) result.add(Protocol.QUIC);
+            else if(el.getAsString().toLowerCase().equals("rmp")) result.add(Protocol.REV);
         }
-        return config;
+        return result;
     }
 }

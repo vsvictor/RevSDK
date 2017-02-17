@@ -1,4 +1,4 @@
-package com.rev.revsdk;
+package com.rev.revsdk.utils;
 
 /*
  * ************************************************************************
@@ -22,18 +22,30 @@ package com.rev.revsdk;
  * /
  */
 
-public class Constants {
-    public static final String KEY_TAG = "com.revsdk.key";
-    public static final String BASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
-    public static final String RASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/";
+import java.util.Objects;
 
-    public static  final int MIN_SLEEP = 200;
+public class Tag {
+    private String name;
+    private Object value;
 
-    public static final int DEFAULT_TIMEOUT_SEC = 10;
+    public Tag(String name, Object value){
+        this.name = name;
+        this.value = value;
+    }
 
-    public static final int SYSTEM_REQUEST = 1;
+    public String getName() {
+        return name;
+    }
 
-    public static final String HOST_HEADER_NAME = "Host";
-    public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
-    public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

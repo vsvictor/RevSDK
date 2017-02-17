@@ -5,6 +5,7 @@ import android.util.Log;
 import com.rev.revsdk.config.Config;
 import com.rev.revsdk.config.ListString;
 import com.rev.revsdk.interseptor.RequesCreator;
+import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,9 +54,13 @@ public class RevSDK {
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request result = null;
                 Request original = chain.request();
-                Log.i(TAG, "Intercepted: \n"+original.toString());
-                if(!isSystemRequest(original)) result = processingRequest(original);
-                else result = original;
+                boolean isSystem = (original.tag() != null);
+                Log.i(TAG, "is System?"+String.valueOf(isSystem)+" ,Intercepted: \n"+original.toString());
+                //if(!isSystem)
+                result = processingRequest(original);
+                Log.i(TAG, "Intercepted: \n"+result.toString());
+
+                //else result = original;
                 return chain.proceed(result);
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
@@ -63,9 +68,6 @@ public class RevSDK {
     }
 
 
-    private static boolean isSystemRequest(Request original){
-        return Constants.BASE_URL.toLowerCase().contains(original.url().host()) || original.url().toString().contains(Constants.BASE_URL.toLowerCase());
-    }
     private static Request processingRequest(Request original){
         Request result = null;
         RequesCreator creator = new RequesCreator(RevApplication.getInstance().getConfig());

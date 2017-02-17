@@ -51,8 +51,15 @@ public class RequesCreator {
 
         switch (config.getParam().get(0).getOperationMode()){
             case transfer_and_report:{
-                String newURL = oldURL.toString().replace(oldDomen, config.getParam().get(0).getEdgeSdkDomain());
-                builder.url(newURL).headers(addHeaders(original)).method(original.method(), original.body());
+                //String newURL = oldURL.toString().replace(oldDomen, config.getParam().get(0).getEdgeSdkDomain());
+
+                HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+                if(!newURL.isHttps()){
+                    String ss = newURL.toString();
+                    String[] st = ss.split("://");
+                    newURL = HttpUrl.parse("https://"+st[1]);
+                }
+                builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
                 result = builder.build();
                 int i = 0;
                 break;
@@ -66,7 +73,7 @@ public class RequesCreator {
         }
        return result;
     }
-    private Headers addHeaders(Request original){
+    private Headers addAllHeaders(Request original){
         Headers.Builder builder = new Headers.Builder();
         StringBuilder valueBuilder = new StringBuilder();
 

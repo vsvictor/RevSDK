@@ -1,4 +1,4 @@
-package com.rev.revsdk;
+package com.rev.revsdk.database;
 
 /*
  * ************************************************************************
@@ -22,18 +22,5 @@ package com.rev.revsdk;
  * /
  */
 
-public class Constants {
-    public static final String KEY_TAG = "com.revsdk.key";
-    public static final String BASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
-    public static final String RASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/";
-
-    public static  final int MIN_SLEEP = 200;
-
-    public static final int DEFAULT_TIMEOUT_SEC = 10;
-
-    public static final int SYSTEM_REQUEST = 1;
-
-    public static final String HOST_HEADER_NAME = "Host";
-    public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
-    public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
+public class LogTable {
 }

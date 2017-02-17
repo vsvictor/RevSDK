@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         edQuery = (TextInputEditText) findViewById(R.id.edQuery);
-        edQuery.setText("http://stackoverflow.com/questions/3961589/android-webview-and-loaddata");
+        edQuery.setText("hTTp://stackoverflow.com/questions/3961589/android-webview-and-loaddata");
         //edQuery.setText("https://www.google.com");
         //edQuery.setText("https://mail.ru/");
         wvMain = (WebView) findViewById(R.id.wvMain);
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     response = null;
                     e.printStackTrace();
                 }
+                /*
                 try {
                     Headers hh = response.headers();
                     contentType = "text/html";
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 }catch (NullPointerException ex){
                     ex.printStackTrace();
                 }
+                */
                 try {
                     body = response.body().string();
                 } catch (IOException e) {

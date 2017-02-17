@@ -33,6 +33,7 @@ import com.rev.revsdk.statistic.Phone;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.serialize.PhoneSerialize;
 import com.rev.revsdk.statistic.serialize.StatisticSerializer;
+import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
 
@@ -211,7 +212,9 @@ public class RevApplication extends Application {
                     long res = currTime - (config == null?0:config.getLastUpdate());
                     if(res>configRefreshInterval) {
                         //oldTime = currTime;
-                        config.setLastUpdate(currTime);
+                        if(config != null) {
+                            config.setLastUpdate(currTime);
+                        }
                         Log.i(TAG, "Running...");
                         OkHttpClient client;
                         if(config != null && config.getParam().get(0).getConfigurationRequestTimeoutSec()>0) {
@@ -219,7 +222,7 @@ public class RevApplication extends Application {
                         }
                         else client = RevSDK.OkHttpCreate();
 
-                        Request req = new Request.Builder().url(configURL + sdkKey).cacheControl(CacheControl.FORCE_NETWORK).build();
+                        Request req = new Request.Builder().url(configURL + sdkKey).cacheControl(CacheControl.FORCE_NETWORK).tag(Constants.SYSTEM_REQUEST).build();
                         Response response = null;
                         try {
                             response = client.newCall(req).execute();

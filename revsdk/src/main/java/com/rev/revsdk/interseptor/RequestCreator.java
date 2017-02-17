@@ -35,11 +35,11 @@ import okhttp3.internal.framed.Header;
  * /
  */
 
-public class RequesCreator {
+public class RequestCreator {
 
     private final Config config;
 
-    public RequesCreator(Config config){
+    public RequestCreator(Config config){
         this.config = config;
     }
 
@@ -48,25 +48,38 @@ public class RequesCreator {
         Request.Builder builder = new Request.Builder();
         HttpUrl oldURL = original.url();
         String oldDomen = oldURL.host();
+        if(config != null) {
+            switch (config.getParam().get(0).getOperationMode()) {
+                case transfer_and_report: {
+                    //String newURL = oldURL.toString().replace(oldDomen, config.getParam().get(0).getEdgeSdkDomain());
 
-        switch (config.getParam().get(0).getOperationMode()){
-            case transfer_and_report:{
-                String newURL = oldURL.toString().replace(oldDomen, config.getParam().get(0).getEdgeSdkDomain());
-                builder.url(newURL).headers(addHeaders(original)).method(original.method(), original.body());
-                result = builder.build();
-                int i = 0;
-                break;
-            }
-            case transfer_only:{break;}
-            case report_only:{break;}
-            case off:{
-                result = original;
-                break;
+                    HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+                    if (!newURL.isHttps()) {
+                        String ss = newURL.toString();
+                        String[] st = ss.split("://");
+                        newURL = HttpUrl.parse("https://" + st[1]);
+                    }
+                    builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
+                    result = builder.build();
+                    int i = 0;
+                    break;
+                }
+                case transfer_only: {
+                    break;
+                }
+                case report_only: {
+                    break;
+                }
+                case off: {
+                    result = original;
+                    break;
+                }
             }
         }
+        else result = original;
        return result;
     }
-    private Headers addHeaders(Request original){
+    private Headers addAllHeaders(Request original){
         Headers.Builder builder = new Headers.Builder();
         StringBuilder valueBuilder = new StringBuilder();
 

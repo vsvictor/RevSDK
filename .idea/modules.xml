@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/RevBanshee/RevBanshee.iml" filepath="$PROJECT_DIR$/RevBanshee/RevBanshee.iml" />
       <module fileurl="file://$PROJECT_DIR$/RevDemo/RevDemo.iml" filepath="$PROJECT_DIR$/RevDemo/RevDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/revbanshee/revbanshee.iml" filepath="$PROJECT_DIR$/revbanshee/revbanshee.iml" />
-      <module fileurl="file://$PROJECT_DIR$/revsdk/revsdk.iml" filepath="$PROJECT_DIR$/revsdk/revsdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RevSDK/RevSDK.iml" filepath="$PROJECT_DIR$/RevSDK/RevSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
     </modules>
   </component>

@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.rev.revsdk.statistic.Phone;
+import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
 
 import java.lang.reflect.Type;
@@ -39,7 +39,7 @@ public class StatisticSerializer implements JsonSerializer<Statistic> {
         result.addProperty("sdk_key", src.getSDKKey());
         result.addProperty("sdk_version", src.getSDKVersion());
         result.addProperty("version", src.getVersion());
-        result.add("carrier", new PhoneSerialize().serialize(src.getPhone(), Phone.class, context));
+        result.add("carrier", new CarrierSerialize().serialize(src.getCarrier(), Carrier.class, context));
         return result;
     }
 }

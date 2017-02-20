@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,17 +26,26 @@ import com.rev.revsdk.config.serialization.OperationModeDeserialize;
 import com.rev.revsdk.config.serialization.OperationModeSerialize;
 import com.rev.revsdk.config.serialization.TransportProtocolDeserialize;
 import com.rev.revsdk.config.serialization.TransportProtocolSerialize;
+import com.rev.revsdk.permission.PostPermissionGranted;
+import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.ListProtocol;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.protocols.ProtocolTester;
-import com.rev.revsdk.protocols.TestResult;
-import com.rev.revsdk.statistic.Phone;
+import com.rev.revsdk.statistic.Section;
+import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
-import com.rev.revsdk.statistic.serialize.PhoneSerialize;
+import com.rev.revsdk.statistic.sections.RequestOne;
+import com.rev.revsdk.statistic.sections.Requests;
+import com.rev.revsdk.statistic.serialize.CarrierSerialize;
+import com.rev.revsdk.statistic.serialize.RequestOneDeserialize;
+import com.rev.revsdk.statistic.serialize.RequestOneSerialize;
+import com.rev.revsdk.statistic.serialize.RequestsDeserializer;
+import com.rev.revsdk.statistic.serialize.RequestsSerialize;
 import com.rev.revsdk.statistic.serialize.StatisticSerializer;
 import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
@@ -71,7 +81,8 @@ public class RevApplication extends Application {
     private  String sdkKey;
     private  String version;
     private  Config config;
-    protected Statistic statistic;
+    protected Statist statist;
+    private boolean statistRunning;
     private boolean firstActivity;
     private GsonBuilder gsonBuilder;
     private Gson gson;
@@ -91,6 +102,7 @@ public class RevApplication extends Application {
         super.onCreate();
         instance = this;
         firstActivity = true;
+        statistRunning = false;
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
 
         gsonBuilder = new GsonBuilder().registerTypeAdapter(ConfigsList.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigsList.class, new ConfigListSerialize())
@@ -98,7 +110,9 @@ public class RevApplication extends Application {
                 .registerTypeAdapter(ListString.class, new ListStringDeserializer()).registerTypeAdapter(ListString.class, new ListStrintgSerialize())
                 .registerTypeAdapter(ListProtocol.class, new TransportProtocolDeserialize()).registerTypeAdapter(ListProtocol.class, new TransportProtocolSerialize())
                 .registerTypeAdapter(OperationMode.class, new OperationModeDeserialize()).registerTypeAdapter(OperationMode.class, new OperationModeSerialize())
-                .registerTypeAdapter(Phone.class, new PhoneSerialize()).registerTypeAdapter(Statistic.class, new StatisticSerializer());
+                .registerTypeAdapter(RequestOne.class, new RequestOneDeserialize()).registerTypeAdapter(RequestOne.class, new RequestOneSerialize())
+                .registerTypeAdapter(Requests.class, new RequestsDeserializer()).registerTypeAdapter(Requests.class, new RequestsSerialize())
+                .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Statistic.class, new StatisticSerializer());
         gson = gsonBuilder.create();
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -119,6 +133,23 @@ public class RevApplication extends Application {
                             Toast.makeText(RevApplication.this, RevApplication.this.getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                         }
                     });
+                    /*
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M) {
+                        Class[] args = new Class[3];
+                        args[0] = int.class;
+                        args[1] = String[].class;
+                        args[2] = int[].class;
+                        Class ma = activity.getClass();
+                        Method method;
+                        try {
+                            method = ma.getMethod("onRequestPermissionsResult", args);
+
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+                        //activity.onRequestPermissionsResult();
+                    }
+                    */
                 }
             }
 
@@ -189,7 +220,7 @@ public class RevApplication extends Application {
             configURL = config.getParam().get(0).getConfigurationApiUrl();
             if(!configURL.contains("")) configURL += "config/";
             else configURL+="/";
-        }catch (NullPointerException ex){
+        }catch (Exception ex){
             configRefreshInterval = 0;
             configURL = Constants.BASE_URL;
         }
@@ -222,7 +253,11 @@ public class RevApplication extends Application {
                         }
                         else client = RevSDK.OkHttpCreate();
 
-                        Request req = new Request.Builder().url(configURL + sdkKey).cacheControl(CacheControl.FORCE_NETWORK).tag(Constants.SYSTEM_REQUEST).build();
+                        Request req = new Request.Builder()
+                                .url(configURL + sdkKey)
+                                .cacheControl(CacheControl.FORCE_NETWORK)
+                                .tag(new Tag(Constants.SYSTEM_REQUEST, true))
+                                .build();
                         Response response = null;
                         try {
                             response = client.newCall(req).execute();
@@ -245,6 +280,11 @@ public class RevApplication extends Application {
                                     config.setLastUpdate(System.currentTimeMillis());
                                     tester = new Tester();
                                     tester.start();
+                                    if(!statistRunning) {
+                                        statist = new Statist();
+                                        statist.start();
+                                        statistRunning = true;
+                                    }
                                     //configRefreshInterval = 10*1000;
                                     //Log.i(TAG, "Real:"+String.valueOf(configRefreshInterval)+", Fic:"+String.valueOf(configRefreshIntervalReaf));
                                 } else {
@@ -285,6 +325,26 @@ public class RevApplication extends Application {
                 Log.i(TAG, "Test...");
                 Thread.sleep(10000L);
                 Log.i(TAG, "Tested! Best protocol: " + best.toString());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private class Statist extends Thread{
+        private Statistic statistic;
+        public Statist(){
+            statistic = new Statistic(getApplicationContext(), getConfig());
+            statistic.addSection(Section.MAIN);
+            statistic.addSection(Section.REQUEST);
+        }
+        @Override
+        public void run(){
+            try {
+                while (statistRunning) {
+                    Log.i(TAG, "Statist running...");
+                    Thread.sleep(5000L);
+                    Log.i(TAG, "Statistic saved!!!");
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

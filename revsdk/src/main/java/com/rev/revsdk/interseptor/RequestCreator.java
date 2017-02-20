@@ -48,35 +48,25 @@ public class RequestCreator {
         Request.Builder builder = new Request.Builder();
         HttpUrl oldURL = original.url();
         String oldDomen = oldURL.host();
-        if(config != null) {
-            switch (config.getParam().get(0).getOperationMode()) {
-                case transfer_and_report: {
-                    //String newURL = oldURL.toString().replace(oldDomen, config.getParam().get(0).getEdgeSdkDomain());
-
-                    HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
-                    if (!newURL.isHttps()) {
-                        String ss = newURL.toString();
-                        String[] st = ss.split("://");
-                        newURL = HttpUrl.parse("https://" + st[1]);
-                    }
-                    builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
-                    result = builder.build();
-                    int i = 0;
-                    break;
+        if(config == null) return original;
+        switch (config.getParam().get(0).getOperationMode()){
+            case transfer_and_report:{
+                HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+                if(!newURL.isHttps()){
+                    newURL = HttpUrl.parse("https://"+newURL.toString().split("://")[1]);
                 }
-                case transfer_only: {
-                    break;
-                }
-                case report_only: {
-                    break;
-                }
-                case off: {
-                    result = original;
-                    break;
-                }
+                builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
+                result = builder.build();
+                int i = 0;
+                break;
+            }
+            case transfer_only:{break;}
+            case report_only:{break;}
+            case off:{
+                result = original;
+                break;
             }
         }
-        else result = original;
        return result;
     }
     private Headers addAllHeaders(Request original){

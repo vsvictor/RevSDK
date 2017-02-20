@@ -31,7 +31,7 @@ public class Constants {
 
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
-    public static final int SYSTEM_REQUEST = 1;
+    public static final String SYSTEM_REQUEST = "system";
 
     public static final String HOST_HEADER_NAME = "Host";
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";

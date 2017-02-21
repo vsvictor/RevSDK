@@ -3,6 +3,7 @@ package com.rev.revsdk;
 import android.util.Log;
 
 import com.rev.revsdk.interseptor.RequestCreator;
+import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -48,17 +49,27 @@ public class RevSDK {
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request result = null;
                 Request original = chain.request();
-                boolean isSystem = (original.tag() != null);
-                Log.i(TAG, "is System?"+String.valueOf(isSystem)+" ,Intercepted: \n"+original.toString());
-                //if(!isSystem)
+                boolean systemRequest= isSystem(original);
+                Log.i(TAG, "is System?"+String.valueOf(systemRequest)+" ,Intercepted: \n"+original.toString());
+                if(!systemRequest)
                     result = processingRequest(original);
-                //else result = original;
+                else result = original;
                 return chain.proceed(result);
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
         return httpClient.build();
     }
 
+    private static boolean isSystem(Request req){
+        boolean result = false;
+        try{
+            Tag tag = (Tag) req.tag();
+            result = (boolean) tag.getValue();
+        }catch (Exception ex){
+            result = false;
+        }
+        return result;
+    }
 
     private static Request processingRequest(Request original){
         Request result = null;

@@ -25,7 +25,10 @@ package com.rev.revsdk.protocols;
 public enum Protocol {
     STANDART,
     QUIC,
-    REV;
+    REV,
+    HTTP,
+    HTTPS,
+    UNDEFINED;
 
     @Override
     public String toString() {
@@ -33,8 +36,10 @@ public enum Protocol {
             case STANDART: return "standard";
             case QUIC: return "quic";
             case REV: return "rmp";
+            case HTTP: return "http";
+            case HTTPS: return "https";
+            default: return "undefined";
         }
-        return super.toString();
     }
 }
 

@@ -9,9 +9,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/RevBanshee" />
             <option value="$PROJECT_DIR$/RevDemo" />
-            <option value="$PROJECT_DIR$/revbanshee" />
-            <option value="$PROJECT_DIR$/revsdk" />
+            <option value="$PROJECT_DIR$/RevSDK" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -6,6 +6,12 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
+import com.rev.revsdk.statistic.sections.Device;
+import com.rev.revsdk.statistic.sections.Location;
+import com.rev.revsdk.statistic.sections.LogEvents;
+import com.rev.revsdk.statistic.sections.Network;
+import com.rev.revsdk.statistic.sections.Requests;
+import com.rev.revsdk.statistic.sections.WiFi;
 
 import java.lang.reflect.Type;
 
@@ -40,6 +46,12 @@ public class StatisticSerializer implements JsonSerializer<Statistic> {
         result.addProperty("sdk_version", src.getSDKVersion());
         result.addProperty("version", src.getVersion());
         result.add("carrier", new CarrierSerialize().serialize(src.getCarrier(), Carrier.class, context));
+        result.add("device", new DeviceSerialize().serialize(src.getDevice(), Device.class, context));
+        result.add("log_events", new LogEventsSerialize().serialize(src.getEvents(), LogEvents.class, context));
+        result.add("location", new LocationSerialize().serialize(src.getLocation(), Location.class, context));
+        result.add("network", new NetworkSerialize().serialize(src.getNetwork(), Network.class, context));
+        result.add("requests", new RequestsSerialize().serialize(src.getRequests(), Requests.class, context));
+        result.add("wifi", new WiFiSerialize().serialize(src.getWifi(), WiFi.class, context));
         return result;
     }
 }

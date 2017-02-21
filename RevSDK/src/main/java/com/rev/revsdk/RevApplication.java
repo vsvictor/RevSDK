@@ -36,22 +36,39 @@ import com.rev.revsdk.protocols.ProtocolTester;
 import com.rev.revsdk.statistic.Section;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
+import com.rev.revsdk.statistic.sections.Device;
+import com.rev.revsdk.statistic.sections.Location;
+import com.rev.revsdk.statistic.sections.LogEvents;
+import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.RequestOne;
 import com.rev.revsdk.statistic.sections.Requests;
+import com.rev.revsdk.statistic.sections.WiFi;
+import com.rev.revsdk.statistic.serialize.CarrierDeserialize;
 import com.rev.revsdk.statistic.serialize.CarrierSerialize;
+import com.rev.revsdk.statistic.serialize.DeviceDeserialize;
+import com.rev.revsdk.statistic.serialize.DeviceSerialize;
+import com.rev.revsdk.statistic.serialize.LocationDeserialize;
+import com.rev.revsdk.statistic.serialize.LocationSerialize;
+import com.rev.revsdk.statistic.serialize.LogEventsSerialize;
+import com.rev.revsdk.statistic.serialize.NetworkDeserialize;
+import com.rev.revsdk.statistic.serialize.NetworkSerialize;
 import com.rev.revsdk.statistic.serialize.RequestOneDeserialize;
 import com.rev.revsdk.statistic.serialize.RequestOneSerialize;
 import com.rev.revsdk.statistic.serialize.RequestsDeserializer;
 import com.rev.revsdk.statistic.serialize.RequestsSerialize;
 import com.rev.revsdk.statistic.serialize.StatisticSerializer;
+import com.rev.revsdk.statistic.serialize.WiFiDeserialize;
+import com.rev.revsdk.statistic.serialize.WiFiSerialize;
 import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
 import okhttp3.CacheControl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /*
@@ -118,7 +135,14 @@ public class RevApplication extends Application {
                 .registerTypeAdapter(OperationMode.class, new OperationModeDeserialize()).registerTypeAdapter(OperationMode.class, new OperationModeSerialize())
                 .registerTypeAdapter(RequestOne.class, new RequestOneDeserialize()).registerTypeAdapter(RequestOne.class, new RequestOneSerialize())
                 .registerTypeAdapter(Requests.class, new RequestsDeserializer()).registerTypeAdapter(Requests.class, new RequestsSerialize())
-                .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Statistic.class, new StatisticSerializer());
+                .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
+                .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
+                .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
+                .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
+                .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
+                .registerTypeAdapter(Requests.class, new RequestsSerialize()).registerTypeAdapter(Requests.class, new RequestsDeserializer())
+                .registerTypeAdapter(WiFi.class, new WiFiSerialize()).registerTypeAdapter(WiFi.class, new WiFiDeserialize())
+                .registerTypeAdapter(Statistic.class, new StatisticSerializer());
         gson = gsonBuilder.create();
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -346,6 +370,31 @@ public class RevApplication extends Application {
             try {
                 while (statistRunning) {
                     Log.i(TAG, "Statist running...");
+                    statistic = new Statistic(getApplicationContext());
+                    String stat = gson.toJson(statistic);
+                    Log.i(TAG, stat);
+                    OkHttpClient client;
+                    if(config != null && config.getParam().get(0).getConfigurationRequestTimeoutSec()>0) {
+                        client = RevSDK.OkHttpCreate(config.getParam().get(0).getConfigurationRequestTimeoutSec());
+                    }
+                    else client = RevSDK.OkHttpCreate();
+
+                    Request req = new Request.Builder()
+                            .url(config.getParam().get(0).getStatsReportingUrl())
+                            .cacheControl(CacheControl.FORCE_NETWORK)
+                            .method("POST", RequestBody.create(null, new byte[0]))
+                            .post(RequestBody.create(MediaType.parse("application/json"),stat))
+                            .tag(new Tag(Constants.SYSTEM_REQUEST, true))
+                            .build();
+                    Response response = null;
+
+                    try {
+                        response = client.newCall(req).execute();
+                    } catch (IOException e) {
+                        response = null;
+                        e.printStackTrace();
+                    }
+
                     Thread.sleep(5000L);
                     Log.i(TAG, "Statistic saved!!!");
                 }

@@ -61,7 +61,8 @@ import java.util.List;
 
 public class Carrier {
     private Context context;
-    private final TelephonyManager tm;
+/*
+    private final TelephonyManager tm = null;
 
     private String countryCode;
     private String deviceID;
@@ -78,9 +79,10 @@ public class Carrier {
     private String simOperator;
     private String shortTower;
     private String longTower;
-
+*/
     public Carrier(Context context){
         this.context = context;
+/*
         tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String networkOperator = tm.getNetworkOperator();
         tm.listen(new RSSIPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
@@ -102,8 +104,9 @@ public class Carrier {
         //}
         this.shortTower = "undefined";
         this.longTower = "undefined";
+*/
     }
-
+/*
     public String getCountryCode() {
         return countryCode.toUpperCase();
     }
@@ -246,4 +249,5 @@ public class Carrier {
             Log.i(TAG, String.valueOf(rssiArr.size()));
         }
     }
+*/
 }

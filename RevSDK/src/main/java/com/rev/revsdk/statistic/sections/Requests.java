@@ -23,12 +23,24 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
+
+import com.rev.revsdk.database.RequestTable;
 
 import java.util.ArrayList;
 
 public class Requests extends ArrayList<RequestOne> {
+    private static final String TAG = Requests.class.getSimpleName();
     private Context context;
     public Requests(Context context){
         this.context = context;
+        readRequests();
+    }
+    private void readRequests(){
+        String[] args = {"0","0"};
+        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENDED+"=? OR "+RequestTable.Columns.CONFIRMED+"=?", args, null);
+        addAll(RequestTable.listFromCursor(c));
+        Log.i(TAG, "Size : "+String.valueOf(size()));
     }
 }

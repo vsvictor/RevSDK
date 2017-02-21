@@ -1,3 +1,10 @@
 <component name="CopyrightManager">
-  <settings default="" />
+  <settings default="Rev">
+    <module2copyright>
+      <element module="All" copyright="Rev" />
+    </module2copyright>
+    <LanguageOptions name="JAVA">
+      <option name="fileLocation" value="3" />
+    </LanguageOptions>
+  </settings>
 </component>

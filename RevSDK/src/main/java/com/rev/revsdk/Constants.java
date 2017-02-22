@@ -36,4 +36,7 @@ public class Constants {
     public static final String HOST_HEADER_NAME = "Host";
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
     public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
+
+    public static final String undefined = "undefined";
+    public static final String zerro_ip = "0.0.0.0";
 }

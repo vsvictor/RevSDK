@@ -22,10 +22,12 @@ package com.rev.revsdk.statistic.serialize;
  * /
  */
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.rev.revsdk.statistic.sections.Event;
 import com.rev.revsdk.statistic.sections.LogEvents;
 
 import java.lang.reflect.Type;
@@ -33,7 +35,11 @@ import java.lang.reflect.Type;
 public class LogEventsSerialize implements JsonSerializer<LogEvents> {
     @Override
     public JsonElement serialize(LogEvents src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject result = new JsonObject();
+        JsonArray result = new JsonArray();
+        for(Event ev : src){
+            JsonElement obj = new EventSerialize().serialize(ev,Event.class,context);
+            result.add(obj);
+        }
         return result;
     }
 }

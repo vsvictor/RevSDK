@@ -1,14 +1,5 @@
 package com.rev.revsdk.statistic.serialize;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.rev.revsdk.statistic.sections.Carrier;
-import com.rev.revsdk.statistic.Statistic;
-
-import java.lang.reflect.Type;
-
 /*
  * ************************************************************************
  *
@@ -31,15 +22,23 @@ import java.lang.reflect.Type;
  * /
  */
 
-public class StatisticSerializer implements JsonSerializer<Statistic> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.rev.revsdk.statistic.sections.Event;
+
+import java.lang.reflect.Type;
+
+public class EventSerialize implements JsonSerializer<Event> {
     @Override
-    public JsonElement serialize(Statistic src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Event src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
-        result.addProperty("app_name", src.getAppName());
-        result.addProperty("sdk_key", src.getSDKKey());
-        result.addProperty("sdk_version", src.getSDKVersion());
-        result.addProperty("version", src.getVersion());
-        result.add("carrier", new CarrierSerialize().serialize(src.getCarrier(), Carrier.class, context));
-        return result;
+        result.addProperty("log_severity", src.getLogSeverity());
+        result.addProperty("log_event_code", src.getLogEventCode());
+        result.addProperty("log_message", src.getLogMessage());
+        result.addProperty("log_interval", src.getLogInterval());
+        result.addProperty("timestamp", src.getTimestamp());
+        return null;
     }
 }

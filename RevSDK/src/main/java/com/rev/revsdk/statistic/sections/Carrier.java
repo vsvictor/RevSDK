@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
+import com.rev.revsdk.Constants;
 import com.rev.revsdk.R;
 
 import java.util.ArrayList;
@@ -61,8 +62,8 @@ import java.util.List;
 
 public class Carrier {
     private Context context;
-/*
-    private final TelephonyManager tm = null;
+
+    //private TelephonyManager tm = null;
 
     private String countryCode;
     private String deviceID;
@@ -79,83 +80,158 @@ public class Carrier {
     private String simOperator;
     private String shortTower;
     private String longTower;
-*/
+
     public Carrier(Context context){
         this.context = context;
-/*
-        tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String networkOperator = tm.getNetworkOperator();
-        tm.listen(new RSSIPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        countryCode = tm.getNetworkCountryIso();
-        deviceID = tm.getDeviceId();
-        mcc = networkOperator.substring(0, 3);
-        mnc = networkOperator.substring(3);
-        netOperator = tm.getNetworkOperatorName();
-        netType = networkType2String(tm.getNetworkType());
-        phoneType = phoneType2String(tm.getPhoneType());
-        rssi = -10000;
-        rssiAverage = -10000;
-        rssiBest = -10000;
-        signalType = getNetworkType(context);
-        simOperator = tm.getSimOperatorName();
-        //List<NeighboringCellInfo> inf = tm.getNeighboringCellInfo();
-        //for(NeighboringCellInfo i : inf){
+        TelephonyManager tm = null;
+        String vNetworkOperator = null;
+        try {
+            tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            vNetworkOperator = tm.getNetworkOperator();
+        } catch (NullPointerException ex){
+            tm = null;
+            netOperator = "";
+        }
 
-        //}
-        this.shortTower = "undefined";
-        this.longTower = "undefined";
-*/
+        countryCode = countryCode(tm);
+
+        deviceID = deviceID(tm);
+        mcc = MMC(vNetworkOperator);
+        mnc = MNC(vNetworkOperator);
+
+        netOperator = netOperator(tm);
+        netType = netType(tm);
+        phoneType = phoneType(tm);
+        rssi = RSSI();
+        rssiAverage = RSSIAverage();
+        rssiBest = RSSIBest();
+        signalType = networkType(context);
+        simOperator = simOperator(tm);
+        this.shortTower = towerLong();
+        this.longTower = towerShort();
+
+        try {
+            tm.listen(new RSSIPhoneStateListener(tm), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }catch (NullPointerException ex){}
+
     }
-/*
+    private String countryCode(TelephonyManager tm){
+        try{
+            return tm.getNetworkCountryIso();
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+
+    }
     public String getCountryCode() {
         return countryCode.toUpperCase();
     }
-
+    private String deviceID(TelephonyManager tm){
+        try {
+            return tm.getDeviceId();
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+    }
     public String getDeviceID() {
         return deviceID;
     }
-
+    private String MMC(String netOperator){
+        try {
+            return netOperator.substring(0, 3);
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+    }
     public String getMCC() {
         return mcc;
     }
-
+    private String MNC(String netOperator){
+        try {
+            return netOperator.substring(3);
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+    }
     public String getMNC() {
         return mnc;
     }
-
+    private String netOperator(TelephonyManager tm){
+        try {
+            return tm.getNetworkOperatorName();
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+    }
     public String getNetOperator(){
         return netOperator;
+    }
+    private String netType(TelephonyManager tm){
+        try {
+            return networkType2String(tm.getNetworkType());
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
     }
     public String getNetType() {
         return netType;
     }
+    private String phoneType(TelephonyManager tm){
+        try {
+            return phoneType2String(tm.getPhoneType());
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+    }
     public String getPhoneType() {
         return phoneType;
+    }
+    private float RSSI(){
+        return -10000;
     }
     public float getRSSI() {
         return rssi;
     }
+    private float RSSIAverage(){
+        return -10000;
+    }
     public float getRSSIAverage() {
         return rssiAverage;
+    }
+    private float RSSIBest(){
+        return  -10000;
     }
     public float getRSSIBest() {
         return rssiBest;
     }
+    private String networkType(Context context){
+        return getNetworkMobileType(context);
+    }
     public String getNetworkType(){
         return signalType;
+    }
+    private String simOperator(TelephonyManager tm){
+        try {
+            return tm.getSimOperatorName();
+        }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+
     }
     public String getSimOperator() {
         return simOperator;
     }
-
+    private String towerLong(){
+        return "undefined";
+    }
     public String getTowerLong(){
-        GsmCellLocation cl = (GsmCellLocation) tm.getCellLocation();
-        return String.valueOf(cl.getCid());
-
+        return longTower;
+    }
+    private String towerShort(){
+        return "undefined";
     }
     public String getTowerShort(){
-        GsmCellLocation cl = (GsmCellLocation) tm.getCellLocation();
-        return String.valueOf(cl.getCid());
+        return shortTower;
     }
 
     private String networkType2String(int netType){
@@ -190,42 +266,50 @@ public class Carrier {
         }
         return result;
     }
-    public static String getNetworkType(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        if(info==null || !info.isConnected()) return context.getResources().getString(R.string.no_network); //not connected
-        if(info.getType() == ConnectivityManager.TYPE_WIFI) return context.getResources().getString(R.string.wifi);
-        if(info.getType() == ConnectivityManager.TYPE_MOBILE){
-            int networkType = info.getSubtype();
-            switch (networkType) {
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
-                    return context.getResources().getString(R.string.g2);
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
-                case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
-                case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
-                    return context.getResources().getString(R.string.g3);
-                case TelephonyManager.NETWORK_TYPE_LTE:    //api<11 : replace by 13
-                    return context.getResources().getString(R.string.g4);
-                default:
-                    return context.getResources().getString(R.string.unknown);
+    public static String getNetworkMobileType(Context context) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo info = cm.getActiveNetworkInfo();
+            if (info == null || !info.isConnected())
+                return context.getResources().getString(R.string.no_network); //not connected
+            if (info.getType() == ConnectivityManager.TYPE_WIFI)
+                return context.getResources().getString(R.string.wifi);
+            if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+                int networkType = info.getSubtype();
+                switch (networkType) {
+                    case TelephonyManager.NETWORK_TYPE_GPRS:
+                    case TelephonyManager.NETWORK_TYPE_EDGE:
+                    case TelephonyManager.NETWORK_TYPE_CDMA:
+                    case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    case TelephonyManager.NETWORK_TYPE_IDEN: //api<8 : replace by 11
+                        return context.getResources().getString(R.string.g2);
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                    case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    case TelephonyManager.NETWORK_TYPE_HSUPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPA:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_B: //api<9 : replace by 14
+                    case TelephonyManager.NETWORK_TYPE_EHRPD:  //api<11 : replace by 12
+                    case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
+                        return context.getResources().getString(R.string.g3);
+                    case TelephonyManager.NETWORK_TYPE_LTE:    //api<11 : replace by 13
+                        return context.getResources().getString(R.string.g4);
+                    default:
+                        return context.getResources().getString(R.string.unknown);
+                }
             }
+            return context.getResources().getString(R.string.unknown);
+        }catch (NullPointerException ex){
+            return Constants.undefined;
         }
-        return context.getResources().getString(R.string.unknown);
     }
     public class RSSIPhoneStateListener extends PhoneStateListener {
+        private TelephonyManager tm;
         private final String TAG = RSSIPhoneStateListener.class.getSimpleName();
         private ArrayList<Float> rssiArr = new ArrayList<>();
-        public RSSIPhoneStateListener() {
+        public RSSIPhoneStateListener(TelephonyManager tm) {
+            this.tm = tm;
         }
 
         @Override
@@ -249,5 +333,4 @@ public class Carrier {
             Log.i(TAG, String.valueOf(rssiArr.size()));
         }
     }
-*/
 }

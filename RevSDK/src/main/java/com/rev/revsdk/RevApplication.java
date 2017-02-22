@@ -37,6 +37,7 @@ import com.rev.revsdk.statistic.Section;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.Device;
+import com.rev.revsdk.statistic.sections.Event;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
@@ -47,6 +48,7 @@ import com.rev.revsdk.statistic.serialize.CarrierDeserialize;
 import com.rev.revsdk.statistic.serialize.CarrierSerialize;
 import com.rev.revsdk.statistic.serialize.DeviceDeserialize;
 import com.rev.revsdk.statistic.serialize.DeviceSerialize;
+import com.rev.revsdk.statistic.serialize.EventSerialize;
 import com.rev.revsdk.statistic.serialize.LocationDeserialize;
 import com.rev.revsdk.statistic.serialize.LocationSerialize;
 import com.rev.revsdk.statistic.serialize.LogEventsSerialize;
@@ -137,6 +139,7 @@ public class RevApplication extends Application {
                 .registerTypeAdapter(Requests.class, new RequestsDeserializer()).registerTypeAdapter(Requests.class, new RequestsSerialize())
                 .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
                 .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
+                .registerTypeAdapter(Event.class, new EventSerialize())
                 .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
                 .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
                 .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
@@ -394,7 +397,7 @@ public class RevApplication extends Application {
                         response = null;
                         e.printStackTrace();
                     }
-
+                    Log.i(TAG, response.toString());
                     Thread.sleep(5000L);
                     Log.i(TAG, "Statistic saved!!!");
                 }

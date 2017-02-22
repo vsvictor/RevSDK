@@ -34,6 +34,16 @@ public class WiFiSerialize implements JsonSerializer<WiFi> {
     @Override
     public JsonElement serialize(WiFi src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
+
+        result.addProperty("mac", src.getMac());
+        result.addProperty("ssid", src.getMac());
+        result.addProperty("wifi_enc", src.getMac());
+        result.addProperty("wifi_freq", src.getMac());
+        result.addProperty("wifi_rssi", src.getMac());
+        result.addProperty("wifi_rssibest", src.getMac());
+        result.addProperty("wifi_sig", src.getMac());
+        result.addProperty("wifi_speed", src.getMac());
+
         return result;
     }
 }

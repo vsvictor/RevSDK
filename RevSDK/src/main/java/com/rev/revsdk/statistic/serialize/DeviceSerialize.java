@@ -34,6 +34,29 @@ public class DeviceSerialize implements JsonSerializer<Device> {
     @Override
     public JsonElement serialize(Device src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
+        result.addProperty("batt_cap", src.getBattCap());
+        result.addProperty("batt_status", src.getBattStatus());
+        result.addProperty("batt_tech", src.getBattTech());
+        result.addProperty("batt_temp", src.getBattTemp());
+        result.addProperty("batt_volt", src.getBattVolt());
+        result.addProperty("brand", src.getBrand());
+        result.addProperty("cpu", src.getCPU());
+        result.addProperty("cpu_cores", src.getCPUCores());
+        result.addProperty("cpu_freq", src.getCPUFreq());
+        result.addProperty("cpu_number", src.getCPUNumber());
+        result.addProperty("cpu_sub", src.getCPUSub());
+        result.addProperty("hight", src.getHight());
+        result.addProperty("iccid", src.getIccid());
+        result.addProperty("imei", src.getIMEI());
+        result.addProperty("imsi", src.getIMSI());
+        result.addProperty("manufacture", src.getManufacture());
+        result.addProperty("meis", src.getMEIS());
+        result.addProperty("os", src.getOS());
+        result.addProperty("phone_number", src.getPhoneNumber());
+        result.addProperty("radio_serial", src.getRadioSerial());
+        result.addProperty("serial_number", src.getSerialNumber());
+        result.addProperty("uuid", src.getUUID());
+        result.addProperty("width", src.getWidth());
         return result;
     }
 }

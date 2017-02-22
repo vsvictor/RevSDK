@@ -26,7 +26,38 @@ import android.content.Context;
 
 public class Location {
     private Context context;
+
+    private float direction;
+    private double latitude;
+    private double longitude;
+    private float speed;
+
     public Location(Context context){
         this.context = context;
+        this.direction = direction();
+        this.latitude = latitude();
+        this.longitude = longitude();
+        this.speed = speed();
+
+    }
+    private float direction(){return 0;}
+    private double latitude(){return  0;}
+    private double longitude(){return 0;}
+    private float speed(){return 0;}
+
+    public float getDirection() {
+        return direction;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 }

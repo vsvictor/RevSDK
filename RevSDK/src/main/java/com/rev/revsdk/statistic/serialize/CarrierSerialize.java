@@ -33,7 +33,7 @@ public class CarrierSerialize implements JsonSerializer<Carrier>{
     @Override
     public JsonElement serialize(Carrier src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
-/*
+
         if(src != null) {
             result.addProperty("country_code", src.getCountryCode());
             result.addProperty("device_id", src.getDeviceID());
@@ -48,7 +48,7 @@ public class CarrierSerialize implements JsonSerializer<Carrier>{
             result.addProperty("signal_type", src.getNetworkType());
             result.addProperty("sim_operator", src.getSimOperator());
         }
-*/
+
         return result;
     }
 }

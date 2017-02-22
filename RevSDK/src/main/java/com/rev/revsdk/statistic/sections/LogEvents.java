@@ -24,7 +24,9 @@ package com.rev.revsdk.statistic.sections;
 
 import android.content.Context;
 
-public class LogEvents {
+import java.util.ArrayList;
+
+public class LogEvents extends ArrayList<Event>{
     private Context context;
     public LogEvents(Context context){
         this.context = context;

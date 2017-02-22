@@ -61,8 +61,10 @@ public class RevSDK {
                 Request original = chain.request();
                 boolean systemRequest = isSystem(original);
                 Log.i(TAG, "is System?" + String.valueOf(systemRequest) + " ,Intercepted: \n" + original.toString());
-                if (!systemRequest)
+                if (!systemRequest) {
                     result = processingRequest(original);
+                    int i= 0;
+                }
                 else result = original;
 
                 Response response = chain.proceed(result);

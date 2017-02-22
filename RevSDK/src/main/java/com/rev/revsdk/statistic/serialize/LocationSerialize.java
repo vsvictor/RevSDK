@@ -34,6 +34,10 @@ public class LocationSerialize implements JsonSerializer<Location> {
     @Override
     public JsonElement serialize(Location src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
+        result.addProperty("direction", src.getDirection());
+        result.addProperty("latitude", src.getLatitude());
+        result.addProperty("longitude", src.getLongitude());
+        result.addProperty("speed", src.getSpeed());
         return result;
     }
 }

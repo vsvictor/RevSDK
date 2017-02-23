@@ -25,6 +25,7 @@ package com.rev.revsdk.statistic.sections;
 import android.content.Context;
 
 import com.rev.revsdk.Constants;
+import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.protocols.Protocol;
 
 public class Network {
@@ -34,18 +35,18 @@ public class Network {
     private String cellularIPInternal;
     private String DNS1;
     private String DNS2;
-    private int ipReassemblies;
-    private long ipTotalBytesIn;
-    private long ipTotalBytesOut;
-    private long ipTotalPacketsIn;
-    private long ipTotalPacketsOut;
-    private int rtt;
-    private int tcpBytesIn;
-    private int tcpBytesOut;
-    private int tcpRetransmits;
+    private String ipReassemblies;
+    private String ipTotalBytesIn;
+    private String ipTotalBytesOut;
+    private String ipTotalPacketsIn;
+    private String ipTotalPacketsOut;
+    private String rtt;
+    private String tcpBytesIn;
+    private String tcpBytesOut;
+    private String tcpRetransmits;
     private String transportProtocol;
-    private long udpBytesIn;
-    private long udpBytesOut;
+    private String udpBytesIn;
+    private String udpBytesOut;
     private String wifiDHCP;
     private String wifiExtip;
     private String wifiGW;
@@ -80,87 +81,87 @@ public class Network {
     }
 
     private String cellularIPExternal() {
-        return Constants.zerro_ip;
+        return Constants.undefined;
     }
 
     private String cellularIPInternal() {
-        return Constants.zerro_ip;
+        return Constants.undefined;
     }
 
     private String DNS1() {
-        return Constants.zerro_ip;
+        return Constants.google_dns1;
     }
 
     private String DNS2() {
-        return Constants.zerro_ip;
+        return Constants.google_dns2;
     }
 
-    private int ipReassemblies() {
-        return 0;
+    private String ipReassemblies() {
+        return Constants.s_zerro;
     }
 
-    private long ipTotalBytesIn() {
-        return 0;
+    private String ipTotalBytesIn() {
+        return Constants.s_zerro;
     }
 
-    private long ipTotalBytesOut() {
-        return 0;
+    private String ipTotalBytesOut() {
+        return Constants.s_zerro;
     }
 
-    private long ipTotalPacketsIn() {
-        return 0;
+    private String  ipTotalPacketsIn() {
+        return Constants.s_zerro;
     }
 
-    private long ipTotalPacketsOut() {
-        return 0;
+    private String  ipTotalPacketsOut() {
+        return Constants.s_zerro;
     }
 
-    private int rtt() {
-        return 0;
+    private String  rtt() {
+        return Constants.s_zerro;
     }
 
-    private int tcpBytesIn() {
-        return 0;
+    private String tcpBytesIn() {
+        return Constants.s_zerro;
     }
 
-    private int tcpBytesOut() {
-        return 0;
+    private String tcpBytesOut() {
+        return Constants.s_zerro;
     }
 
-    private int tcpRetransmits() {
-        return 0;
+    private String tcpRetransmits() {
+        return Constants.s_zerro;
     }
 
     private String transportProtocol() {
-        return Protocol.UNDEFINED.toString();
+        return ((RevApplication)context).getBest().toString();
     }
 
-    private long udpBytesIn() {
-        return 0;
+    private String udpBytesIn() {
+        return Constants.s_zerro;
     }
 
-    private long udpBytesOut() {
-        return 0;
+    private String udpBytesOut() {
+        return Constants.s_zerro;
     }
 
     private String wifiDHCP() {
-        return Constants.zerro_ip;
+        return Constants.undefined;
     }
 
     private String wifiExtip() {
-        return Constants.zerro_ip;
+        return Constants.undefined;
     }
 
     private String wifiGW() {
-        return Constants.zerro_ip;
+        return Constants.net_ip;
     }
 
     private String wifiIP() {
-        return Constants.zerro_ip;
+        return Constants.ip;
     }
 
     private String wifiMask() {
-        return Constants.zerro_ip;
+        return Constants.mask_24;
     }
 
     public String getCellularIPExternal() {
@@ -179,39 +180,39 @@ public class Network {
         return DNS2;
     }
 
-    public int getIpReassemblies() {
+    public String getIpReassemblies() {
         return ipReassemblies;
     }
 
-    public long getIpTotalBytesIn() {
+    public String getIpTotalBytesIn() {
         return ipTotalBytesIn;
     }
 
-    public long getIpTotalBytesOut() {
+    public String  getIpTotalBytesOut() {
         return ipTotalBytesOut;
     }
 
-    public long getIpTotalPacketsIn() {
+    public String getIpTotalPacketsIn() {
         return ipTotalPacketsIn;
     }
 
-    public long getIpTotalPacketsOut() {
+    public String getIpTotalPacketsOut() {
         return ipTotalPacketsOut;
     }
 
-    public int getRtt() {
+    public String  getRtt() {
         return rtt;
     }
 
-    public int getTcpBytesIn() {
+    public String getTcpBytesIn() {
         return tcpBytesIn;
     }
 
-    public int getTcpBytesOut() {
+    public String getTcpBytesOut() {
         return tcpBytesOut;
     }
 
-    public int getTcpRetransmits() {
+    public String getTcpRetransmits() {
         return tcpRetransmits;
     }
 
@@ -219,11 +220,11 @@ public class Network {
         return transportProtocol;
     }
 
-    public long getUdpBytesIn() {
+    public String getUdpBytesIn() {
         return udpBytesIn;
     }
 
-    public long getUdpBytesOut() {
+    public String getUdpBytesOut() {
         return udpBytesOut;
     }
 

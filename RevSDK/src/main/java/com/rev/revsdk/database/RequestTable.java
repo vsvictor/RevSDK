@@ -72,6 +72,10 @@ public class RequestTable {
         value.setSuccessStatus(cursor.getInt(cursor.getColumnIndex(Columns.SUCCESS_CODE)));
         value.setTransportProtocol(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.TRANSPORT_PROTOCOL))));
         value.setURL(cursor.getString(cursor.getColumnIndex(Columns.URL)));
+        value.setDestination(cursor.getString(cursor.getColumnIndex(Columns.DESTINATION)));
+        value.setXRevCach(cursor.getString(cursor.getColumnIndex(Columns.X_REV_CACHE)));
+        value.setDomain(cursor.getString(cursor.getColumnIndex(Columns.DOMAIN)));
+        value.setEdgeTransport(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.EDGE_TRANSPORT))));
         return value;
     }
 
@@ -117,6 +121,10 @@ public class RequestTable {
         values.put(Columns.SUCCESS_CODE, req.getSuccessStatus());
         values.put(Columns.TRANSPORT_PROTOCOL, req.getTransportProtocol().toString());
         values.put(Columns.URL, req.getURL());
+        values.put(Columns.DESTINATION, req.getDestination());
+        values.put(Columns.X_REV_CACHE, req.getXRevCach());
+        values.put(Columns.DOMAIN, req.getDomain());
+        values.put(Columns.EDGE_TRANSPORT, req.getEdgeTransport().toString());
         return values;
     }
     public interface Columns{
@@ -139,8 +147,12 @@ public class RequestTable {
         final String SUCCESS_CODE = "success_status";
         final String TRANSPORT_PROTOCOL = "transport_protocol";
         final String URL = "url";
+        final String DESTINATION = "destination";
+        final String X_REV_CACHE = "x_rev_cache";
+        final String DOMAIN = "domain";
         final String SENDED = "sended";
         final String CONFIRMED = "confirmed";
+        final String EDGE_TRANSPORT = "edge_transport";
     }
     public interface Requests{
         final String TABLE_NAME = RequestTable.class.getSimpleName();
@@ -164,6 +176,10 @@ public class RequestTable {
                 Columns.SUCCESS_CODE + " int not null," +
                 Columns.TRANSPORT_PROTOCOL + " varchar(8) not null," +
                 Columns.URL + " varchar(256) not null," +
+                Columns.DESTINATION + " varchar(256) not null," +
+                Columns.X_REV_CACHE + " varchar(16) not null," +
+                Columns.EDGE_TRANSPORT + " varchar(16) not null," +
+                Columns.DOMAIN + " varchar(256) not null," +
                 Columns.SENDED + " int(1) not null default 0," +
                 Columns.CONFIRMED + " int(1) not null default 0);";
 

@@ -44,21 +44,14 @@ public class MainActivity extends AppCompatActivity {
         edQuery.setText("hTTp://stackoverflow.com/questions/3961589/android-webview-and-loaddata");
         //edQuery.setText("https://www.google.com");
         //edQuery.setText("https://mail.ru/");
+
         wvMain = (WebView) findViewById(R.id.wvMain);
+        wvMain.setWebViewClient(RevSDK.createWebClient());
+
         wvMain.getSettings().setJavaScriptEnabled(true);
         wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
         wvMain.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         wvMain.getSettings().setPluginState(WebSettings.PluginState.ON);
-
-
-        wvMain.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String newURL) {
-                super.onPageFinished(view, newURL);
-                edQuery.setText(newURL);
-            }
-        });
-        wvMain.setWebChromeClient(new WebChromeClient());
 
         rlRun = (RelativeLayout) findViewById(R.id.rlRun);
         rlRun.setOnClickListener(new View.OnClickListener() {
@@ -105,29 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     response = null;
                     e.printStackTrace();
                 }
-                /*
-                try {
-                    Headers hh = response.headers();
-                    contentType = "text/html";
-                    codePage = Charset.forName("windows-1251").name().toUpperCase();
-                    for (int i = 0; i < hh.size(); i++) {
-                        String headerName = hh.name(i).toLowerCase();
-                        if (headerName.equals("content-type")) {
-                            String sAll = hh.value(i).toString();
-                            String[] parse = sAll.split(";");
-                            contentType = sAll;
-                            if (parse.length > 1) {
-                                String[] ss = parse[1].split("=");
-                                codePage = ss[1].toUpperCase();
-                            }
-                            int ii = 0;
-                            break;
-                        }
-                    }
-                }catch (NullPointerException ex){
-                    ex.printStackTrace();
-                }
-                */
                 try {
                     body = response.body().string();
                 } catch (IOException e) {
@@ -139,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String body) {
-            //wvMain.loadData(body, contentType, codePage);
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
         }
     }

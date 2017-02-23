@@ -1,6 +1,7 @@
 package com.rev.revsdk.statistic.sections;
 
 import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.NeighboringCellInfo;
@@ -71,11 +72,11 @@ public class Carrier {
     private String mnc;
     private String netOperator;
     private String netType;
-    private String phoneType;
+    //private String phoneType;
 
-    private float rssi;
-    private float rssiAverage;
-    private float rssiBest;
+    private String rssi;
+    private String rssiAverage;
+    private String rssiBest;
     private String signalType;
     private String simOperator;
     private String shortTower;
@@ -101,7 +102,7 @@ public class Carrier {
 
         netOperator = netOperator(tm);
         netType = netType(tm);
-        phoneType = phoneType(tm);
+        //phoneType = phoneType(tm);
         rssi = RSSI();
         rssiAverage = RSSIAverage();
         rssiBest = RSSIBest();
@@ -176,6 +177,7 @@ public class Carrier {
     public String getNetType() {
         return netType;
     }
+/*
     private String phoneType(TelephonyManager tm){
         try {
             return phoneType2String(tm.getPhoneType());
@@ -183,25 +185,27 @@ public class Carrier {
             return Constants.undefined;
         }
     }
+
     public String getPhoneType() {
         return phoneType;
     }
-    private float RSSI(){
-        return -10000;
+*/
+    private String RSSI(){
+        return Constants.rssi;
     }
-    public float getRSSI() {
+    public String getRSSI() {
         return rssi;
     }
-    private float RSSIAverage(){
-        return -10000;
+    private String RSSIAverage(){
+        return Constants.rssi;
     }
-    public float getRSSIAverage() {
+    public String getRSSIAverage() {
         return rssiAverage;
     }
-    private float RSSIBest(){
-        return  -10000;
+    private String RSSIBest(){
+        return  Constants.rssi;
     }
-    public float getRSSIBest() {
+    public String getRSSIBest() {
         return rssiBest;
     }
     private String networkType(Context context){
@@ -222,13 +226,13 @@ public class Carrier {
         return simOperator;
     }
     private String towerLong(){
-        return "undefined";
+        return Constants.undefined;
     }
     public String getTowerLong(){
         return longTower;
     }
     private String towerShort(){
-        return "undefined";
+        return Constants.undefined;
     }
     public String getTowerShort(){
         return shortTower;
@@ -317,19 +321,19 @@ public class Carrier {
             super.onSignalStrengthsChanged(signalStrength);
             String[] parts = signalStrength.toString().split(" ");
             if ( tm.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE){
-                rssi = Integer.parseInt(parts[8])-140;
+                rssi = String.valueOf(Integer.parseInt(parts[8])-140);
             }
             else{
                 if (signalStrength.getGsmSignalStrength() != 99) {
-                    rssi = -113 + 2 * signalStrength.getGsmSignalStrength();
+                    rssi = String.valueOf(-113 + 2 * signalStrength.getGsmSignalStrength());
                 }
             }
-            rssiArr.add(rssi);
+            rssiArr.add(Float.parseFloat(rssi));
             float rssiSum = 0;
             for(float rf : rssiArr) rssiSum += rf;
-            if(rssiArr.size() > 0) rssiAverage = rssiSum/rssiArr.size();
+            if(rssiArr.size() > 0) rssiAverage = String.valueOf(rssiSum/rssiArr.size());
             else rssiAverage = rssi;
-            rssiBest = Math.max(rssi, rssiBest);
+            rssiBest = String.valueOf(Math.max(Float.parseFloat(rssi), Float.parseFloat(rssiBest)));
             Log.i(TAG, String.valueOf(rssiArr.size()));
         }
     }

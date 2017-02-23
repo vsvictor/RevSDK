@@ -25,7 +25,7 @@ package com.rev.revsdk.statistic.sections;
 import com.rev.revsdk.protocols.Protocol;
 
 public class RequestOne {
-    private long id = -1L;
+    private long id;
     private int connectionID;
     private String contentEncode;
     private String contentType;
@@ -43,6 +43,10 @@ public class RequestOne {
     private int successStatus;
     private Protocol transportProtocol;
     private String url;
+    private String destination;
+    private String xRevCach;
+    private String domain;
+    private Protocol edge_transport;
 
     public long getID() {
         return id;
@@ -184,5 +188,37 @@ public class RequestOne {
 
     public void setURL(String url) {
         this.url = url;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getXRevCach() {
+        return xRevCach;
+    }
+
+    public void setXRevCach(String xRevCach) {
+        this.xRevCach = xRevCach;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public Protocol getEdgeTransport() {
+        return edge_transport;
+    }
+
+    public void setEdgeTransport(Protocol edge_transport) {
+        this.edge_transport = edge_transport;
     }
 }

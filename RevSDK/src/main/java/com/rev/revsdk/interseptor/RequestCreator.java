@@ -1,6 +1,7 @@
 package com.rev.revsdk.interseptor;
 
 import android.preference.PreferenceActivity;
+import android.util.Log;
 
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
@@ -37,6 +38,7 @@ import okhttp3.internal.framed.Header;
 
 public class RequestCreator {
 
+    private static final String TAG = RequestCreator.class.getSimpleName();
     private final Config config;
 
     public RequestCreator(Config config){
@@ -67,6 +69,7 @@ public class RequestCreator {
                 break;
             }
         }
+        Log.i(TAG, config.getParam().get(0).getOperationMode().toString());
        return result;
     }
     private Headers addAllHeaders(Request original){

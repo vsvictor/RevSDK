@@ -1,4 +1,4 @@
-package com.rev.revsdk.config;
+package com.rev.revsdk.statistic.serialize;
 
 /*
  * ************************************************************************
@@ -22,23 +22,19 @@ package com.rev.revsdk.config;
  * /
  */
 
-public enum OperationMode {
-    transfer_and_report,
-    transfer_only,
-    report_only,
-    off,
-    undefined;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.rev.revsdk.RevApplication;
+import com.rev.revsdk.statistic.sections.AppInfo;
 
+import java.lang.reflect.Type;
+
+public class AppInfoDeserializer implements JsonDeserializer<AppInfo> {
     @Override
-    public String toString(){
-        String result = "undefined";
-        switch (this){
-            case transfer_and_report:{result = "Transport and report";break;}
-            case transfer_only:{result = "Transport only";break;}
-            case report_only:{result = "Report only";break;}
-            case off:{result = "Off";break;}
-        }
+    public AppInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        AppInfo result = new AppInfo(RevApplication.getInstance());
         return result;
     }
 }
-

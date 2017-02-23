@@ -48,6 +48,12 @@ import retrofit2.http.Body;
 public class RevSDK {
     private static final String TAG = RevSDK.class.getSimpleName();
 
+    public static RevWebViewClient createWebClient(OkHttpClient client){
+        return new RevWebViewClient();
+    }
+    public static RevWebViewClient createWebClient(){
+        return new RevWebViewClient();
+    }
     public static OkHttpClient OkHttpCreate() {
         return OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC);
     }
@@ -67,11 +73,13 @@ public class RevSDK {
                 }
                 else result = original;
 
+                Log.i(TAG, "\n"+result.toString());
+
                 Response response = chain.proceed(result);
 
                 if (!systemRequest) {
 
-                    final RequestOne statRequest = toRequestOne(original, result, response);
+                    final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
                     Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
                             .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i(TAG, "Inserted to URI: " + uri.toString());
@@ -103,7 +111,7 @@ public class RevSDK {
         return creator.create(original);
     }
 
-    private static RequestOne toRequestOne(Request original, Request processed, Response response) {
+    private static RequestOne toRequestOne(Request original, Request processed, Response response, Protocol edge_transport) {
         RequestOne result = new RequestOne();
 
         result.setID(-1);
@@ -111,11 +119,12 @@ public class RevSDK {
         result.setContentEncode(getEncode(original));
         result.setContentType(getContentType(original));
         result.setStartTS(response.sentRequestAtMillis());
-        result.setEndTS(response.receivedResponseAtMillis());
+        result.setEndTS(response.receivedResponseAtMillis()-response.sentRequestAtMillis());
         result.setFirstByteTime(-1);
-        result.setKeepAliveStatus(-1);
+        result.setKeepAliveStatus(1); //TODO how
         result.setLocalCacheStatus(response.cacheControl().toString());
         result.setMethod(original.method());
+        result.setEdgeTransport(edge_transport);
 
         //result.setNetwork(NetworkUtil.getNetworkName(RevApplication.getInstance()));
         result.setNetwork("NETWORK");
@@ -134,6 +143,11 @@ public class RevSDK {
         result.setSuccessStatus(response.code());
         result.setTransportProtocol(Protocol.STANDART);
         result.setURL(original.url().toString());
+        result.setDestination(original == processed ? "origin" : "rev_edge");
+        String cache = response.header("x-rev-cache");
+        result.setXRevCach(cache==null?Constants.undefined:cache);
+        result.setDomain(original.url().host());
+
         return result;
     }
 

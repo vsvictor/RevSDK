@@ -38,17 +38,21 @@ import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.Device;
 import com.rev.revsdk.statistic.sections.Event;
+import com.rev.revsdk.statistic.sections.GeoIP;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.RequestOne;
 import com.rev.revsdk.statistic.sections.Requests;
 import com.rev.revsdk.statistic.sections.WiFi;
+import com.rev.revsdk.statistic.serialize.AppInfoDeserializer;
+import com.rev.revsdk.statistic.serialize.AppInfoSerialize;
 import com.rev.revsdk.statistic.serialize.CarrierDeserialize;
 import com.rev.revsdk.statistic.serialize.CarrierSerialize;
 import com.rev.revsdk.statistic.serialize.DeviceDeserialize;
 import com.rev.revsdk.statistic.serialize.DeviceSerialize;
 import com.rev.revsdk.statistic.serialize.EventSerialize;
+import com.rev.revsdk.statistic.serialize.GeoIPDeserialize;
 import com.rev.revsdk.statistic.serialize.LocationDeserialize;
 import com.rev.revsdk.statistic.serialize.LocationSerialize;
 import com.rev.revsdk.statistic.serialize.LogEventsSerialize;
@@ -62,6 +66,7 @@ import com.rev.revsdk.statistic.serialize.StatisticSerializer;
 import com.rev.revsdk.statistic.serialize.WiFiDeserialize;
 import com.rev.revsdk.statistic.serialize.WiFiSerialize;
 import com.rev.revsdk.utils.Tag;
+import com.rev.revsdk.statistic.sections.AppInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -98,11 +103,11 @@ import okhttp3.Response;
 public class RevApplication extends Application {
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
-
-    private  String sdkKey;
-    private  String version;
-    private  Config config;
-    protected Statist statist;
+    private OkHttpClient client;
+    private String sdkKey;
+    private String version;
+    private Config config;
+    private Statist statist;
     private boolean statistRunning;
     private boolean firstActivity;
     private GsonBuilder gsonBuilder;
@@ -138,12 +143,14 @@ public class RevApplication extends Application {
                 .registerTypeAdapter(RequestOne.class, new RequestOneDeserialize()).registerTypeAdapter(RequestOne.class, new RequestOneSerialize())
                 .registerTypeAdapter(Requests.class, new RequestsDeserializer()).registerTypeAdapter(Requests.class, new RequestsSerialize())
                 .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
+                .registerTypeAdapter(AppInfo.class, new AppInfoSerialize()).registerTypeAdapter(AppInfo.class, new AppInfoDeserializer())
                 .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
                 .registerTypeAdapter(Event.class, new EventSerialize())
                 .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
                 .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
                 .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
                 .registerTypeAdapter(Requests.class, new RequestsSerialize()).registerTypeAdapter(Requests.class, new RequestsDeserializer())
+                .registerTypeAdapter(GeoIP.class, new GeoIPDeserialize()).registerTypeAdapter(GeoIP.class, new GeoIPDeserialize())
                 .registerTypeAdapter(WiFi.class, new WiFiSerialize()).registerTypeAdapter(WiFi.class, new WiFiDeserialize())
                 .registerTypeAdapter(Statistic.class, new StatisticSerializer());
         gson = gsonBuilder.create();
@@ -264,6 +271,7 @@ public class RevApplication extends Application {
     public void onTerminate(){
         super.onTerminate();
     }
+
     private class Updater extends Thread{
         private long currTime;
         //private long oldTime = 0;
@@ -280,12 +288,11 @@ public class RevApplication extends Application {
                             config.setLastUpdate(currTime);
                         }
                         Log.i(TAG, "Running...");
-                        OkHttpClient client;
-                        if(config != null && config.getParam().get(0).getConfigurationRequestTimeoutSec()>0) {
-                            client = RevSDK.OkHttpCreate(config.getParam().get(0).getConfigurationRequestTimeoutSec());
+                        if(client == null) {
+                            if (config != null && config.getParam().get(0).getConfigurationRequestTimeoutSec() > 0) {
+                                client = RevSDK.OkHttpCreate(config.getParam().get(0).getConfigurationRequestTimeoutSec());
+                            } else client = RevSDK.OkHttpCreate();
                         }
-                        else client = RevSDK.OkHttpCreate();
-
                         Request req = new Request.Builder()
                                 .url(configURL + sdkKey)
                                 .cacheControl(CacheControl.FORCE_NETWORK)
@@ -311,6 +318,9 @@ public class RevApplication extends Application {
                                     transportMonitorURL = config.getParam().get(0).getTransportMonitoringUrl();
                                     configRefreshInterval = config.getParam().get(0).getConfigurationRefreshIntervalSec()*1000;
                                     config.setLastUpdate(System.currentTimeMillis());
+
+                                    Log.i("RequestCreator",config.getParam().get(0).getOperationMode().toString());
+
                                     tester = new Tester();
                                     tester.start();
                                     if(!statistRunning) {
@@ -318,6 +328,7 @@ public class RevApplication extends Application {
                                         statist.start();
                                         statistRunning = true;
                                     }
+
                                     //configRefreshInterval = 10*1000;
                                     //Log.i(TAG, "Real:"+String.valueOf(configRefreshInterval)+", Fic:"+String.valueOf(configRefreshIntervalReaf));
                                 } else {
@@ -375,7 +386,7 @@ public class RevApplication extends Application {
                     Log.i(TAG, "Statist running...");
                     statistic = new Statistic(getApplicationContext());
                     String stat = gson.toJson(statistic);
-                    Log.i(TAG, stat);
+                    Log.i(TAG+" stat", "\n\n"+stat);
                     OkHttpClient client;
                     if(config != null && config.getParam().get(0).getConfigurationRequestTimeoutSec()>0) {
                         client = RevSDK.OkHttpCreate(config.getParam().get(0).getConfigurationRequestTimeoutSec());
@@ -417,4 +428,6 @@ public class RevApplication extends Application {
         return best;
     }
     public Config getConfig(){return config;}
+    public String getVersion() {return version;}
+    public String getPackage(){return getApplicationContext().getPackageName();}
 }

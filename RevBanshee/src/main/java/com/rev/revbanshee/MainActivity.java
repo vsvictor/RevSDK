@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         //edQuery.setText("https://mail.ru/");
 
         wvMain = (WebView) findViewById(R.id.wvMain);
-        wvMain.setWebViewClient(RevSDK.createWebClient());
+        wvMain.setWebViewClient(RevSDK.createWebViewClient());
 
         wvMain.getSettings().setJavaScriptEnabled(true);
         wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);

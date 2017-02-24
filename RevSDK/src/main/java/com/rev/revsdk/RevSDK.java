@@ -44,10 +44,7 @@ import okhttp3.Response;
 public class RevSDK {
     private static final String TAG = RevSDK.class.getSimpleName();
 
-    public static RevWebViewClient createWebClient(OkHttpClient client){
-        return new RevWebViewClient();
-    }
-    public static RevWebViewClient createWebClient(){
+    public static RevWebViewClient createWebViewClient(){
         return new RevWebViewClient();
     }
     public static OkHttpClient OkHttpCreate() {

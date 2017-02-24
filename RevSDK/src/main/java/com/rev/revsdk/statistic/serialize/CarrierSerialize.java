@@ -41,12 +41,13 @@ public class CarrierSerialize implements JsonSerializer<Carrier>{
             result.addProperty("mnc", src.getMNC());
             result.addProperty("net_operator", src.getNetOperator());
             result.addProperty("network_type", src.getNetType());
-            result.addProperty("phone_type", src.getPhoneType());
             result.addProperty("rssi", src.getRSSI());
             result.addProperty("rssi_avg", src.getRSSIAverage());
             result.addProperty("rssi_best", src.getRSSIBest());
             result.addProperty("signal_type", src.getNetworkType());
             result.addProperty("sim_operator", src.getSimOperator());
+            result.addProperty("tower_cell_id_l", src.getTowerLong());
+            result.addProperty("tower_cell_id_s", src.getTowerShort());
         }
 
         return result;

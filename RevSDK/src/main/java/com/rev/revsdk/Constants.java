@@ -37,6 +37,22 @@ public class Constants {
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
     public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
 
-    public static final String undefined = "undefined";
-    public static final String zerro_ip = "0.0.0.0";
+    public static final String undefined = "_";
+    public static final String net_ip = "10.0.0.1";
+    public static final String local_ip = "192.168.0.1";
+    public static final String google_dns1 = "8.8.8.8";
+    public static final String google_dns2 = "8.8.4.4";
+    public static final int zero = 0;
+    public static final String s_zero = "0";
+    public static final String ip = "10.0.0.200";
+    public static final String mask_24 = "255.255.255.0";
+    public static final long big_number1 = 1234567891*1000;
+    public static final long big_number2 = 1234567991*1000;
+    public static final int hits = 0;
+    public static final String level = "debug";
+    public static final String message = "This is a message from RevSDK Android";
+    public static final String default_date = "2017-02-22T07:27:13.041Z";
+    public static final String UA = "UA";
+    public static final String Dnipro = "Dnipro";
+    public static final String rssi = "-10000";
 }

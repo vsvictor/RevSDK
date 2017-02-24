@@ -1,4 +1,4 @@
-package com.rev.revsdk.config;
+package com.rev.revsdk.statistic.serialize;
 
 /*
  * ************************************************************************
@@ -22,23 +22,21 @@ package com.rev.revsdk.config;
  * /
  */
 
-public enum OperationMode {
-    transfer_and_report,
-    transfer_only,
-    report_only,
-    off,
-    undefined;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.rev.revsdk.statistic.sections.GeoIP;
 
+import java.lang.reflect.Type;
+
+public class GeoIPSerialize implements JsonSerializer<GeoIP> {
     @Override
-    public String toString(){
-        String result = "undefined";
-        switch (this){
-            case transfer_and_report:{result = "Transport and report";break;}
-            case transfer_only:{result = "Transport only";break;}
-            case report_only:{result = "Report only";break;}
-            case off:{result = "Off";break;}
-        }
+    public JsonElement serialize(GeoIP src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+        result.addProperty("country_code2", src.getCountryCodeTwoLetter());
+        result.addProperty("region_name", src.getRegionName());
+        result.addProperty("city_name", src.getCityName());
         return result;
     }
 }
-

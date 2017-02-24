@@ -1,16 +1,11 @@
 package com.rev.revsdk.statistic;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
-import android.support.v4.app.ActivityCompat;
 
 import com.google.gson.annotations.SerializedName;
-import com.rev.revsdk.RevApplication;
-import com.rev.revsdk.config.Config;
-import com.rev.revsdk.permission.RequestUserPermission;
+import com.rev.revsdk.Constants;
 import com.rev.revsdk.statistic.sections.App;
+import com.rev.revsdk.statistic.sections.AppInfo;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.sections.Device;
 import com.rev.revsdk.statistic.sections.Location;
@@ -18,9 +13,6 @@ import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.Requests;
 import com.rev.revsdk.statistic.sections.WiFi;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * ************************************************************************
@@ -55,8 +47,32 @@ public class Statistic {
     private String sdkKey;
     @SerializedName("sdk_version")
     private String sdkVersion;
+    @SerializedName("a_b_mode")
+    private boolean abMode;
+    @SerializedName("ip")
+    private String ip;
+    //@SerializedName("received_at")
+    //private long receivedAt;
+    //@SerializedName("account_id")
+    //private String accountID;
+    //@SerializedName("app_id")
+    //private String appID;
+    @SerializedName("hits")
+    private int hits;
+    @SerializedName("start_ts")
+    private long startTS;
+    @SerializedName("end_ts")
+    private long endTS;
+    @SerializedName("level")
+    private String level;
+    //@SerializedName("message")
+    //private String message;
+    //@SerializedName("timestamp")
+    //private String timestamp;
     @SerializedName("carrier")
     private Carrier carrier;
+    @SerializedName("application_info")
+    private AppInfo appInfo;
     @SerializedName("device")
     private Device device;
     @SerializedName("log_events")
@@ -69,13 +85,26 @@ public class Statistic {
     private Requests requests;
     @SerializedName("wifi")
     private WiFi wifi;
+    //@SerializedName("geoip")
+    //private GeoIP geoIP;
 
-    public Statistic(Context context){
+    public Statistic(Context context) {
         App app = new App();
         setVersion(app.getVersion());
         setAppName(app.getAppName());
         setSDKKey(app.getSDKKey());
         setSDKVersion(app.getSDKVersion());
+        setABMode(false);
+        setIP(Constants.local_ip);
+        //setReceivedAt(Constants.big_number1);
+        //setAppID(Constants.app_id);
+        //setAccountID(Constants.account_id);
+        setHits(Constants.hits);
+        setStartTS(Constants.big_number1);
+        setEndTS(Constants.big_number2);
+        setLevel(Constants.level);
+        //setMessage(Constants.message);
+        //setTimestamp(Constants.default_date);
 
         carrier = new Carrier(this.context);
         device = new Device(context);
@@ -84,6 +113,7 @@ public class Statistic {
         network = new Network(context);
         requests = new Requests(context);
         wifi = new WiFi(context);
+        //geoIP = new GeoIP(context);
     }
 
     public String getVersion() {
@@ -118,6 +148,94 @@ public class Statistic {
         this.sdkVersion = sdkVersion;
     }
 
+    public boolean isABMode() {
+        return abMode;
+    }
+
+    public void setABMode(boolean mode) {
+        this.abMode = mode;
+    }
+
+    public String getIP() {
+        return ip;
+    }
+
+    public void setIP(String ip) {
+        this.ip = ip;
+    }
+/*
+    public long getReceivedAt() {
+        return receivedAt;
+    }
+
+    public void setReceivedAt(long receivedAt) {
+        this.receivedAt = receivedAt;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public String getAppID() {
+        return appID;
+    }
+
+    public void setAppID(String appID) {
+        this.appID = appID;
+    }
+*/
+    public int getHits() {
+        return hits;
+    }
+
+    public void setHits(int hits) {
+        this.hits = hits;
+    }
+
+    public long getStartTS() {
+        return startTS;
+    }
+
+    public void setStartTS(long startTS) {
+        this.startTS = startTS;
+    }
+
+    public long getEndTS() {
+        return endTS;
+    }
+
+    public void setEndTS(long endTS) {
+        this.endTS = endTS;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+/*
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+*/
     public Carrier getCarrier() {
         return carrier;
     }
@@ -173,4 +291,22 @@ public class Statistic {
     public void setWifi(WiFi wifi) {
         this.wifi = wifi;
     }
+
+
+    public AppInfo getAppInfo() {
+        return appInfo;
+    }
+
+    public void setAppInfo(AppInfo appInfo) {
+        this.appInfo = appInfo;
+    }
+/*
+    public GeoIP getGeoIP() {
+        return geoIP;
+    }
+
+    public void setGeoIP(GeoIP geoIP) {
+        this.geoIP = geoIP;
+    }
+*/
 }

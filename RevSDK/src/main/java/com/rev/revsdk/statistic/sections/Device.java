@@ -36,12 +36,12 @@ public class Device {
     private String batt_volt;
     private String brand;
     private String cpu;
-    private int cpu_cores;
+    private String cpu_cores;
     private String cpu_freq;
-    private float cpu_number;
-    private int cpu_sub;
+    private String cpu_number;
+    private String cpu_sub;
     private String device;
-    private float hight;
+    private String hight;
     private String width;
     private String iccid;
     private String imei;
@@ -53,36 +53,40 @@ public class Device {
     private String radio_serial;
     private String serial_number;
     private String uuid;
-
+    private String osName;
+    private String osVersion;
+    private String model;
 
     public Device(Context context) {
         this.context = context;
 
-        batt_cap = battCap();
-        batt_status = battStatus();
-        batt_tech = battTech();
-        batt_temp = battTemp();
-        batt_volt = battVolt();
-        brand = brand();
-        cpu = cpu();
-        cpu_cores = cpuCores();
-        cpu_freq = cpuFreq();
-        cpu_number = cpuNumber();
-        cpu_sub = cpuSub();
-        device = device();
-        hight = hight();
-        width = width();
-        iccid = ICCID();
-        imei = IMEI();
-        imsi = IMSI();
-        manufacture = manufacture();
-        meis = MEIS();
-        os = OS();
-        phone_number = phoneNumber();
-        radio_serial = radioSerial();
-        serial_number = serialNumber();
-        uuid = UUID();
-
+        this.batt_cap = battCap();
+        this.batt_status = battStatus();
+        this.batt_tech = battTech();
+        this.batt_temp = battTemp();
+        this.batt_volt = battVolt();
+        this.brand = brand();
+        this.cpu = cpu();
+        this.cpu_cores = cpuCores();
+        this.cpu_freq = cpuFreq();
+        this.cpu_number = cpuNumber();
+        this.cpu_sub = cpuSub();
+        this.device = device();
+        this.hight = hight();
+        this.width = width();
+        this.iccid = ICCID();
+        this.imei = IMEI();
+        this.imsi = IMSI();
+        this.manufacture = manufacture();
+        this.meis = MEIS();
+        this.os = OS();
+        this.phone_number = phoneNumber();
+        this.radio_serial = radioSerial();
+        this.serial_number = serialNumber();
+        this.uuid = UUID();
+        this.osName = nameOS();
+        this.osVersion = versionOS();
+        this.model = model();
     }
 
     private float battCap() {
@@ -113,28 +117,28 @@ public class Device {
         return Constants.undefined;
     }
 
-    private int cpuCores() {
-        return 0;
+    private String cpuCores() {
+        return Constants.s_zero;
     }
 
     private String cpuFreq() {
         return Constants.undefined;
     }
 
-    private float cpuNumber() {
-        return 0;
+    private String cpuNumber() {
+        return Constants.s_zero;
     }
 
-    private int cpuSub() {
-        return 0;
+    private String cpuSub() {
+        return Constants.s_zero;
     }
 
     private String device() {
-        return Constants.undefined;
+        return "Nexus 6P";
     }
 
-    private float hight() {
-        return 0;
+    private String hight() {
+        return Constants.s_zero;
     }
 
     private String width() {
@@ -161,9 +165,7 @@ public class Device {
         return Constants.undefined;
     }
 
-    private String OS() {
-        return Constants.undefined;
-    }
+    private String OS() {return "Android";}
 
     private String phoneNumber() {
         return Constants.undefined;
@@ -179,6 +181,18 @@ public class Device {
 
     private String UUID() {
         return Constants.undefined;
+    }
+
+    private String nameOS() {
+        return "Android";
+    }
+
+    private String versionOS() {
+        return "7.1.1";
+    }
+
+    private String model() {
+        return "Nexus 6P";
     }
 
     public float getBattCap() {
@@ -209,7 +223,7 @@ public class Device {
         return cpu;
     }
 
-    public int getCPUCores() {
+    public String getCPUCores() {
         return cpu_cores;
     }
 
@@ -217,11 +231,11 @@ public class Device {
         return cpu_freq;
     }
 
-    public float getCPUNumber() {
+    public String getCPUNumber() {
         return cpu_number;
     }
 
-    public int getCPUSub() {
+    public String getCPUSub() {
         return cpu_sub;
     }
 
@@ -229,7 +243,7 @@ public class Device {
         return device;
     }
 
-    public float getHight() {
+    public String getHight() {
         return hight;
     }
 
@@ -275,5 +289,17 @@ public class Device {
 
     public String getUUID() {
         return uuid;
+    }
+
+    public String getOSName() {
+        return osName;
+    }
+
+    public String getOSVersion() {
+        return osVersion;
+    }
+
+    public String getModel() {
+        return model;
     }
 }

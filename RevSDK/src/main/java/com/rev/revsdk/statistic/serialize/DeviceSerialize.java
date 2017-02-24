@@ -45,6 +45,7 @@ public class DeviceSerialize implements JsonSerializer<Device> {
         result.addProperty("cpu_freq", src.getCPUFreq());
         result.addProperty("cpu_number", src.getCPUNumber());
         result.addProperty("cpu_sub", src.getCPUSub());
+        result.addProperty("device", src.getDevice());
         result.addProperty("hight", src.getHight());
         result.addProperty("iccid", src.getIccid());
         result.addProperty("imei", src.getIMEI());
@@ -57,6 +58,9 @@ public class DeviceSerialize implements JsonSerializer<Device> {
         result.addProperty("serial_number", src.getSerialNumber());
         result.addProperty("uuid", src.getUUID());
         result.addProperty("width", src.getWidth());
+        result.addProperty("os_name", src.getOSName());
+        result.addProperty("os_version", src.getOSVersion());
+        result.addProperty("model", src.getModel());
         return result;
     }
 }

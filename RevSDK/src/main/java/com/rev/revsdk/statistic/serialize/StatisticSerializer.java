@@ -45,13 +45,26 @@ public class StatisticSerializer implements JsonSerializer<Statistic> {
         result.addProperty("sdk_key", src.getSDKKey());
         result.addProperty("sdk_version", src.getSDKVersion());
         result.addProperty("version", src.getVersion());
+        result.addProperty("ip", src.getIP());
+        //result.addProperty("received_at", src.getReceivedAt());
+        //result.addProperty("account_id", src.getAccountID());
+        //result.addProperty("app_id", src.getAppID());
+        result.addProperty("hits", src.getHits());
+        result.addProperty("start_ts", src.getStartTS());
+        result.addProperty("end_ts", src.getEndTS());
+        result.addProperty("level", src.getLevel());
+        //result.addProperty("message", src.getMessage());
+        //result.addProperty("timestamp", src.getTimestamp());
+
         result.add("carrier", new CarrierSerialize().serialize(src.getCarrier(), Carrier.class, context));
         result.add("device", new DeviceSerialize().serialize(src.getDevice(), Device.class, context));
         result.add("log_events", new LogEventsSerialize().serialize(src.getEvents(), LogEvents.class, context));
         result.add("location", new LocationSerialize().serialize(src.getLocation(), Location.class, context));
         result.add("network", new NetworkSerialize().serialize(src.getNetwork(), Network.class, context));
         result.add("requests", new RequestsSerialize().serialize(src.getRequests(), Requests.class, context));
+        //result.add("requests", new JsonArray());
         result.add("wifi", new WiFiSerialize().serialize(src.getWifi(), WiFi.class, context));
+        //result.add("geoip", new GeoIPSerialize().serialize(src.getGeoIP(), GeoIP.class, context));
         return result;
     }
 }

@@ -23,24 +23,37 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
 
-import com.rev.revsdk.database.RequestTable;
+import com.rev.revsdk.Constants;
 
-import java.util.ArrayList;
-
-public class Requests extends ArrayList<RequestOne> {
-    private static final String TAG = Requests.class.getSimpleName();
+public class GeoIP {
     private Context context;
-    public Requests(Context context){
+
+    private String countryCodeTwoLetter;
+    private String regionName;
+    private String cityName;
+
+    public GeoIP(Context context){
         this.context = context;
-        readRequests();
+
+        countryCodeTwoLetter = countryCodeTwoLetter();
+        regionName = regionName();
+        cityName = cityName();
     }
-    private void readRequests(){
-        String[] args = {"0","0"};
-        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? OR "+RequestTable.Columns.CONFIRMED+"=?", args, null);
-        addAll(RequestTable.listFromCursor(c));
-        Log.i(TAG, "Size : "+String.valueOf(size()));
+
+    private String countryCodeTwoLetter(){return Constants.UA;}
+    private String regionName(){return  Constants.Dnipro;}
+    private String cityName(){return  Constants.Dnipro;}
+
+    public String getCountryCodeTwoLetter() {
+        return countryCodeTwoLetter;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public String getCityName() {
+        return cityName;
     }
 }

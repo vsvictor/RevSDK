@@ -202,7 +202,7 @@ public class RequestOne {
         return xRevCach;
     }
 
-    public void setXRevCach(String xRevCach) {
+    public void setXRevCache(String xRevCach) {
         this.xRevCach = xRevCach;
     }
 

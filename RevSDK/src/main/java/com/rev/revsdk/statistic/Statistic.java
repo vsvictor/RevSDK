@@ -8,7 +8,6 @@ import com.rev.revsdk.statistic.sections.App;
 import com.rev.revsdk.statistic.sections.AppInfo;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.sections.Device;
-import com.rev.revsdk.statistic.sections.GeoIP;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;

@@ -26,7 +26,6 @@ import android.content.Context;
 
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
-import com.rev.revsdk.protocols.Protocol;
 
 public class Network {
     private Context context;
@@ -97,39 +96,39 @@ public class Network {
     }
 
     private String ipReassemblies() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String ipTotalBytesIn() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String ipTotalBytesOut() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String  ipTotalPacketsIn() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String  ipTotalPacketsOut() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String  rtt() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String tcpBytesIn() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String tcpBytesOut() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String tcpRetransmits() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String transportProtocol() {
@@ -137,11 +136,11 @@ public class Network {
     }
 
     private String udpBytesIn() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String udpBytesOut() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String wifiDHCP() {

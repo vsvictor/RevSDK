@@ -118,7 +118,7 @@ public class Device {
     }
 
     private String cpuCores() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String cpuFreq() {
@@ -126,11 +126,11 @@ public class Device {
     }
 
     private String cpuNumber() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String cpuSub() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String device() {
@@ -138,7 +138,7 @@ public class Device {
     }
 
     private String hight() {
-        return Constants.s_zerro;
+        return Constants.s_zero;
     }
 
     private String width() {

@@ -42,14 +42,12 @@ public class Constants {
     public static final String local_ip = "192.168.0.1";
     public static final String google_dns1 = "8.8.8.8";
     public static final String google_dns2 = "8.8.4.4";
-    public static final int zerro = 0;
-    public static final String s_zerro = "0";
+    public static final int zero = 0;
+    public static final String s_zero = "0";
     public static final String ip = "10.0.0.200";
     public static final String mask_24 = "255.255.255.0";
     public static final long big_number1 = 1234567891*1000;
     public static final long big_number2 = 1234567991*1000;
-    public static final String app_id = "985ac9bbde587ced50dcaf60";
-    public static final String account_id = "995ac9bbde587ced50dcaf99";
     public static final int hits = 0;
     public static final String level = "debug";
     public static final String message = "This is a message from RevSDK Android";

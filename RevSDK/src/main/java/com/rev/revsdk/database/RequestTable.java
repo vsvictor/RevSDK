@@ -73,7 +73,7 @@ public class RequestTable {
         value.setTransportProtocol(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.TRANSPORT_PROTOCOL))));
         value.setURL(cursor.getString(cursor.getColumnIndex(Columns.URL)));
         value.setDestination(cursor.getString(cursor.getColumnIndex(Columns.DESTINATION)));
-        value.setXRevCach(cursor.getString(cursor.getColumnIndex(Columns.X_REV_CACHE)));
+        value.setXRevCache(cursor.getString(cursor.getColumnIndex(Columns.X_REV_CACHE)));
         value.setDomain(cursor.getString(cursor.getColumnIndex(Columns.DOMAIN)));
         value.setEdgeTransport(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.EDGE_TRANSPORT))));
         return value;
@@ -150,7 +150,7 @@ public class RequestTable {
         final String DESTINATION = "destination";
         final String X_REV_CACHE = "x_rev_cache";
         final String DOMAIN = "domain";
-        final String SENDED = "sended";
+        final String SENT = "sent";
         final String CONFIRMED = "confirmed";
         final String EDGE_TRANSPORT = "edge_transport";
     }
@@ -180,7 +180,7 @@ public class RequestTable {
                 Columns.X_REV_CACHE + " varchar(16) not null," +
                 Columns.EDGE_TRANSPORT + " varchar(16) not null," +
                 Columns.DOMAIN + " varchar(256) not null," +
-                Columns.SENDED + " int(1) not null default 0," +
+                Columns.SENT + " int(1) not null default 0," +
                 Columns.CONFIRMED + " int(1) not null default 0);";
 
         final String DROP_REQUEST = "DROP TABLE IF EXIST " + TABLE_NAME;

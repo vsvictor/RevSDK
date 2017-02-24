@@ -5,8 +5,6 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,12 +31,10 @@ import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.ListProtocol;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.protocols.ProtocolTester;
-import com.rev.revsdk.statistic.Section;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.Device;
 import com.rev.revsdk.statistic.sections.Event;
-import com.rev.revsdk.statistic.sections.GeoIP;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
@@ -52,7 +48,6 @@ import com.rev.revsdk.statistic.serialize.CarrierSerialize;
 import com.rev.revsdk.statistic.serialize.DeviceDeserialize;
 import com.rev.revsdk.statistic.serialize.DeviceSerialize;
 import com.rev.revsdk.statistic.serialize.EventSerialize;
-import com.rev.revsdk.statistic.serialize.GeoIPDeserialize;
 import com.rev.revsdk.statistic.serialize.LocationDeserialize;
 import com.rev.revsdk.statistic.serialize.LocationSerialize;
 import com.rev.revsdk.statistic.serialize.LogEventsSerialize;
@@ -69,7 +64,6 @@ import com.rev.revsdk.utils.Tag;
 import com.rev.revsdk.statistic.sections.AppInfo;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import okhttp3.CacheControl;
 import okhttp3.MediaType;
@@ -150,7 +144,6 @@ public class RevApplication extends Application {
                 .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
                 .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
                 .registerTypeAdapter(Requests.class, new RequestsSerialize()).registerTypeAdapter(Requests.class, new RequestsDeserializer())
-                .registerTypeAdapter(GeoIP.class, new GeoIPDeserialize()).registerTypeAdapter(GeoIP.class, new GeoIPDeserialize())
                 .registerTypeAdapter(WiFi.class, new WiFiSerialize()).registerTypeAdapter(WiFi.class, new WiFiDeserialize())
                 .registerTypeAdapter(Statistic.class, new StatisticSerializer());
         gson = gsonBuilder.create();

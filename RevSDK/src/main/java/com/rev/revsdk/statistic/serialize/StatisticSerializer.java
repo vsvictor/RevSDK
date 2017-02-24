@@ -1,6 +1,5 @@
 package com.rev.revsdk.statistic.serialize;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -8,7 +7,6 @@ import com.google.gson.JsonSerializer;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.Device;
-import com.rev.revsdk.statistic.sections.GeoIP;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;

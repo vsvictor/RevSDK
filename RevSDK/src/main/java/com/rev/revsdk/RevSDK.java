@@ -8,20 +8,16 @@ import com.rev.revsdk.database.RequestTable;
 import com.rev.revsdk.interseptor.RequestCreator;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.statistic.sections.RequestOne;
-import com.rev.revsdk.utils.NetworkUtil;
 import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.framed.Header;
-import retrofit2.http.Body;
 
 /*
  * ************************************************************************
@@ -145,7 +141,7 @@ public class RevSDK {
         result.setURL(original.url().toString());
         result.setDestination(original == processed ? "origin" : "rev_edge");
         String cache = response.header("x-rev-cache");
-        result.setXRevCach(cache==null?Constants.undefined:cache);
+        result.setXRevCache(cache==null?Constants.undefined:cache);
         result.setDomain(original.url().host());
 
         return result;

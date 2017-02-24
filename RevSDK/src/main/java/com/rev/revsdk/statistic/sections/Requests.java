@@ -39,7 +39,7 @@ public class Requests extends ArrayList<RequestOne> {
     }
     private void readRequests(){
         String[] args = {"0","0"};
-        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENDED+"=? OR "+RequestTable.Columns.CONFIRMED+"=?", args, null);
+        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? OR "+RequestTable.Columns.CONFIRMED+"=?", args, null);
         addAll(RequestTable.listFromCursor(c));
         Log.i(TAG, "Size : "+String.valueOf(size()));
     }

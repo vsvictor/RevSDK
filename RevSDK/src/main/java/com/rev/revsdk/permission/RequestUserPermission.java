@@ -40,11 +40,13 @@ public class RequestUserPermission {
     private static final int REQUEST_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.INTERNET,
+/*
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_COARSE_LOCATION
+*/
     };
 
     public RequestUserPermission(Activity activity) {

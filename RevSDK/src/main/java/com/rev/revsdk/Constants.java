@@ -24,10 +24,14 @@ package com.rev.revsdk;
 
 public class Constants {
     public static final String KEY_TAG = "com.revsdk.key";
-    public static final String BASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
-    public static final String RASE_URL = "https://sdk-config-api.revapm.net/v1/sdk/";
+    public static final String MAIN_CONFIG_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
 
-    public static  final int MIN_SLEEP = 200;
+    public static final String CONFIG = "config";
+    public static final String TIMEOUT = "timeout";
+    public static final String TEST_PROTOCOL = "protocol";
+
+    public static final String STATISTIC = "statistic";
+
 
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
@@ -55,4 +59,7 @@ public class Constants {
     public static final String UA = "UA";
     public static final String Dnipro = "Dnipro";
     public static final String rssi = "-10000";
+
+
+
 }

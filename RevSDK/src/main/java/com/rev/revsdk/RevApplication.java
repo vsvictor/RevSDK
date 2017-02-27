@@ -22,6 +22,7 @@ import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.services.Configurator;
 import com.rev.revsdk.services.Statist;
+import com.rev.revsdk.services.Tester;
 
 import java.sql.Time;
 import java.util.Timer;
@@ -99,6 +100,7 @@ public class RevApplication extends Application {
             public void onActivityResumed(Activity activity) {
                 registration();
                 configuratorRunner();
+                testerRunner();
             }
 
             @Override
@@ -156,6 +158,9 @@ public class RevApplication extends Application {
         }
         sdkKey = getKeyFromManifest();
         config = Config.load(RevSDK.gsonCreate(), share);
+        if (config != null) {
+            statRunner();
+        }
     }
     @Override
     public void onTerminate(){
@@ -269,5 +274,10 @@ public class RevApplication extends Application {
                 startService(statIntent);
             }
         },0, config.getParam().get(0).getStatsReportingIntervalSec()*1000);
+    }
+
+    private void testerRunner() {
+        Intent statIntent = new Intent(RevApplication.this, Tester.class);
+        startService(statIntent);
     }
 }

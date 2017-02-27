@@ -1,12 +1,4 @@
-package com.rev.revsdk.listeners;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-import com.rev.revsdk.services.Tester;
-import com.rev.revsdk.utils.NetworkUtil;
+package com.rev.revsdk;
 
 /*
  * ************************************************************************
@@ -30,13 +22,10 @@ import com.rev.revsdk.utils.NetworkUtil;
  * /
  */
 
-public class NetListener extends BroadcastReceiver {
-    private static final String TAG = NetListener.class.getSimpleName();
-    private Context context;
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        this.context = context;
-        Intent testIntent = new Intent(context, Tester.class);
-        context.startService(testIntent);
-    }
+import com.rev.revsdk.services.Statist;
+
+public class Actions {
+    public static final String CONFIG_UPDATE_ACTION = "com.rev.revsdk.UPDATE_CONFIG";
+    public static final String TEST_PROTOCOL_ACTION = "com.rev.revsdk.TEST_PROTOCOL_ACTION";
+    public static final String STAT_ACTION = "com.rev.revsdk.STAT_ACTION";
 }

@@ -4,10 +4,55 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.rev.revsdk.config.ConfigParamenetrs;
+import com.rev.revsdk.config.ConfigsList;
+import com.rev.revsdk.config.ListString;
+import com.rev.revsdk.config.OperationMode;
+import com.rev.revsdk.config.serialization.ConfigListDeserialize;
+import com.rev.revsdk.config.serialization.ConfigListSerialize;
+import com.rev.revsdk.config.serialization.ConfigParametersSerialize;
+import com.rev.revsdk.config.serialization.ListStringDeserializer;
+import com.rev.revsdk.config.serialization.ListStrintgSerialize;
+import com.rev.revsdk.config.serialization.OperationModeDeserialize;
+import com.rev.revsdk.config.serialization.OperationModeSerialize;
+import com.rev.revsdk.config.serialization.TransportProtocolDeserialize;
+import com.rev.revsdk.config.serialization.TransportProtocolSerialize;
 import com.rev.revsdk.database.RequestTable;
 import com.rev.revsdk.interseptor.RequestCreator;
+import com.rev.revsdk.protocols.ListProtocol;
 import com.rev.revsdk.protocols.Protocol;
+import com.rev.revsdk.statistic.Statistic;
+import com.rev.revsdk.statistic.sections.AppInfo;
+import com.rev.revsdk.statistic.sections.Carrier;
+import com.rev.revsdk.statistic.sections.Device;
+import com.rev.revsdk.statistic.sections.Event;
+import com.rev.revsdk.statistic.sections.Location;
+import com.rev.revsdk.statistic.sections.LogEvents;
+import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.RequestOne;
+import com.rev.revsdk.statistic.sections.Requests;
+import com.rev.revsdk.statistic.sections.WiFi;
+import com.rev.revsdk.statistic.serialize.AppInfoDeserializer;
+import com.rev.revsdk.statistic.serialize.AppInfoSerialize;
+import com.rev.revsdk.statistic.serialize.CarrierDeserialize;
+import com.rev.revsdk.statistic.serialize.CarrierSerialize;
+import com.rev.revsdk.statistic.serialize.DeviceDeserialize;
+import com.rev.revsdk.statistic.serialize.DeviceSerialize;
+import com.rev.revsdk.statistic.serialize.EventSerialize;
+import com.rev.revsdk.statistic.serialize.LocationDeserialize;
+import com.rev.revsdk.statistic.serialize.LocationSerialize;
+import com.rev.revsdk.statistic.serialize.LogEventsSerialize;
+import com.rev.revsdk.statistic.serialize.NetworkDeserialize;
+import com.rev.revsdk.statistic.serialize.NetworkSerialize;
+import com.rev.revsdk.statistic.serialize.RequestOneDeserialize;
+import com.rev.revsdk.statistic.serialize.RequestOneSerialize;
+import com.rev.revsdk.statistic.serialize.RequestsDeserializer;
+import com.rev.revsdk.statistic.serialize.RequestsSerialize;
+import com.rev.revsdk.statistic.serialize.StatisticSerializer;
+import com.rev.revsdk.statistic.serialize.WiFiDeserialize;
+import com.rev.revsdk.statistic.serialize.WiFiSerialize;
 import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
@@ -53,7 +98,6 @@ public class RevSDK {
     public static OkHttpClient OkHttpCreate() {
         return OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC);
     }
-
     public static OkHttpClient OkHttpCreate(int timeoutSec) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
@@ -62,14 +106,14 @@ public class RevSDK {
                 Request result = null;
                 Request original = chain.request();
                 boolean systemRequest = isSystem(original);
-                Log.i(TAG, "is System?" + String.valueOf(systemRequest) + " ,Intercepted: \n" + original.toString());
+                //Log.i(TAG, "is System?" + String.valueOf(systemRequest) + " ,Intercepted: \n" + original.toString());
                 if (!systemRequest) {
                     result = processingRequest(original);
                     int i= 0;
                 }
                 else result = original;
 
-                Log.i(TAG, "\n"+result.toString());
+                //Log.i(TAG, "\n"+result.toString());
 
                 Response response = chain.proceed(result);
 
@@ -78,17 +122,41 @@ public class RevSDK {
                     final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
                     Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
                             .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                    Log.i(TAG, "Inserted to URI: " + uri.toString());
+                    //Log.i(TAG, "Inserted to URI: " + uri.toString());
 
                     Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
                             .query(RequestTable.URI,null,null, null,null);
-                    Log.i(TAG, "Row count: "+String.valueOf(c.getCount())+" Columns count: "+c.getColumnCount());
+                    //Log.i(TAG, "Row count: "+String.valueOf(c.getCount())+" Columns count: "+c.getColumnCount());
                 }
                 return response;
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
         return httpClient.build();
     }
+    public static Gson gsonCreate(){
+        GsonBuilder gsonBuilder;
+
+        gsonBuilder = new GsonBuilder().registerTypeAdapter(ConfigsList.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigsList.class, new ConfigListSerialize())
+                .registerTypeAdapter(ConfigParamenetrs.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigParamenetrs.class, new ConfigParametersSerialize())
+                .registerTypeAdapter(ListString.class, new ListStringDeserializer()).registerTypeAdapter(ListString.class, new ListStrintgSerialize())
+                .registerTypeAdapter(ListProtocol.class, new TransportProtocolDeserialize()).registerTypeAdapter(ListProtocol.class, new TransportProtocolSerialize())
+                .registerTypeAdapter(OperationMode.class, new OperationModeDeserialize()).registerTypeAdapter(OperationMode.class, new OperationModeSerialize())
+                .registerTypeAdapter(RequestOne.class, new RequestOneDeserialize()).registerTypeAdapter(RequestOne.class, new RequestOneSerialize())
+                .registerTypeAdapter(Requests.class, new RequestsDeserializer()).registerTypeAdapter(Requests.class, new RequestsSerialize())
+                .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
+                .registerTypeAdapter(AppInfo.class, new AppInfoSerialize()).registerTypeAdapter(AppInfo.class, new AppInfoDeserializer())
+                .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
+                .registerTypeAdapter(Event.class, new EventSerialize())
+                .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
+                .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
+                .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
+                .registerTypeAdapter(Requests.class, new RequestsSerialize()).registerTypeAdapter(Requests.class, new RequestsDeserializer())
+                .registerTypeAdapter(WiFi.class, new WiFiSerialize()).registerTypeAdapter(WiFi.class, new WiFiDeserialize())
+                .registerTypeAdapter(Statistic.class, new StatisticSerializer());
+        return gsonBuilder.create();
+    }
+
+
 
     private static boolean isSystem(Request req) {
         boolean result = false;

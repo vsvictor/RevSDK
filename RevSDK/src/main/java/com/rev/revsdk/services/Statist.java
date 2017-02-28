@@ -23,6 +23,7 @@ package com.rev.revsdk.services;
  */
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,10 +31,13 @@ import android.util.Log;
 import com.rev.revsdk.Actions;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.database.RequestTable;
 import com.rev.revsdk.statistic.Statistic;
+import com.rev.revsdk.statistic.sections.RequestOne;
 import com.rev.revsdk.utils.Tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.CacheControl;
 import okhttp3.MediaType;
@@ -58,8 +62,11 @@ public class Statist extends IntentService {
         String url = null;
 
         Log.i(TAG, "Statist running...");
+        //String rssi = intent.getExtras().getString(Constants.RSSI, "-10000");
+        //String rssiAverage = intent.getExtras().getString(Constants.RSSI_AVERAGE, "-10000");
+        //String rssiBest = intent.getExtras().getString(Constants.RSSI_BEST, "-10000");
 
-        statistic = new Statistic(getApplicationContext());
+        statistic = new Statistic(getApplicationContext()); //, rssi, rssiAverage, rssiBest);
         String stat = RevSDK.gsonCreate().toJson(statistic);
         Log.i(TAG+" stat", "\n\n"+stat);
 
@@ -86,6 +93,23 @@ public class Statist extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if(response.code() == 200){
+            ArrayList<RequestOne> rows = statistic.getRequests();
+            ContentValues values = new ContentValues();
+            values.put(RequestTable.Columns.CONFIRMED, 1);
+            int count = 0;
+            if(statistic.getRequests().size()>0) {
+                long mixIndex = statistic.getRequests().get(0).getID();
+                long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
+                count = getApplicationContext().getContentResolver().update(RequestTable.URI,
+                        values,
+                        RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
+                        new String[]{String.valueOf(mixIndex), String.valueOf(maxIndex)});
+            }
+            Log.i(TAG, "Updated: "+String.valueOf(count));
+        }
+
         Intent statIntent = new Intent(Actions.STAT_ACTION);
         statIntent.putExtra(Constants.STATISTIC, response.toString());
         sendBroadcast(statIntent);

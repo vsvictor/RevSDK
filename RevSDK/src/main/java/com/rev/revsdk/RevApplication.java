@@ -11,6 +11,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +26,9 @@ import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.services.Configurator;
 import com.rev.revsdk.services.Statist;
+import com.rev.revsdk.services.Tester;
+import com.rev.revsdk.statistic.sections.Carrier;
+//import com.rev.revsdk.statistic.sections.helper.RSSIHelper;
 
 import java.sql.Time;
 import java.util.Timer;
@@ -49,9 +56,10 @@ import java.util.TimerTask;
  * /
  */
 
-public class RevApplication extends Application {
+public class RevApplication extends Application{
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
+    private RequestUserPermission permission;
     private String sdkKey;
     private String version;
     private Config config;
@@ -60,9 +68,12 @@ public class RevApplication extends Application {
     private SharedPreferences share;
     private Protocol best = Protocol.STANDART;
 
+    private boolean isInternet = false;
+
     private BroadcastReceiver configReceiver;
     private BroadcastReceiver testReceiver;
     private BroadcastReceiver statReceiver;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -73,20 +84,23 @@ public class RevApplication extends Application {
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 share = getSharedPreferences("RevSDK", MODE_PRIVATE);
                 if (firstActivity) {
-                    RequestUserPermission permission = new RequestUserPermission(activity);
-                    permission.verifyStoragePermissions(new PostPermissionGranted() {
+                    permission = new RequestUserPermission(activity);
+                    permission.verifyPermissionsInternet(new PostPermissionGranted() {
                         @Override
                         public void onPermissionGranted() {
                             init();
+                            isInternet = true;
                             firstActivity = false;
                         }
                         @Override
                         public void onPermissionDenied() {
-                            init();
+                            isInternet = false;
                             firstActivity = true;
                             Toast.makeText(RevApplication.this, RevApplication.this.getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                         }
                     });
+                    permission.verifyPermissionsReadPhoneState();
+                    permission.verifyPermissionsAccessNetworkState();
                 }
             }
 
@@ -96,16 +110,34 @@ public class RevApplication extends Application {
             }
 
             @Override
-            public void onActivityResumed(Activity activity) {
-                registration();
-                configuratorRunner();
+            public void onActivityResumed(final Activity activity) {
+                if(isInternet) {
+                    registration();
+                    configuratorRunner();
+                    testerRunner();
+                }
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Carrier.runRSSIListener();
+                            }
+                        }).start();
+
+                    }
+                }, 10*1000);
             }
 
             @Override
             public void onActivityPaused(Activity activity) {
-                unregisterReceiver(configReceiver);
-                unregisterReceiver(testReceiver);
-                unregisterReceiver(statReceiver);
+                if(isInternet) {
+                    unregisterReceiver(configReceiver);
+                    unregisterReceiver(testReceiver);
+                    unregisterReceiver(statReceiver);
+                }
             }
 
             @Override
@@ -139,7 +171,6 @@ public class RevApplication extends Application {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        //return " ";
         return result.toLowerCase();
     }
 
@@ -156,6 +187,9 @@ public class RevApplication extends Application {
         }
         sdkKey = getKeyFromManifest();
         config = Config.load(RevSDK.gsonCreate(), share);
+        if(config != null){
+            statRunner();
+        }
     }
     @Override
     public void onTerminate(){
@@ -174,6 +208,7 @@ public class RevApplication extends Application {
     public Config getConfig(){return config;}
     public String getVersion() {return version;}
     public String getPackage(){return getApplicationContext().getPackageName();}
+    public RequestUserPermission getPermission(){return permission;}
 
     private void registration(){
         configReceiver = createConfigReceiver();
@@ -269,5 +304,9 @@ public class RevApplication extends Application {
                 startService(statIntent);
             }
         },0, config.getParam().get(0).getStatsReportingIntervalSec()*1000);
+    }
+    private void testerRunner(){
+                Intent statIntent = new Intent(RevApplication.this, Tester.class);
+                startService(statIntent);
     }
 }

@@ -51,12 +51,6 @@ public class Statistic {
     private boolean abMode;
     @SerializedName("ip")
     private String ip;
-    //@SerializedName("received_at")
-    //private long receivedAt;
-    //@SerializedName("account_id")
-    //private String accountID;
-    //@SerializedName("app_id")
-    //private String appID;
     @SerializedName("hits")
     private int hits;
     @SerializedName("start_ts")
@@ -65,10 +59,6 @@ public class Statistic {
     private long endTS;
     @SerializedName("level")
     private String level;
-    //@SerializedName("message")
-    //private String message;
-    //@SerializedName("timestamp")
-    //private String timestamp;
     @SerializedName("carrier")
     private Carrier carrier;
     @SerializedName("application_info")
@@ -85,10 +75,10 @@ public class Statistic {
     private Requests requests;
     @SerializedName("wifi")
     private WiFi wifi;
-    //@SerializedName("geoip")
-    //private GeoIP geoIP;
 
-    public Statistic(Context context) {
+    public Statistic(Context context){
+        this.context = context;
+
         App app = new App();
         setVersion(app.getVersion());
         setAppName(app.getAppName());
@@ -96,24 +86,18 @@ public class Statistic {
         setSDKVersion(app.getSDKVersion());
         setABMode(false);
         setIP(Constants.local_ip);
-        //setReceivedAt(Constants.big_number1);
-        //setAppID(Constants.app_id);
-        //setAccountID(Constants.account_id);
         setHits(Constants.hits);
         setStartTS(Constants.big_number1);
         setEndTS(Constants.big_number2);
         setLevel(Constants.level);
-        //setMessage(Constants.message);
-        //setTimestamp(Constants.default_date);
 
         carrier = new Carrier(this.context);
-        device = new Device(context);
-        events = new LogEvents(context);
-        location = new Location(context);
-        network = new Network(context);
-        requests = new Requests(context);
-        wifi = new WiFi(context);
-        //geoIP = new GeoIP(context);
+        device = new Device(this.context);
+        events = new LogEvents(this.context);
+        location = new Location(this.context);
+        network = new Network(this.context);
+        requests = new Requests(this.context);
+        wifi = new WiFi(this.context);
     }
 
     public String getVersion() {
@@ -163,31 +147,7 @@ public class Statistic {
     public void setIP(String ip) {
         this.ip = ip;
     }
-/*
-    public long getReceivedAt() {
-        return receivedAt;
-    }
 
-    public void setReceivedAt(long receivedAt) {
-        this.receivedAt = receivedAt;
-    }
-
-    public String getAccountID() {
-        return accountID;
-    }
-
-    public void setAccountID(String accountID) {
-        this.accountID = accountID;
-    }
-
-    public String getAppID() {
-        return appID;
-    }
-
-    public void setAppID(String appID) {
-        this.appID = appID;
-    }
-*/
     public int getHits() {
         return hits;
     }
@@ -219,23 +179,7 @@ public class Statistic {
     public void setLevel(String level) {
         this.level = level;
     }
-/*
-    public String getMessage() {
-        return message;
-    }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-*/
     public Carrier getCarrier() {
         return carrier;
     }
@@ -300,13 +244,4 @@ public class Statistic {
     public void setAppInfo(AppInfo appInfo) {
         this.appInfo = appInfo;
     }
-/*
-    public GeoIP getGeoIP() {
-        return geoIP;
-    }
-
-    public void setGeoIP(GeoIP geoIP) {
-        this.geoIP = geoIP;
-    }
-*/
 }

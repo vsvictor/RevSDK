@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ProviderInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Looper;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -13,6 +14,7 @@ import android.util.Log;
 
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.R;
+import com.rev.revsdk.RevApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,33 +40,11 @@ import java.util.List;
  *
  * /
  */
-
-/*
- * ************************************************************************
- *
- *
- * NUU:BIT CONFIDENTIAL
- * [2013] - [2017] NUU:BIT, INC.
- * All Rights Reserved.
- * NOTICE: All information contained herein is, and remains
- * the property of NUU:BIT, INC. and its suppliers,
- * if any. The intellectual and technical concepts contained
- * herein are proprietary to NUU:BIT, INC.
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from NUU:BIT, INC.
- *
- * Victor D. Djurlyak, 2017
- *
- * /
- */
-
 public class Carrier {
+    private static final String TAG = Carrier.class.getSimpleName();
     private Context context;
 
-    //private TelephonyManager tm = null;
+    private static boolean isListened = false;
 
     private String countryCode;
     private String deviceID;
@@ -72,11 +52,9 @@ public class Carrier {
     private String mnc;
     private String netOperator;
     private String netType;
-    //private String phoneType;
-
-    private String rssi;
-    private String rssiAverage;
-    private String rssiBest;
+    private static String rssi;
+    private static String rssiAverage;
+    private static String rssiBest;
     private String signalType;
     private String simOperator;
     private String shortTower;
@@ -93,28 +71,19 @@ public class Carrier {
             tm = null;
             netOperator = "";
         }
-
         countryCode = countryCode(tm);
-
         deviceID = deviceID(tm);
         mcc = MMC(vNetworkOperator);
         mnc = MNC(vNetworkOperator);
-
         netOperator = netOperator(tm);
         netType = netType(tm);
-        //phoneType = phoneType(tm);
-        rssi = RSSI();
-        rssiAverage = RSSIAverage();
-        rssiBest = RSSIBest();
+        if(rssi == null || rssi.isEmpty()) rssi = RSSI();
+        if(rssiAverage == null || rssiAverage.isEmpty())rssiAverage = RSSIAverage();
+        if(rssiBest == null || rssiBest.isEmpty())rssiBest = RSSIBest();
         signalType = networkType(context);
         simOperator = simOperator(tm);
         this.shortTower = towerLong();
         this.longTower = towerShort();
-
-        try {
-            tm.listen(new RSSIPhoneStateListener(tm), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        }catch (NullPointerException ex){}
-
     }
     private String countryCode(TelephonyManager tm){
         try{
@@ -131,6 +100,9 @@ public class Carrier {
         try {
             return tm.getDeviceId();
         }catch (NullPointerException ex){
+            return Constants.undefined;
+        }
+        catch (SecurityException ex){
             return Constants.undefined;
         }
     }
@@ -177,19 +149,6 @@ public class Carrier {
     public String getNetType() {
         return netType;
     }
-/*
-    private String phoneType(TelephonyManager tm){
-        try {
-            return phoneType2String(tm.getPhoneType());
-        }catch (NullPointerException ex){
-            return Constants.undefined;
-        }
-    }
-
-    public String getPhoneType() {
-        return phoneType;
-    }
-*/
     private String RSSI(){
         return Constants.rssi;
     }
@@ -308,19 +267,37 @@ public class Carrier {
             return Constants.undefined;
         }
     }
-    public class RSSIPhoneStateListener extends PhoneStateListener {
-        private TelephonyManager tm;
-        private final String TAG = RSSIPhoneStateListener.class.getSimpleName();
-        private ArrayList<Float> rssiArr = new ArrayList<>();
-        public RSSIPhoneStateListener(TelephonyManager tm) {
-            this.tm = tm;
+
+    public static void runRSSIListener(){
+        try {
+            Looper.prepare();
+            TelephonyManager manager = (TelephonyManager) RevApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
+            manager.listen(new RSSIPhoneStateListener(manager.getNetworkType()), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+            isListened = true;
+            Looper.loop();
+        }catch (NullPointerException ex){
+            isListened = false;
+        }
+    }
+
+    public static boolean isIsListen(){
+        return isListened;
+    }
+
+    public static class RSSIPhoneStateListener extends PhoneStateListener {
+        private static int netWorkType;
+        private static final String TAG = RSSIPhoneStateListener.class.getSimpleName();
+        private static ArrayList<Float> rssiArr = new ArrayList<>();
+
+        public RSSIPhoneStateListener(int netWorkType) {
+            this.netWorkType = netWorkType;
         }
 
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
             String[] parts = signalStrength.toString().split(" ");
-            if ( tm.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE){
+            if ( this.netWorkType == TelephonyManager.NETWORK_TYPE_LTE){
                 rssi = String.valueOf(Integer.parseInt(parts[8])-140);
             }
             else{
@@ -334,7 +311,6 @@ public class Carrier {
             if(rssiArr.size() > 0) rssiAverage = String.valueOf(rssiSum/rssiArr.size());
             else rssiAverage = rssi;
             rssiBest = String.valueOf(Math.max(Float.parseFloat(rssi), Float.parseFloat(rssiBest)));
-            Log.i(TAG, String.valueOf(rssiArr.size()));
         }
     }
 }

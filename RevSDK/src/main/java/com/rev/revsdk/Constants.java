@@ -32,6 +32,10 @@ public class Constants {
 
     public static final String STATISTIC = "statistic";
 
+    public static final String RSSI = "rssi";
+    public static final String RSSI_AVERAGE = "rssi_average";
+    public static final String RSSI_BEST = "rssi_best";
+
 
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
@@ -54,10 +58,6 @@ public class Constants {
     public static final long big_number2 = 1234567991*1000;
     public static final int hits = 0;
     public static final String level = "debug";
-    public static final String message = "This is a message from RevSDK Android";
-    public static final String default_date = "2017-02-22T07:27:13.041Z";
-    public static final String UA = "UA";
-    public static final String Dnipro = "Dnipro";
     public static final String rssi = "-10000";
 
 

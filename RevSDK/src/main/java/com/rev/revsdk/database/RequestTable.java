@@ -25,6 +25,7 @@ package com.rev.revsdk.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -94,7 +95,14 @@ public class RequestTable {
         }
         return values;
     }
-
+/*
+    public static void setSelected(Context context, int count){
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String command = "Update From Select * selected=1 Where selected=0 and confirmed=0 limit "+String.valueOf(count);
+        db.execSQL(command);
+    }
+*/
     @NonNull
     public static void clear(Context context){
         context.getContentResolver().delete(URI, null, null);
@@ -127,6 +135,7 @@ public class RequestTable {
         values.put(Columns.EDGE_TRANSPORT, req.getEdgeTransport().toString());
         return values;
     }
+
     public interface Columns{
         final String ID = "id";
         final String APP_NAME = "app_id";

@@ -11,12 +11,12 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
-      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
-      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
       <root url="jar:///usr/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
       <root url="jar:///usr/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
       <root url="jar:///usr/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
+      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
+      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
+      <root url="jar:///opt/google/android-sdk-linux/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

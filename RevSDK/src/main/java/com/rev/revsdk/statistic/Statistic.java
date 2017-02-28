@@ -76,7 +76,9 @@ public class Statistic {
     @SerializedName("wifi")
     private WiFi wifi;
 
-    public Statistic(Context context) {
+    public Statistic(Context context){
+        this.context = context;
+
         App app = new App();
         setVersion(app.getVersion());
         setAppName(app.getAppName());
@@ -90,13 +92,12 @@ public class Statistic {
         setLevel(Constants.level);
 
         carrier = new Carrier(this.context);
-        device = new Device(context);
-        events = new LogEvents(context);
-        location = new Location(context);
-        network = new Network(context);
-        requests = new Requests(context);
-        wifi = new WiFi(context);
-        //geoIP = new GeoIP(context);
+        device = new Device(this.context);
+        events = new LogEvents(this.context);
+        location = new Location(this.context);
+        network = new Network(this.context);
+        requests = new Requests(this.context);
+        wifi = new WiFi(this.context);
     }
 
     public String getVersion() {

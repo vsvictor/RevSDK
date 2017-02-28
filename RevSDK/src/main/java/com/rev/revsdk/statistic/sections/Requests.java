@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class Requests extends ArrayList<RequestOne> {
+public class Requests extends ArrayList<RequestOne>{
     private static final String TAG = Requests.class.getSimpleName();
     private Context context;
     public Requests(Context context){
@@ -46,22 +46,22 @@ public class Requests extends ArrayList<RequestOne> {
     }
     private void readRequests(){
         this.clear();
-        String[] args = {"1", "0"};
+        String[] args = {"1","0"};
         ContentValues update = new ContentValues();
         update.put(RequestTable.Columns.SENT, 1);
-        context.getContentResolver().update(RequestTable.URI, update, null, null);
-        Cursor c = context.getContentResolver().query(RequestTable.URI, null, RequestTable.Columns.SENT + "=? AND " + RequestTable.Columns.CONFIRMED + "=?", args, null);
+        context.getContentResolver().update(RequestTable.URI, update,null,null);
+        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? AND "+RequestTable.Columns.CONFIRMED+"=?", args, null);
         List<RequestOne> rows = RequestTable.listFromCursor(c);
         int perReport = RevApplication.getInstance().getConfig().getParam().get(0).getStatsReportingMaxRequestsPerReport();
-        Log.i(TAG, "Max per report:" + String.valueOf(perReport));
-        List<RequestOne> sub = rows.subList(0, perReport > rows.size() ? rows.size() : perReport);
+        Log.i(TAG, "Max per report:"+String.valueOf(perReport));
+        List<RequestOne> sub = rows.subList(0, perReport>rows.size()?rows.size():perReport);
         addAll(sub);
         Log.i(TAG, "Size : "+String.valueOf(size()));
         Collections.sort(this, new Comparator<RequestOne>() {
             @Override
             public int compare(RequestOne o1, RequestOne o2) {
-                if (o1.getID() > o2.getID()) return 1;
-                else if (o1.getID() == o2.getID()) return 0;
+                if(o1.getID()>o2.getID()) return 1;
+                else if(o1.getID()==o2.getID()) return 0;
                 else return -1;
             }
         });

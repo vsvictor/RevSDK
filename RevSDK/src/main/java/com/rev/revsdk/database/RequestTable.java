@@ -95,15 +95,14 @@ public class RequestTable {
         }
         return values;
     }
-
-    /*
-        public static void setSelected(Context context, int count){
-            DBHelper dbHelper = new DBHelper(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            String command = "Update From Select * selected=1 Where selected=0 and confirmed=0 limit "+String.valueOf(count);
-            db.execSQL(command);
-        }
-    */
+/*
+    public static void setSelected(Context context, int count){
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String command = "Update From Select * selected=1 Where selected=0 and confirmed=0 limit "+String.valueOf(count);
+        db.execSQL(command);
+    }
+*/
     @NonNull
     public static void clear(Context context){
         context.getContentResolver().delete(URI, null, null);

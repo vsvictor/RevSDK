@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PermissionInfo;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.rev.revsdk.permission.PostPermissionGranted;
 
@@ -34,60 +36,64 @@ import java.util.List;
  *
  * /
  */
-public class RequestUserPermission {
 
-    private Activity activity;
-    private static final int REQUEST_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.INTERNET,
 /*
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
 */
-    };
+
+
+public class RequestUserPermission {
+
+    private Activity activity;
+    private static final int REQUEST_STORAGE_INTERNET = 1;
+    private static final int REQUEST_STORAGE_READ_PHONE_STATE = 2;
+    private static final int REQUEST_STORAGE_ACCESS_NETWORK_STATE = 3;
 
     public RequestUserPermission(Activity activity) {
         this.activity = activity;
     }
 
-    public  void verifyStoragePermissions(PostPermissionGranted runner) {
-        //int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        boolean isPerm = true;
+    public boolean verifyPermissionsInternet(PostPermissionGranted runner) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.INTERNET},
+                    REQUEST_STORAGE_INTERNET);
 
-        for(String perm : PERMISSIONS_STORAGE){
-            int permission = ActivityCompat.checkSelfPermission(activity, perm);
-            isPerm = isPerm && (permission == PackageManager.PERMISSION_GRANTED);
-        }
-        if (!isPerm) {
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_STORAGE
-            );
-            if(runner != null) runner.onPermissionGranted();
-        }
-        else{
-            if(runner != null) runner.onPermissionDenied();
+            return false;
+        } else {
+            runner.onPermissionGranted();
+            return true;
         }
     }
-    public static List<PermissionInfo> getAllPermissions(Context context) {
-        PackageManager pm = context.getPackageManager();
-        List<PermissionInfo> permissions = new ArrayList<>();
 
-        List<PermissionGroupInfo> groupList = pm.getAllPermissionGroups(0);
-        groupList.add(null); // ungrouped permissions
-
-        for (PermissionGroupInfo permissionGroup : groupList) {
-            String name = permissionGroup == null ? null : permissionGroup.name;
-            try {
-                permissions.addAll(pm.queryPermissionsByGroup(name, 0));
-            } catch (PackageManager.NameNotFoundException ignored) {
-            }
+    public boolean verifyPermissionsReadPhoneState() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    REQUEST_STORAGE_READ_PHONE_STATE);
+            return false;
+        } else {
+            return true;
         }
 
-        return permissions;
     }
+
+    public boolean verifyPermissionsAccessNetworkState() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                    REQUEST_STORAGE_ACCESS_NETWORK_STATE);
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
 }

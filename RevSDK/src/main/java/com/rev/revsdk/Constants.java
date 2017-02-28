@@ -32,6 +32,10 @@ public class Constants {
 
     public static final String STATISTIC = "statistic";
 
+    public static final String RSSI = "rssi";
+    public static final String RSSI_AVERAGE = "rssi_average";
+    public static final String RSSI_BEST = "rssi_best";
+
 
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 

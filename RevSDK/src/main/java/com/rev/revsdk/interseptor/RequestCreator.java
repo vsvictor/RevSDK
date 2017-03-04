@@ -5,7 +5,6 @@ import android.util.Log;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.config.Config;
-import com.rev.revsdk.config.ListString;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
@@ -37,9 +36,10 @@ public class RequestCreator {
 
     private static final String TAG = RequestCreator.class.getSimpleName();
     private final Config config;
-
+    private DomainsChecker checker;
     public RequestCreator(Config config){
         this.config = config;
+        checker = new DomainsChecker(this.config);
     }
 
     public Request create(Request original){
@@ -67,6 +67,25 @@ public class RequestCreator {
         Log.i(TAG, config.getParam().get(0).getOperationMode().toString());
        return result;
     }
+
+    private Request transfer(Request original) {
+
+        if (checker.isInternalBlack(original) || checker.isBlack(original)) return original;
+
+        if (checker.isWhite(original)) {
+            Request.Builder builder = new Request.Builder();
+            HttpUrl oldURL = original.url();
+            String oldDomen = oldURL.host();
+
+            HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+            if (!newURL.isHttps()) {
+                newURL = HttpUrl.parse("https://" + newURL.toString().split("://")[1]);
+            }
+            builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
+            return builder.build();
+        }
+        return original;
+    }
     private Headers addAllHeaders(Request original){
         Headers.Builder builder = new Headers.Builder();
         StringBuilder valueBuilder = new StringBuilder();
@@ -78,10 +97,7 @@ public class RequestCreator {
             builder.add(sName, sValue);
         }
 
-        ListString provision = config.getParam().get(0).getDomainsProvisionedList();
-        ListString white = config.getParam().get(0).getDomainsWhiteList();
-
-        if(provision.contains(original.url().host())){
+        if (checker.isProvosion(original)) {
             if (original.url().scheme().equalsIgnoreCase("http")) {
                 valueBuilder.append(RevApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");
@@ -90,8 +106,7 @@ public class RequestCreator {
             }
             builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
             builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());
-        }
-        else if(white.contains(original.url().host()) || white.isEmpty()){
+        } else if (checker.isWhite(original)) {
             valueBuilder.append(RevApplication.getInstance().getSDKKey());
             valueBuilder.append(".");
             valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeHost());
@@ -99,19 +114,6 @@ public class RequestCreator {
             builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
             builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());
         }
-        return builder.build();
-    }
-
-    private Request transfer(Request original) {
-        Request.Builder builder = new Request.Builder();
-        HttpUrl oldURL = original.url();
-        String oldDomen = oldURL.host();
-
-        HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
-        if (!newURL.isHttps()) {
-            newURL = HttpUrl.parse("https://" + newURL.toString().split("://")[1]);
-        }
-        builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
         return builder.build();
     }
 }

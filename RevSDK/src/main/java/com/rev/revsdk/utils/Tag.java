@@ -22,8 +22,6 @@ package com.rev.revsdk.utils;
  * /
  */
 
-import java.util.Objects;
-
 public class Tag {
     private String name;
     private Object value;

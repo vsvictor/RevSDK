@@ -94,43 +94,43 @@ public class Device {
     }
 
     private String battStatus() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String battTech() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String battTemp() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String battVolt() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String brand() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String cpu() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String cpuCores() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String cpuFreq() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String cpuNumber() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String cpuSub() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String device() {
@@ -138,49 +138,49 @@ public class Device {
     }
 
     private String hight() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String width() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String ICCID() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String IMEI() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String IMSI() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String manufacture() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String MEIS() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String OS() {return "Android";}
 
     private String phoneNumber() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String radioSerial() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String serialNumber() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String UUID() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String nameOS() {

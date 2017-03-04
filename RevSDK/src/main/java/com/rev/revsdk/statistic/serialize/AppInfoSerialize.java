@@ -22,14 +22,11 @@ package com.rev.revsdk.statistic.serialize;
  * /
  */
 
-import android.content.pm.ApplicationInfo;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.rev.revsdk.statistic.sections.AppInfo;
-
 
 import java.lang.reflect.Type;
 

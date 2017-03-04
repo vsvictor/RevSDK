@@ -1,9 +1,5 @@
 package com.rev.revsdk.protocols;
 
-import android.util.Log;
-
-import java.util.List;
-
 /*
  * ************************************************************************
  *

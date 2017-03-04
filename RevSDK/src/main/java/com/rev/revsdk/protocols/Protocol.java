@@ -38,7 +38,8 @@ public enum Protocol {
             case REV: return "rmp";
             case HTTP: return "http";
             case HTTPS: return "https";
-            default: return "undefined";
+            default:
+                return "UNDEFINED";
         }
     }
     public static Protocol fromString(String name) {

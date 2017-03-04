@@ -2,18 +2,8 @@ package com.rev.revsdk.permission;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionGroupInfo;
-import android.content.pm.PermissionInfo;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
-
-import com.rev.revsdk.permission.PostPermissionGranted;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * ************************************************************************

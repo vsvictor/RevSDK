@@ -31,7 +31,7 @@ public enum OperationMode {
 
     @Override
     public String toString(){
-        String result = "undefined";
+        String result = "UNDEFINED";
         switch (this){
             case transfer_and_report:{result = "Transport and report";break;}
             case transfer_only:{result = "Transport only";break;}

@@ -22,8 +22,6 @@ package com.rev.revsdk;
  * /
  */
 
-import com.rev.revsdk.services.Statist;
-
 public class Actions {
     public static final String CONFIG_UPDATE_ACTION = "com.rev.revsdk.UPDATE_CONFIG";
     public static final String TEST_PROTOCOL_ACTION = "com.rev.revsdk.TEST_PROTOCOL_ACTION";

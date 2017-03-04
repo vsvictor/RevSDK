@@ -24,8 +24,6 @@ package com.rev.revsdk.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 
 import com.rev.revsdk.Actions;
 import com.rev.revsdk.Constants;

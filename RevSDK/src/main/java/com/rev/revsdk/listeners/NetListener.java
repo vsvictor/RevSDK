@@ -3,10 +3,8 @@ package com.rev.revsdk.listeners;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.rev.revsdk.services.Tester;
-import com.rev.revsdk.utils.NetworkUtil;
 
 /*
  * ************************************************************************

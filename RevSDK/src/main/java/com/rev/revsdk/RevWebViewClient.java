@@ -39,11 +39,12 @@ public class RevWebViewClient extends WebViewClient {
 
     private OkHttpClient client;
 
-    public RevWebViewClient(OkHttpClient client){
+    public RevWebViewClient(OkHttpClient client) {
         super();
         this.client = client;
     }
-    public RevWebViewClient(){
+
+    public RevWebViewClient() {
         this(RevSDK.OkHttpCreate());
     }
 
@@ -52,12 +53,14 @@ public class RevWebViewClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
         return handleRequestViaOkHttp(url);
     }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull
             WebResourceRequest request) {
         return handleRequestViaOkHttp(request.getUrl().toString());
     }
+
     @NonNull
     private WebResourceResponse handleRequestViaOkHttp(@NonNull String url) {
         Response response = null;
@@ -74,12 +77,12 @@ public class RevWebViewClient extends WebViewClient {
 
             String header = response.header("content-type");
             String[] ss = header.split(";");
-            switch (ss.length){
-                case 1:{
+            switch (ss.length) {
+                case 1: {
                     ct = ss[0];
                     break;
                 }
-                case 2:{
+                case 2: {
                     ct = ss[0];
                     String[] s = ss[1].split("=");
                     cp = s[1];
@@ -90,10 +93,14 @@ public class RevWebViewClient extends WebViewClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        result = new WebResourceResponse(
-                response.header("content-type", ct),
-                response.header("content-encoding", cp),
-                response.body().byteStream());
+        try {
+            result = new WebResourceResponse(
+                    response.header("content-type", ct),
+                    response.header("content-encoding", cp),
+                    response.body().byteStream());
+        } catch (NullPointerException ex) {
+            result = null;
+        }
         return result;
     }
 }

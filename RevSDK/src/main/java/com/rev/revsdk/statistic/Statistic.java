@@ -49,15 +49,15 @@ public class Statistic {
     private String sdkVersion;
     @SerializedName("a_b_mode")
     private boolean abMode;
-    @SerializedName("ip")
+    @SerializedName("IP")
     private String ip;
-    @SerializedName("hits")
+    @SerializedName("HITS")
     private int hits;
     @SerializedName("start_ts")
     private long startTS;
     @SerializedName("end_ts")
     private long endTS;
-    @SerializedName("level")
+    @SerializedName("LEVEL")
     private String level;
     @SerializedName("carrier")
     private Carrier carrier;
@@ -85,11 +85,11 @@ public class Statistic {
         setSDKKey(app.getSDKKey());
         setSDKVersion(app.getSDKVersion());
         setABMode(false);
-        setIP(Constants.local_ip);
-        setHits(Constants.hits);
-        setStartTS(Constants.big_number1);
-        setEndTS(Constants.big_number2);
-        setLevel(Constants.level);
+        setIP(Constants.LOCAL_IP);
+        setHits(Constants.HITS);
+        setStartTS(Constants.BIG_NUMBER_1);
+        setEndTS(Constants.BIG_NUMBER_2);
+        setLevel(Constants.LEVEL);
 
         carrier = new Carrier(this.context);
         device = new Device(this.context);

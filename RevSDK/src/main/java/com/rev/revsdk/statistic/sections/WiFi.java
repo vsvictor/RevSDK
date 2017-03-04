@@ -53,35 +53,35 @@ public class WiFi {
     }
 
     private String mac() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String ssid() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_enc() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_freq() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_rssi() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_rssibest() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_sig() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifi_speed() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     public String getMac() {

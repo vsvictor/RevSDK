@@ -82,7 +82,7 @@ public class RequestCreator {
         ListString white = config.getParam().get(0).getDomainsWhiteList();
 
         if(provision.contains(original.url().host())){
-            if(original.url().scheme().toLowerCase().equals("http")){
+            if (original.url().scheme().equalsIgnoreCase("http")) {
                 valueBuilder.append(RevApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");
                 valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeHost());

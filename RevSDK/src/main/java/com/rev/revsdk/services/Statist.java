@@ -96,7 +96,8 @@ public class Statist extends IntentService {
             ContentValues values = new ContentValues();
             values.put(RequestTable.Columns.CONFIRMED, 1);
             int count = 0;
-            if(statistic.getRequests().size()>0) {
+            //if(statistic.getRequests().size()>0) {
+            if (!statistic.getRequests().isEmpty()) {
                 long mixIndex = statistic.getRequests().get(0).getID();
                 long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
                 count = getApplicationContext().getContentResolver().update(RequestTable.URI,

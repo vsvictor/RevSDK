@@ -80,55 +80,55 @@ public class Network {
     }
 
     private String cellularIPExternal() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String cellularIPInternal() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String DNS1() {
-        return Constants.google_dns1;
+        return Constants.GOOGLE_DNS_1;
     }
 
     private String DNS2() {
-        return Constants.google_dns2;
+        return Constants.GOOGLE_DNS_2;
     }
 
     private String ipReassemblies() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String ipTotalBytesIn() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String ipTotalBytesOut() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String  ipTotalPacketsIn() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String  ipTotalPacketsOut() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String  rtt() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String tcpBytesIn() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String tcpBytesOut() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String tcpRetransmits() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String transportProtocol() {
@@ -136,31 +136,31 @@ public class Network {
     }
 
     private String udpBytesIn() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String udpBytesOut() {
-        return Constants.s_zero;
+        return Constants.S_ZERO;
     }
 
     private String wifiDHCP() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifiExtip() {
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
 
     private String wifiGW() {
-        return Constants.net_ip;
+        return Constants.NET_IP;
     }
 
     private String wifiIP() {
-        return Constants.ip;
+        return Constants.IP;
     }
 
     private String wifiMask() {
-        return Constants.mask_24;
+        return Constants.MASK_24;
     }
 
     public String getCellularIPExternal() {

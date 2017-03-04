@@ -39,13 +39,13 @@ public class Event {
         this.timestamp = timestamp();
     }
     private String logSeverity(){
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
     private String logEventCode(){
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
     private String logMessage(){
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
     private float logInterval(){
         return 0;

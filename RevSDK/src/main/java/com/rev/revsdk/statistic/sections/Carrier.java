@@ -1,22 +1,20 @@
 package com.rev.revsdk.statistic.sections;
 
 import android.content.Context;
-import android.content.pm.ProviderInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Looper;
-import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
 
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /*
@@ -287,7 +285,8 @@ public class Carrier {
     public static class RSSIPhoneStateListener extends PhoneStateListener {
         private static int netWorkType;
         private static final String TAG = RSSIPhoneStateListener.class.getSimpleName();
-        private static ArrayList<Float> rssiArr = new ArrayList<>();
+        //private static ArrayList<Float> rssiArr = new ArrayList<>();
+        private static List<Float> rssiArr = Collections.synchronizedList(new ArrayList<Float>());
 
         public RSSIPhoneStateListener(int netWorkType) {
             this.netWorkType = netWorkType;
@@ -307,7 +306,12 @@ public class Carrier {
             }
             rssiArr.add(Float.parseFloat(rssi));
             float rssiSum = 0;
-            for(float rf : rssiArr) rssiSum += rf;
+            for (float rf : rssiArr) {
+                try {
+                    rssiSum += rf;
+                } catch (ConcurrentModificationException ex) {
+                }
+            }
             if(rssiArr.size() > 0) rssiAverage = String.valueOf(rssiSum/rssiArr.size());
             else rssiAverage = rssi;
             rssiBest = String.valueOf(Math.max(Float.parseFloat(rssi), Float.parseFloat(rssiBest)));

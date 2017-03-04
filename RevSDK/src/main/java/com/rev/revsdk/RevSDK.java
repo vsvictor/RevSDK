@@ -89,15 +89,18 @@ import okhttp3.Response;
 public class RevSDK {
     private static final String TAG = RevSDK.class.getSimpleName();
 
-    public static RevWebViewClient createWebViewClient(OkHttpClient client){
+    public static RevWebViewClient createWebViewClient(OkHttpClient client) {
         return new RevWebViewClient();
     }
-    public static RevWebViewClient createWebViewClient(){
+
+    public static RevWebViewClient createWebViewClient() {
         return new RevWebViewClient();
     }
+
     public static OkHttpClient OkHttpCreate() {
         return OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC);
     }
+
     public static OkHttpClient OkHttpCreate(int timeoutSec) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
@@ -106,34 +109,36 @@ public class RevSDK {
                 Request result = null;
                 Request original = chain.request();
                 boolean systemRequest = isSystem(original);
-                //Log.i(TAG, "is System?" + String.valueOf(systemRequest) + " ,Intercepted: \n" + original.toString());
                 if (!systemRequest) {
                     result = processingRequest(original);
-                    int i= 0;
+                    int i = 0;
+                } else {
+                    Log.i("System", original.toString());
+                    result = original;
                 }
-                else result = original;
-
-                //Log.i(TAG, "\n"+result.toString());
 
                 Response response = chain.proceed(result);
 
-                if (!systemRequest) {
+                if (!systemRequest && isStatistic()) {
+                    try {
+                        final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
+                        Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                                .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                        Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                                .query(RequestTable.URI, null, null, null, null);
+                        Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
+                    } catch (NullPointerException ex) {
 
-                    final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
-                    Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                            .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                    //Log.i(TAG, "Inserted to URI: " + uri.toString());
-
-                    Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                            .query(RequestTable.URI,null,null, null,null);
-                    //Log.i(TAG, "Row count: "+String.valueOf(c.getCount())+" Columns count: "+c.getColumnCount());
+                    }
                 }
+
                 return response;
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
         return httpClient.build();
     }
-    public static Gson gsonCreate(){
+
+    public static Gson gsonCreate() {
         GsonBuilder gsonBuilder;
 
         gsonBuilder = new GsonBuilder().registerTypeAdapter(ConfigsList.class, new ConfigListDeserialize()).registerTypeAdapter(ConfigsList.class, new ConfigListSerialize())
@@ -156,22 +161,26 @@ public class RevSDK {
         return gsonBuilder.create();
     }
 
-
-
     private static boolean isSystem(Request req) {
         boolean result = false;
         try {
             Tag tag = (Tag) req.tag();
-            result = (boolean) tag.getValue();
+            result = tag.getName().equals(Constants.SYSTEM_REQUEST) && ((boolean) tag.getValue());
         } catch (Exception ex) {
             result = false;
         }
         return result;
     }
 
+    private static boolean isStat(Request req) {
+        String statURL = RevApplication.getInstance().getConfig().getParam().get(0).getStatsReportingUrl();
+        return req.url().toString().equals(statURL);
+    }
     private static Request processingRequest(Request original) {
+        Log.i(TAG, "Original:" + original.toString());
         RequestCreator creator = new RequestCreator(RevApplication.getInstance().getConfig());
-        Log.i(TAG, "Intercepted: \n" + original.toString());
+        Request result = creator.create(original);
+        Log.i(TAG, "Transfered: \n" + result.toString());
         return creator.create(original);
     }
 
@@ -183,7 +192,7 @@ public class RevSDK {
         result.setContentEncode(getEncode(original));
         result.setContentType(getContentType(original));
         result.setStartTS(response.sentRequestAtMillis());
-        result.setEndTS(response.receivedResponseAtMillis()-response.sentRequestAtMillis());
+        result.setEndTS(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
         result.setFirstByteTime(-1);
         result.setKeepAliveStatus(1); //TODO how
         result.setLocalCacheStatus(response.cacheControl().toString());
@@ -209,7 +218,7 @@ public class RevSDK {
         result.setURL(original.url().toString());
         result.setDestination(original == processed ? "origin" : "rev_edge");
         String cache = response.header("x-rev-cache");
-        result.setXRevCache(cache==null?Constants.undefined:cache);
+        result.setXRevCache(cache == null ? Constants.undefined : cache);
         result.setDomain(original.url().host());
 
         return result;
@@ -230,6 +239,35 @@ public class RevSDK {
         if (header == null || header.isEmpty()) return result;
         String[] sp = header.split(";");
         if (sp.length > 0 && !sp[0].isEmpty()) result = sp[0];
+        return result;
+    }
+
+    public static boolean isStatistic() {
+        boolean result = false;
+        try {
+            OperationMode mode = RevApplication.getInstance().getConfig().getParam().get(0).getOperationMode();
+            switch (mode) {
+                case transfer_and_report: {
+                    result = true;
+                    break;
+                }
+                case transfer_only: {
+                    result = false;
+                    break;
+                }
+                case report_only: {
+                    result = true;
+                    break;
+                }
+                case off: {
+                    result = false;
+                    break;
+                }
+            }
+        } catch (NullPointerException ex) {
+            result = false;
+        }
+        Log.i("System", String.valueOf(result));
         return result;
     }
 

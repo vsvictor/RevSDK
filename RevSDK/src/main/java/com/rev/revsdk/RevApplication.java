@@ -2,7 +2,6 @@ package com.rev.revsdk;
 
 import android.app.Activity;
 import android.app.Application;
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,16 +10,11 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rev.revsdk.config.Config;
-import com.rev.revsdk.database.DBHelper;
 import com.rev.revsdk.permission.PostPermissionGranted;
 import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.Protocol;
@@ -28,9 +22,7 @@ import com.rev.revsdk.services.Configurator;
 import com.rev.revsdk.services.Statist;
 import com.rev.revsdk.services.Tester;
 import com.rev.revsdk.statistic.sections.Carrier;
-//import com.rev.revsdk.statistic.sections.helper.RSSIHelper;
 
-import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,7 +48,7 @@ import java.util.TimerTask;
  * /
  */
 
-public class RevApplication extends Application{
+public class RevApplication extends Application {
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
     private RequestUserPermission permission;
@@ -92,6 +84,7 @@ public class RevApplication extends Application{
                             isInternet = true;
                             firstActivity = false;
                         }
+
                         @Override
                         public void onPermissionDenied() {
                             isInternet = false;
@@ -111,9 +104,9 @@ public class RevApplication extends Application{
 
             @Override
             public void onActivityResumed(final Activity activity) {
-                if(isInternet) {
+                if (isInternet) {
                     registration();
-                    configuratorRunner();
+                    configuratorRunner(true);
                     testerRunner();
                 }
                 Timer t = new Timer();
@@ -128,12 +121,12 @@ public class RevApplication extends Application{
                         }).start();
 
                     }
-                }, 10*1000);
+                }, 10 * 1000);
             }
 
             @Override
             public void onActivityPaused(Activity activity) {
-                if(isInternet) {
+                if (isInternet) {
                     unregisterReceiver(configReceiver);
                     unregisterReceiver(testReceiver);
                     unregisterReceiver(statReceiver);
@@ -180,37 +173,50 @@ public class RevApplication extends Application{
             version = getApplicationContext()
                     .getPackageManager()
                     .getPackageInfo(getApplicationContext()
-                    .getPackageName(), 0)
+                            .getPackageName(), 0)
                     .versionName;
         } catch (PackageManager.NameNotFoundException ex) {
             version = "1.0";
         }
         sdkKey = getKeyFromManifest();
         config = Config.load(RevSDK.gsonCreate(), share);
-        if(config != null){
-            statRunner();
-        }
+        //configuratorRunner(true);
     }
+
     @Override
-    public void onTerminate(){
+    public void onTerminate() {
         super.onTerminate();
     }
 
-    public static RevApplication getInstance(){
+    public static RevApplication getInstance() {
         return instance;
     }
-    public String getSDKKey(){
+
+    public String getSDKKey() {
         return sdkKey;
     }
-    public Protocol getBest(){
+
+    public Protocol getBest() {
         return best;
     }
-    public Config getConfig(){return config;}
-    public String getVersion() {return version;}
-    public String getPackage(){return getApplicationContext().getPackageName();}
-    public RequestUserPermission getPermission(){return permission;}
 
-    private void registration(){
+    public Config getConfig() {
+        return config;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getPackage() {
+        return getApplicationContext().getPackageName();
+    }
+
+    public RequestUserPermission getPermission() {
+        return permission;
+    }
+
+    private void registration() {
         configReceiver = createConfigReceiver();
         testReceiver = createTestReceiver();
         statReceiver = createStatReceiver();
@@ -227,86 +233,107 @@ public class RevApplication extends Application{
         intentFilterStat.addAction(Actions.STAT_ACTION);
         registerReceiver(statReceiver, intentFilterStat);
     }
-    private BroadcastReceiver createConfigReceiver(){
+
+    private BroadcastReceiver createConfigReceiver() {
         return new BroadcastReceiver() {
             @Override
             public void onReceive(final Context context, Intent intent) {
                 Bundle result = intent.getExtras();
-                if(result != null){
+                if (result != null) {
                     String newConfig = result.getString(Constants.CONFIG);
-                    if(newConfig != null){
-                        Log.i(TAG+" receiver", newConfig);
+                    if (newConfig != null) {
+                        Log.i(TAG + " configurator receiver", newConfig);
                         Gson gson = RevSDK.gsonCreate();
                         config = gson.fromJson(newConfig, Config.class);
-                        config.save(gson,share);
-                        Log.i(TAG, "Config saved");
-                        statRunner();
-                    }
-                    configuratorRunner();
-                }
-            }
-        };
-    }
-    private BroadcastReceiver createTestReceiver(){
-        return new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent != null){
-                  Bundle bundle = intent.getExtras();
-                  if(bundle != null){
-                      String sProtocol = bundle.getString(Constants.TEST_PROTOCOL, getBest().toString());
-                      best = Protocol.fromString(sProtocol);
-                      Log.i(TAG+" test receiver", "Best protocol: "+best.toString());
-                  }
-              }
-            }
-        };
-    }
-    private BroadcastReceiver createStatReceiver(){
-        return new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent != null){
-                    Bundle bundle = intent.getExtras();
-                    if(bundle != null){
-                        String sResponce = bundle.getString(Constants.STATISTIC);
-                        Log.i(TAG+" statistic receiver", "Response: "+sResponce);
+                        config.save(gson, share);
+                        Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
+                        if (RevSDK.isStatistic()) {
+                            statRunner();
+                        }
                     }
                 }
+                configuratorRunner(false);
             }
         };
     }
-    private void configuratorRunner(){
-        Timer configTimer = new Timer();
-        configTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Intent updateIntent = new Intent(RevApplication.this, Configurator.class);
-                updateIntent.putExtra(Constants.CONFIG,config==null?
-                        Constants.MAIN_CONFIG_URL:config.getParam().get(0).getConfigurationApiUrl());
-                updateIntent.putExtra(Constants.TIMEOUT, config == null?
-                        Constants.DEFAULT_TIMEOUT_SEC:config.getParam().get(0).getConfigurationRequestTimeoutSec());
-                startService(updateIntent);
 
-            }
-        }, config == null?
-                0:config.getParam().get(0).getConfigurationRefreshIntervalSec()*1000);
-    }
-    private void statRunner(){
-        Timer statTimer = new Timer();
-        statTimer.schedule(new TimerTask() {
+    private BroadcastReceiver createTestReceiver() {
+        return new BroadcastReceiver() {
             @Override
-            public void run() {
-                Intent statIntent = new Intent(RevApplication.this, Statist.class);
-                statIntent.putExtra(Constants.TIMEOUT,
-                        config.getParam().get(0).getConfigurationStaleTimeoutSec());
-                statIntent.putExtra(Constants.STATISTIC, config.getParam().get(0).getStatsReportingUrl());
-                startService(statIntent);
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    Bundle bundle = intent.getExtras();
+                    if (bundle != null) {
+                        String sProtocol = bundle.getString(Constants.TEST_PROTOCOL, getBest().toString());
+                        best = Protocol.fromString(sProtocol);
+                        Log.i(TAG + " test receiver", "Best protocol: " + best.toString());
+                    }
+                }
             }
-        },0, config.getParam().get(0).getStatsReportingIntervalSec()*1000);
+        };
     }
-    private void testerRunner(){
-                Intent statIntent = new Intent(RevApplication.this, Tester.class);
-                startService(statIntent);
+
+    private BroadcastReceiver createStatReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getExtras();
+                if (bundle != null) {
+                    String sResponce = bundle.getString(Constants.STATISTIC);
+                    Log.i(TAG + " statistic receiver", "Response: " + sResponce);
+                }
+                if (RevSDK.isStatistic()) {
+                    Timer statTimer = new Timer();
+                    statTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            statRunner();
+                        }
+                    }, config.getParam().get(0).getStatsReportingIntervalSec() * 1000);
+                }
+            }
+        };
+    }
+
+    private void configuratorRunner(boolean now) {
+        final Intent updateIntent = new Intent(RevApplication.this, Configurator.class);
+        updateIntent.putExtra(Constants.CONFIG, config == null ?
+                Constants.MAIN_CONFIG_URL : config.getParam().get(0).getConfigurationApiUrl());
+        updateIntent.putExtra(Constants.TIMEOUT, config == null ?
+                Constants.DEFAULT_TIMEOUT_SEC : config.getParam().get(0).getConfigurationRequestTimeoutSec());
+        if (now) {
+            startService(updateIntent);
+        } else {
+            Timer configTimer = new Timer();
+            if (configTimer == null) configTimer = new Timer();
+            configTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    startService(updateIntent);
+
+                }
+            }, config == null ?
+                    0 : config.getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
+        }
+    }
+
+    private void statRunner() {
+        Timer statTimer = new Timer();
+        String isStatistic = "Statistic is off";
+        Log.i("isstat", String.valueOf(RevSDK.isStatistic()));
+        if (config != null && RevSDK.isStatistic()) {
+            Intent statIntent = new Intent(RevApplication.this, Statist.class);
+            statIntent.putExtra(Constants.TIMEOUT,
+                    config.getParam().get(0).getConfigurationStaleTimeoutSec());
+            statIntent.putExtra(Constants.STATISTIC, config.getParam().get(0).getStatsReportingUrl());
+            startService(statIntent);
+            isStatistic = "Run statistic";
+        }
+        Log.i(TAG, isStatistic);
+    }
+
+    private void testerRunner() {
+        Intent statIntent = new Intent(RevApplication.this, Tester.class);
+        startService(statIntent);
     }
 }

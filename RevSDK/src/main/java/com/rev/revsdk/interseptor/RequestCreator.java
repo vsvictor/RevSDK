@@ -1,18 +1,15 @@
 package com.rev.revsdk.interseptor;
 
-import android.preference.PreferenceActivity;
 import android.util.Log;
 
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.config.Config;
 import com.rev.revsdk.config.ListString;
-import com.rev.revsdk.protocols.Protocol;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
-import okhttp3.internal.framed.Header;
 
 /*
  * ************************************************************************
@@ -47,23 +44,21 @@ public class RequestCreator {
 
     public Request create(Request original){
         Request result = null;
-        Request.Builder builder = new Request.Builder();
-        HttpUrl oldURL = original.url();
-        String oldDomen = oldURL.host();
+
         if(config == null) return original;
         switch (config.getParam().get(0).getOperationMode()){
             case transfer_and_report:{
-                HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
-                if(!newURL.isHttps()){
-                    newURL = HttpUrl.parse("https://"+newURL.toString().split("://")[1]);
-                }
-                builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
-                result = builder.build();
-                int i = 0;
+                result = transfer(original);
                 break;
             }
-            case transfer_only:{break;}
-            case report_only:{break;}
+            case transfer_only: {
+                result = transfer(original);
+                break;
+            }
+            case report_only: {
+                result = original;
+                break;
+            }
             case off:{
                 result = original;
                 break;
@@ -104,6 +99,19 @@ public class RequestCreator {
             builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
             builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());
         }
+        return builder.build();
+    }
+
+    private Request transfer(Request original) {
+        Request.Builder builder = new Request.Builder();
+        HttpUrl oldURL = original.url();
+        String oldDomen = oldURL.host();
+
+        HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+        if (!newURL.isHttps()) {
+            newURL = HttpUrl.parse("https://" + newURL.toString().split("://")[1]);
+        }
+        builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
         return builder.build();
     }
 }

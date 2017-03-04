@@ -62,11 +62,8 @@ public class Statist extends IntentService {
         String url = null;
 
         Log.i(TAG, "Statist running...");
-        //String rssi = intent.getExtras().getString(Constants.RSSI, "-10000");
-        //String rssiAverage = intent.getExtras().getString(Constants.RSSI_AVERAGE, "-10000");
-        //String rssiBest = intent.getExtras().getString(Constants.RSSI_BEST, "-10000");
 
-        statistic = new Statistic(getApplicationContext()); //, rssi, rssiAverage, rssiBest);
+        statistic = new Statistic(getApplicationContext());
         String stat = RevSDK.gsonCreate().toJson(statistic);
         Log.i(TAG+" stat", "\n\n"+stat);
 
@@ -114,6 +111,5 @@ public class Statist extends IntentService {
         statIntent.putExtra(Constants.STATISTIC, response.toString());
         sendBroadcast(statIntent);
         Log.i(TAG, response.toString());
-        Log.i(TAG, "Statistic saved!!!");
     }
 }

@@ -87,8 +87,12 @@ public class Configurator extends IntentService {
         } catch (IOException e) {
             response = null;
             e.printStackTrace();
+        } catch (NullPointerException ex) {
+            response = null;
+            ex.printStackTrace();
         }
         try {
+            if (response == null) throw new IOException("Response null");
             if (response.code() == 200) {
                 result = response.body().string();
             } else {

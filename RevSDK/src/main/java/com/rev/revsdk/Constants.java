@@ -40,6 +40,7 @@ public class Constants {
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
     public static final String SYSTEM_REQUEST = "system";
+    public static final String STAT_REQUEST = "stat_request";
 
     public static final String HOST_HEADER_NAME = "Host";
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
@@ -59,7 +60,5 @@ public class Constants {
     public static final int hits = 0;
     public static final String level = "debug";
     public static final String rssi = "-10000";
-
-
 
 }

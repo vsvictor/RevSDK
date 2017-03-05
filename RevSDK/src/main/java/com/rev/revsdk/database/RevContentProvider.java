@@ -28,15 +28,10 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteTransactionListener;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
-import com.rev.revsdk.statistic.sections.RequestOne;
-
-import java.util.List;
 
 public class RevContentProvider extends ContentProvider {
     private static final int APP_TABLE = 1;

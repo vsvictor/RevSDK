@@ -218,7 +218,7 @@ public class RevSDK {
         result.setURL(original.url().toString());
         result.setDestination(original == processed ? "origin" : "rev_edge");
         String cache = response.header("x-rev-cache");
-        result.setXRevCache(cache == null ? Constants.undefined : cache);
+        result.setXRevCache(cache == null ? Constants.UNDEFINED : cache);
         result.setDomain(original.url().host());
 
         return result;

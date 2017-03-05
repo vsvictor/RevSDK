@@ -32,33 +32,27 @@ public class Constants {
 
     public static final String STATISTIC = "statistic";
 
-    public static final String RSSI = "rssi";
-    public static final String RSSI_AVERAGE = "rssi_average";
-    public static final String RSSI_BEST = "rssi_best";
-
-
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
     public static final String SYSTEM_REQUEST = "system";
-    public static final String STAT_REQUEST = "stat_request";
 
     public static final String HOST_HEADER_NAME = "Host";
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
     public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
 
-    public static final String undefined = "_";
-    public static final String net_ip = "10.0.0.1";
-    public static final String local_ip = "192.168.0.1";
-    public static final String google_dns1 = "8.8.8.8";
-    public static final String google_dns2 = "8.8.4.4";
-    public static final int zero = 0;
-    public static final String s_zero = "0";
-    public static final String ip = "10.0.0.200";
-    public static final String mask_24 = "255.255.255.0";
-    public static final long big_number1 = 1234567891*1000;
-    public static final long big_number2 = 1234567991*1000;
-    public static final int hits = 0;
-    public static final String level = "debug";
-    public static final String rssi = "-10000";
+    /* Temporaty constants */
+    public static final String UNDEFINED = "_";
+    public static final String NET_IP = "10.0.0.1";
+    public static final String LOCAL_IP = "192.168.0.1";
+    public static final String GOOGLE_DNS_1 = "8.8.8.8";
+    public static final String GOOGLE_DNS_2 = "8.8.4.4";
+    public static final String S_ZERO = "0";
+    public static final String IP = "10.0.0.200";
+    public static final String MASK_24 = "255.255.255.0";
+    public static final long BIG_NUMBER_1 = 1234567891000L;
+    public static final long BIG_NUMBER_2 = 1234567991000L;
+    public static final int HITS = 0;
+    public static final String LEVEL = "debug";
+    public static final String RSSI = "-10000";
 
 }

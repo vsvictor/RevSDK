@@ -25,8 +25,6 @@ package com.rev.revsdk.statistic.sections;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.rev.revsdk.RevApplication;
@@ -65,6 +63,5 @@ public class Requests extends ArrayList<RequestOne>{
                 else return -1;
             }
         });
-        int i = 0;
     }
 }

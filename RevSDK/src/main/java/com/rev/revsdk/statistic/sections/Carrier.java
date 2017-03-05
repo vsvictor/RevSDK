@@ -87,7 +87,7 @@ public class Carrier {
         try{
             return tm.getNetworkCountryIso();
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
 
     }
@@ -98,10 +98,10 @@ public class Carrier {
         try {
             return tm.getDeviceId();
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
         catch (SecurityException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
     public String getDeviceID() {
@@ -111,7 +111,7 @@ public class Carrier {
         try {
             return netOperator.substring(0, 3);
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
     public String getMCC() {
@@ -121,7 +121,7 @@ public class Carrier {
         try {
             return netOperator.substring(3);
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
     public String getMNC() {
@@ -131,7 +131,7 @@ public class Carrier {
         try {
             return tm.getNetworkOperatorName();
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
     public String getNetOperator(){
@@ -141,26 +141,26 @@ public class Carrier {
         try {
             return networkType2String(tm.getNetworkType());
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
     public String getNetType() {
         return netType;
     }
     private String RSSI(){
-        return Constants.rssi;
+        return Constants.RSSI;
     }
     public String getRSSI() {
         return rssi;
     }
     private String RSSIAverage(){
-        return Constants.rssi;
+        return Constants.RSSI;
     }
     public String getRSSIAverage() {
         return rssiAverage;
     }
     private String RSSIBest(){
-        return  Constants.rssi;
+        return Constants.RSSI;
     }
     public String getRSSIBest() {
         return rssiBest;
@@ -175,7 +175,7 @@ public class Carrier {
         try {
             return tm.getSimOperatorName();
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
 
     }
@@ -183,13 +183,13 @@ public class Carrier {
         return simOperator;
     }
     private String towerLong(){
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
     public String getTowerLong(){
         return longTower;
     }
     private String towerShort(){
-        return Constants.undefined;
+        return Constants.UNDEFINED;
     }
     public String getTowerShort(){
         return shortTower;
@@ -262,7 +262,7 @@ public class Carrier {
             }
             return context.getResources().getString(R.string.unknown);
         }catch (NullPointerException ex){
-            return Constants.undefined;
+            return Constants.UNDEFINED;
         }
     }
 

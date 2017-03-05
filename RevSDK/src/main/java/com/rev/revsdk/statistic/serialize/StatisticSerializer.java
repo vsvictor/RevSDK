@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.Statistic;
+import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.statistic.sections.Device;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
@@ -45,14 +45,14 @@ public class StatisticSerializer implements JsonSerializer<Statistic> {
         result.addProperty("sdk_key", src.getSDKKey());
         result.addProperty("sdk_version", src.getSDKVersion());
         result.addProperty("version", src.getVersion());
-        result.addProperty("ip", src.getIP());
+        result.addProperty("IP", src.getIP());
         //result.addProperty("received_at", src.getReceivedAt());
         //result.addProperty("account_id", src.getAccountID());
         //result.addProperty("app_id", src.getAppID());
-        result.addProperty("hits", src.getHits());
+        result.addProperty("HITS", src.getHits());
         result.addProperty("start_ts", src.getStartTS());
         result.addProperty("end_ts", src.getEndTS());
-        result.addProperty("level", src.getLevel());
+        result.addProperty("LEVEL", src.getLevel());
         //result.addProperty("message", src.getMessage());
         //result.addProperty("timestamp", src.getTimestamp());
 

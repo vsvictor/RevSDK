@@ -23,11 +23,17 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.rev.revsdk.Constants;
+import com.rev.revsdk.Data;
 import com.rev.revsdk.RevApplication;
+import com.rev.revsdk.utils.Pair;
 
-public class Network {
+import java.util.ArrayList;
+
+public class Network extends Data implements Parcelable {
     private Context context;
 
     private String cellularIPExternal;
@@ -78,6 +84,69 @@ public class Network {
         this.wifiMask = wifiMask();
 
     }
+
+    protected Network(Parcel in) {
+        cellularIPExternal = in.readString();
+        cellularIPInternal = in.readString();
+        DNS1 = in.readString();
+        DNS2 = in.readString();
+        ipReassemblies = in.readString();
+        ipTotalBytesIn = in.readString();
+        ipTotalBytesOut = in.readString();
+        ipTotalPacketsIn = in.readString();
+        ipTotalPacketsOut = in.readString();
+        rtt = in.readString();
+        tcpBytesIn = in.readString();
+        tcpBytesOut = in.readString();
+        tcpBytesOut = in.readString();
+        transportProtocol = in.readString();
+        udpBytesIn = in.readString();
+        udpBytesOut = in.readString();
+        wifiDHCP = in.readString();
+        wifiExtip = in.readString();
+        wifiGW = in.readString();
+        wifiIP = in.readString();
+        wifiMask = in.readString();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("cellularIPExternal", String.valueOf(cellularIPExternal)));
+        result.add(new Pair("cellularIPInternal", String.valueOf(cellularIPInternal)));
+        result.add(new Pair("DNS1", String.valueOf(DNS1)));
+        result.add(new Pair("DNS2", String.valueOf(DNS2)));
+        result.add(new Pair("ipReassemblies", String.valueOf(ipReassemblies)));
+        result.add(new Pair("ipTotalBytesIn", String.valueOf(ipTotalBytesIn)));
+        result.add(new Pair("ipTotalBytesOut", String.valueOf(ipTotalBytesOut)));
+        result.add(new Pair("ipTotalPacketsIn", String.valueOf(ipTotalPacketsIn)));
+        result.add(new Pair("ipTotalPacketsOut", String.valueOf(ipTotalPacketsOut)));
+        result.add(new Pair("rtt", String.valueOf(rtt)));
+        result.add(new Pair("tcpBytesIn", String.valueOf(tcpBytesIn)));
+        result.add(new Pair("tcpBytesOut", String.valueOf(tcpBytesOut)));
+        result.add(new Pair("tcpBytesOut", String.valueOf(tcpBytesOut)));
+        result.add(new Pair("transportProtocol", String.valueOf(transportProtocol)));
+        result.add(new Pair("udpBytesIn", String.valueOf(udpBytesIn)));
+        result.add(new Pair("udpBytesOut", String.valueOf(udpBytesOut)));
+        result.add(new Pair("wifiDHCP", String.valueOf(wifiDHCP)));
+        result.add(new Pair("wifiExtip", String.valueOf(wifiExtip)));
+        result.add(new Pair("wifiGW", String.valueOf(wifiGW)));
+        result.add(new Pair("wifiIP", String.valueOf(wifiIP)));
+        result.add(new Pair("wifiMask", String.valueOf(wifiMask)));
+        return result;
+    }
+
+    public static final Creator<Network> CREATOR = new Creator<Network>() {
+        @Override
+        public Network createFromParcel(Parcel in) {
+            return new Network(in);
+        }
+
+        @Override
+        public Network[] newArray(int size) {
+            return new Network[size];
+        }
+    };
 
     private String cellularIPExternal() {
         return Constants.UNDEFINED;
@@ -245,5 +314,35 @@ public class Network {
 
     public String getWifiMask() {
         return wifiMask;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(cellularIPExternal);
+        dest.writeString(cellularIPInternal);
+        dest.writeString(DNS1);
+        dest.writeString(DNS2);
+        dest.writeString(ipReassemblies);
+        dest.writeString(ipTotalBytesIn);
+        dest.writeString(ipTotalBytesOut);
+        dest.writeString(ipTotalPacketsIn);
+        dest.writeString(ipTotalPacketsOut);
+        dest.writeString(rtt);
+        dest.writeString(tcpBytesIn);
+        dest.writeString(tcpBytesOut);
+        dest.writeString(tcpRetransmits);
+        dest.writeString(transportProtocol);
+        dest.writeString(udpBytesIn);
+        dest.writeString(udpBytesOut);
+        dest.writeString(wifiDHCP);
+        dest.writeString(wifiExtip);
+        dest.writeString(wifiGW);
+        dest.writeString(wifiIP);
+        dest.writeString(wifiMask);
     }
 }

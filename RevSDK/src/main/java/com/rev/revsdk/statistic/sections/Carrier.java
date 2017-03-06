@@ -4,14 +4,20 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import com.rev.revsdk.Constants;
+import com.rev.revsdk.Data;
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
+import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.utils.Pair;
 
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /*
@@ -35,7 +41,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  *
  * /
  */
-public class Carrier {
+public class Carrier extends Data implements Parcelable {
     private static final String TAG = Carrier.class.getSimpleName();
     private Context context;
 
@@ -80,6 +86,38 @@ public class Carrier {
         this.shortTower = towerLong();
         this.longTower = towerShort();
     }
+
+    protected Carrier(Parcel in) {
+        String s = in.readString();
+        Carrier c = RevSDK.gsonCreate().fromJson(s, Carrier.class);
+        this.countryCode = c.getCountryCode();
+        this.deviceID = c.getDeviceID();
+        this.mcc = c.getMCC();
+        this.mnc = c.getMNC();
+        this.netOperator = c.getNetOperator();
+        this.netType = c.getNetType();
+        this.rssi = c.getRSSI();
+        this.rssiAverage = c.getRSSIAverage();
+        this.rssiBest = c.getRSSIBest();
+        this.signalType = c.getNetworkType();
+        this.simOperator = c.getSimOperator();
+        this.shortTower = c.getTowerShort();
+        this.longTower = c.getTowerLong();
+
+    }
+
+
+    public static final Creator<Carrier> CREATOR = new Creator<Carrier>() {
+        @Override
+        public Carrier createFromParcel(Parcel in) {
+            return new Carrier(in);
+        }
+
+        @Override
+        public Carrier[] newArray(int size) {
+            return new Carrier[size];
+        }
+    };
 
     private String countryCode(TelephonyManager tm) {
         try {
@@ -364,6 +402,44 @@ public class Carrier {
 
     public static boolean isIsListen() {
         return isListened;
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("countryCode", countryCode));
+        result.add(new Pair("deviceID", deviceID));
+        result.add(new Pair("mcc", mcc));
+        result.add(new Pair("mnc", mnc));
+        result.add(new Pair("netOperator", netOperator));
+        result.add(new Pair("netType", netType));
+        result.add(new Pair("rssi", rssi));
+        result.add(new Pair("rssiAverage", rssiAverage));
+        result.add(new Pair("rssiBest", rssiBest));
+        result.add(new Pair("signalType", signalType));
+        result.add(new Pair("simOperator", simOperator));
+        result.add(new Pair("shortTower", shortTower));
+        result.add(new Pair("longTower", longTower));
+        return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(countryCode);
+        dest.writeString(deviceID);
+        dest.writeString(mcc);
+        dest.writeString(mnc);
+        dest.writeString(netOperator);
+        dest.writeString(netType);
+        dest.writeString(signalType);
+        dest.writeString(simOperator);
+        dest.writeString(shortTower);
+        dest.writeString(longTower);
     }
 
     public static class RSSIPhoneStateListener extends PhoneStateListener {

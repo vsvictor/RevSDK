@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.rev.revsdk.Data;
 import com.rev.revsdk.RevSDK;
 import com.rev.revsdk.utils.Pair;
 
@@ -37,7 +38,7 @@ import java.util.Map;
  * /
  */
 
-public class Config implements Parcelable {
+public class Config extends Data implements Parcelable {
     @SerializedName("app_name")
     private String app_name;
     @SerializedName("os")
@@ -48,29 +49,12 @@ public class Config implements Parcelable {
     private long lastUpdate;
 
     public Config(Parcel in) {
-        String[] data = new String[3];
-
         String s = in.readString();
-
         Config c = RevSDK.gsonCreate().fromJson(s, Config.class);
         this.setAppName(c.getAppName());
         this.setOSName(c.getOSName());
         this.setParam(c.getParam());
     }
-
-    /*
-        public static final Creator<Config> CREATOR = new Creator<Config>() {
-            @Override
-            public Config createFromParcel(Parcel in) {
-                return new Config(in);
-            }
-
-            @Override
-            public Config[] newArray(int size) {
-                return new Config[size];
-            }
-        };
-    */
     public void save(Gson gson, SharedPreferences share) {
         String s = gson.toJson(this);
         SharedPreferences.Editor editor = share.edit();

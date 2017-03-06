@@ -23,10 +23,16 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.rev.revsdk.Constants;
+import com.rev.revsdk.Data;
+import com.rev.revsdk.utils.Pair;
 
-public class WiFi {
+import java.util.ArrayList;
+
+public class WiFi extends Data implements Parcelable {
     private Context context;
 
     private String mac;
@@ -51,6 +57,43 @@ public class WiFi {
         this.wifi_speed = wifi_speed();
 
     }
+
+    protected WiFi(Parcel in) {
+        mac = in.readString();
+        ssid = in.readString();
+        wifi_enc = in.readString();
+        wifi_freq = in.readString();
+        wifi_rssi = in.readString();
+        wifi_rssibest = in.readString();
+        wifi_sig = in.readString();
+        wifi_speed = in.readString();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("mac", String.valueOf(mac)));
+        result.add(new Pair("ssid", String.valueOf(ssid)));
+        result.add(new Pair("wifi_enc", String.valueOf(wifi_enc)));
+        result.add(new Pair("wifi_freq", String.valueOf(wifi_freq)));
+        result.add(new Pair("wifi_rssi", String.valueOf(wifi_rssi)));
+        result.add(new Pair("wifi_rssibest", String.valueOf(wifi_rssibest)));
+        result.add(new Pair("wifi_sig", String.valueOf(wifi_sig)));
+        result.add(new Pair("wifi_speed", String.valueOf(wifi_speed)));
+        return result;
+    }
+
+    public static final Creator<WiFi> CREATOR = new Creator<WiFi>() {
+        @Override
+        public WiFi createFromParcel(Parcel in) {
+            return new WiFi(in);
+        }
+
+        @Override
+        public WiFi[] newArray(int size) {
+            return new WiFi[size];
+        }
+    };
 
     private String mac() {
         return Constants.UNDEFINED;
@@ -114,5 +157,22 @@ public class WiFi {
 
     public String getWifi_speed() {
         return wifi_speed;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mac);
+        dest.writeString(ssid);
+        dest.writeString(wifi_enc);
+        dest.writeString(wifi_freq);
+        dest.writeString(wifi_rssi);
+        dest.writeString(wifi_rssibest);
+        dest.writeString(wifi_sig);
+        dest.writeString(wifi_speed);
     }
 }

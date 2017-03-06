@@ -51,13 +51,13 @@ public class Statistic {
     private boolean abMode;
     @SerializedName("IP")
     private String ip;
-    @SerializedName("HITS")
+    @SerializedName("hits")
     private int hits;
     @SerializedName("start_ts")
     private long startTS;
     @SerializedName("end_ts")
     private long endTS;
-    @SerializedName("LEVEL")
+    @SerializedName("level")
     private String level;
     @SerializedName("carrier")
     private Carrier carrier;

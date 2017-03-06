@@ -23,10 +23,16 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.rev.revsdk.Constants;
+import com.rev.revsdk.Data;
+import com.rev.revsdk.utils.Pair;
 
-public class Device {
+import java.util.ArrayList;
+
+public class Device extends Data implements Parcelable {
     private Context context;
 
     private float batt_cap;
@@ -88,6 +94,81 @@ public class Device {
         this.osVersion = versionOS();
         this.model = model();
     }
+
+    protected Device(Parcel in) {
+        batt_cap = in.readFloat();
+        batt_status = in.readString();
+        batt_tech = in.readString();
+        batt_temp = in.readString();
+        batt_volt = in.readString();
+        brand = in.readString();
+        cpu = in.readString();
+        cpu_cores = in.readString();
+        cpu_freq = in.readString();
+        cpu_number = in.readString();
+        cpu_sub = in.readString();
+        device = in.readString();
+        hight = in.readString();
+        width = in.readString();
+        iccid = in.readString();
+        imei = in.readString();
+        imsi = in.readString();
+        manufacture = in.readString();
+        meis = in.readString();
+        os = in.readString();
+        phone_number = in.readString();
+        radio_serial = in.readString();
+        serial_number = in.readString();
+        uuid = in.readString();
+        osName = in.readString();
+        osVersion = in.readString();
+        osVersion = in.readString();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("batt_cap", String.valueOf(batt_cap)));
+        result.add(new Pair("batt_status", String.valueOf(batt_status)));
+        result.add(new Pair("batt_tech", String.valueOf(batt_tech)));
+        result.add(new Pair("batt_temp", String.valueOf(batt_temp)));
+        result.add(new Pair("batt_volt", String.valueOf(batt_volt)));
+        result.add(new Pair("brand", String.valueOf(brand)));
+        result.add(new Pair("cpu", String.valueOf(cpu)));
+        result.add(new Pair("cpu_cores", String.valueOf(cpu_cores)));
+        result.add(new Pair("cpu_freq", String.valueOf(cpu_freq)));
+        result.add(new Pair("cpu_number", String.valueOf(cpu_number)));
+        result.add(new Pair("cpu_sub", String.valueOf(cpu_sub)));
+        result.add(new Pair("device", String.valueOf(device)));
+        result.add(new Pair("hight", String.valueOf(hight)));
+        result.add(new Pair("width", String.valueOf(width)));
+        result.add(new Pair("iccid", String.valueOf(iccid)));
+        result.add(new Pair("imei", String.valueOf(imei)));
+        result.add(new Pair("imsi", String.valueOf(imsi)));
+        result.add(new Pair("manufacture", String.valueOf(manufacture)));
+        result.add(new Pair("meis", String.valueOf(meis)));
+        result.add(new Pair("os", String.valueOf(os)));
+        result.add(new Pair("phone_number", String.valueOf(phone_number)));
+        result.add(new Pair("radio_serial", String.valueOf(radio_serial)));
+        result.add(new Pair("serial_number", String.valueOf(serial_number)));
+        result.add(new Pair("uuid", String.valueOf(uuid)));
+        result.add(new Pair("osName", String.valueOf(osName)));
+        result.add(new Pair("osVersion", String.valueOf(osVersion)));
+        result.add(new Pair("osVersion", String.valueOf(osVersion)));
+        return result;
+    }
+
+    public static final Creator<Device> CREATOR = new Creator<Device>() {
+        @Override
+        public Device createFromParcel(Parcel in) {
+            return new Device(in);
+        }
+
+        @Override
+        public Device[] newArray(int size) {
+            return new Device[size];
+        }
+    };
 
     private float battCap() {
         return 0;
@@ -301,5 +382,41 @@ public class Device {
 
     public String getModel() {
         return model;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeFloat(batt_cap);
+        dest.writeString(batt_status);
+        dest.writeString(batt_tech);
+        dest.writeString(batt_temp);
+        dest.writeString(batt_volt);
+        dest.writeString(brand);
+        dest.writeString(cpu);
+        dest.writeString(cpu_cores);
+        dest.writeString(cpu_freq);
+        dest.writeString(cpu_number);
+        dest.writeString(cpu_sub);
+        dest.writeString(device);
+        dest.writeString(hight);
+        dest.writeString(width);
+        dest.writeString(iccid);
+        dest.writeString(imei);
+        dest.writeString(imsi);
+        dest.writeString(manufacture);
+        dest.writeString(meis);
+        dest.writeString(os);
+        dest.writeString(phone_number);
+        dest.writeString(radio_serial);
+        dest.writeString(serial_number);
+        dest.writeString(uuid);
+        dest.writeString(osName);
+        dest.writeString(osVersion);
+        dest.writeString(model);
     }
 }

@@ -23,8 +23,15 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Location {
+import com.rev.revsdk.Data;
+import com.rev.revsdk.utils.Pair;
+
+import java.util.ArrayList;
+
+public class Location extends Data implements Parcelable {
     private Context context;
 
     private float direction;
@@ -40,6 +47,36 @@ public class Location {
         this.speed = speed();
 
     }
+
+    protected Location(Parcel in) {
+        direction = in.readFloat();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        speed = in.readFloat();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("direction", String.valueOf(direction)));
+        result.add(new Pair("latitude", String.valueOf(latitude)));
+        result.add(new Pair("longitude", String.valueOf(longitude)));
+        result.add(new Pair("speed", String.valueOf(speed)));
+        return result;
+    }
+
+    public static final Creator<Location> CREATOR = new Creator<Location>() {
+        @Override
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
+
     private float direction(){return 0;}
     private double latitude(){return  0;}
     private double longitude(){return 0;}
@@ -59,5 +96,18 @@ public class Location {
 
     public float getSpeed() {
         return speed;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeFloat(direction);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeFloat(speed);
     }
 }

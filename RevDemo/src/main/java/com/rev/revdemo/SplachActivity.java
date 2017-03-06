@@ -62,7 +62,7 @@ public class SplachActivity extends AppCompatActivity {
                 public void run() {
                     finish();
                 }
-            }, 5000 - allTime);
+            }, 4000 - allTime);
 
         }
 

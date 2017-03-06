@@ -7,8 +7,8 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import com.rev.revsdk.Data;
 import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.statistic.sections.Data;
 import com.rev.revsdk.utils.Pair;
 
 import java.util.ArrayList;

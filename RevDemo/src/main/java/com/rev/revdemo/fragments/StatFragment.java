@@ -36,11 +36,23 @@ public class StatFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle bundle) {
-        PairFragment carrier = PairFragment.newInstance(1, stat.getCarrier());
-        PairFragment device = PairFragment.newInstance(1, stat.getDevice());
+        PairFragment main = PairFragment.newInstance(stat);
+        PairFragment carrier = PairFragment.newInstance(stat.getCarrier());
+        PairFragment device = PairFragment.newInstance(stat.getDevice());
+        //PairFragment events = PairFragment.newInstance(stat.getEvents());
+        PairFragment location = PairFragment.newInstance(stat.getLocation());
+        PairFragment network = PairFragment.newInstance(stat.getNetwork());
+        //PairFragment requests = PairFragment.newInstance(stat.getRequests());
+        PairFragment wifi = PairFragment.newInstance(stat.getWifi());
         getActivity().getFragmentManager().beginTransaction()
+                .add(R.id.llContainer, main)
                 .add(R.id.llContainer, carrier)
                 .add(R.id.llContainer, device)
+                //.add(R.id.llContainer, events)
+                .add(R.id.llContainer, location)
+                .add(R.id.llContainer, network)
+                //.add(R.id.llContainer, requests)
+                .add(R.id.llContainer, wifi)
                 .commit();
     }
 

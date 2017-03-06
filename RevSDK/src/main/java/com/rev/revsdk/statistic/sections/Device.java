@@ -27,7 +27,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.rev.revsdk.Constants;
-import com.rev.revsdk.Data;
 import com.rev.revsdk.utils.Pair;
 
 import java.util.ArrayList;

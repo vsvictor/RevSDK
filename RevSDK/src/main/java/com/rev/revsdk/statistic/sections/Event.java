@@ -26,7 +26,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.rev.revsdk.Constants;
-import com.rev.revsdk.Data;
 import com.rev.revsdk.utils.Pair;
 
 import java.util.ArrayList;
@@ -125,5 +124,21 @@ public class Event extends Data implements Parcelable {
         dest.writeString(logMessage);
         dest.writeFloat(logInterval);
         dest.writeLong(timestamp);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Severity: " + logSeverity);
+        builder.append("\n");
+        builder.append("Event code: " + logEventCode);
+        builder.append("\n");
+        builder.append("Message: " + logMessage);
+        builder.append("\n");
+        builder.append("Interval: " + logInterval);
+        builder.append("\n");
+        builder.append("Timestamp: " + timestamp);
+        builder.append("\n");
+        return builder.toString();
     }
 }

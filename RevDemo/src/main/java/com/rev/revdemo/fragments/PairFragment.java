@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rev.revdemo.R;
-import com.rev.revsdk.Data;
+import com.rev.revsdk.statistic.sections.Data;
 
 public class PairFragment extends Fragment {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
+    //private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String DATA = "data";
     private int mColumnCount = 2;
     private Data data;
@@ -23,10 +23,10 @@ public class PairFragment extends Fragment {
     public PairFragment() {
     }
 
-    public static PairFragment newInstance(int columnCount, Data data) {
+    public static PairFragment newInstance(Data data) {
         PairFragment fragment = new PairFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        //args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(DATA, data);
         fragment.setArguments(args);
         return fragment;
@@ -37,7 +37,7 @@ public class PairFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mColumnCount = 1;
             data = getArguments().getParcelable(DATA);
         }
     }

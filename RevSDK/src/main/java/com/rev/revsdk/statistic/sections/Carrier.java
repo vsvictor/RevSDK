@@ -11,7 +11,6 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import com.rev.revsdk.Constants;
-import com.rev.revsdk.Data;
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.RevSDK;

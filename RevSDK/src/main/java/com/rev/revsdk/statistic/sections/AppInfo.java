@@ -26,7 +26,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.rev.revsdk.Data;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.utils.Pair;
 

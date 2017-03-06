@@ -1,4 +1,4 @@
-package com.rev.revsdk;
+package com.rev.revsdk.statistic.sections;
 
 import android.os.Parcel;
 import android.os.Parcelable;

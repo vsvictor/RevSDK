@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rev.revdemo.R;
+import com.rev.revdemo.RevApp;
+import com.rev.revsdk.statistic.Statistic;
 
 public class StatFragment extends Fragment {
-
+    private Statistic stat;
     public StatFragment() {
     }
 
@@ -22,6 +24,8 @@ public class StatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.stat = new Statistic(RevApp.getInstance());
+        int i = 0;
     }
 
     @Override
@@ -32,6 +36,12 @@ public class StatFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle bundle) {
+        PairFragment carrier = PairFragment.newInstance(1, stat.getCarrier());
+        PairFragment device = PairFragment.newInstance(1, stat.getDevice());
+        getActivity().getFragmentManager().beginTransaction()
+                .add(R.id.llContainer, carrier)
+                .add(R.id.llContainer, device)
+                .commit();
     }
 
 

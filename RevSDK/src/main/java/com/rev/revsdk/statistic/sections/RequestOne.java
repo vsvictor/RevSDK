@@ -55,6 +55,10 @@ public class RequestOne extends Data implements Parcelable {
     private String domain;
     private Protocol edge_transport;
 
+    public RequestOne() {
+
+    }
+
     protected RequestOne(Parcel in) {
         id = in.readLong();
         connectionID = in.readInt();

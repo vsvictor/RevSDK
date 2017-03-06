@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.rev.revdemo.fragments.ConfigFragment;
 import com.rev.revdemo.fragments.MainFragment;
+import com.rev.revdemo.fragments.StatFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -94,6 +95,9 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.rlMainContainer, ConfigFragment.newInstance(1, RevApp.getInstance().getConfig()))
                     .commit();
         } else if (id == R.id.stat_view) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.rlMainContainer, StatFragment.newInstance())
+                    .commit();
         } else if (id == R.id.log_view) {
         }
 

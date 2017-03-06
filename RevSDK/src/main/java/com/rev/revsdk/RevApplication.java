@@ -180,7 +180,6 @@ public class RevApplication extends Application {
         }
         sdkKey = getKeyFromManifest();
         config = Config.load(RevSDK.gsonCreate(), share);
-        //configuratorRunner(true);
     }
 
     @Override
@@ -246,6 +245,7 @@ public class RevApplication extends Application {
                         Gson gson = RevSDK.gsonCreate();
                         config = gson.fromJson(newConfig, Config.class);
                         config.save(gson, share);
+                        sendBroadcast(new Intent(Actions.CONFIG_LOADED));
                         Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
                         if (RevSDK.isStatistic()) {
                             statRunner();

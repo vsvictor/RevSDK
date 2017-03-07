@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -11,11 +13,11 @@ import android.telephony.TelephonyManager;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
+import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.utils.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /*
  * ************************************************************************
@@ -38,7 +40,7 @@ import java.util.List;
  *
  * /
  */
-public class Carrier {
+public class Carrier extends Data implements Parcelable {
     private static final String TAG = Carrier.class.getSimpleName();
     private Context context;
 
@@ -58,14 +60,14 @@ public class Carrier {
     private String shortTower;
     private String longTower;
 
-    public Carrier(Context context){
+    public Carrier(Context context) {
         this.context = context;
         TelephonyManager tm = null;
         String vNetworkOperator = null;
         try {
             tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             vNetworkOperator = tm.getNetworkOperator();
-        } catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             tm = null;
             netOperator = "";
         }
@@ -75,158 +77,277 @@ public class Carrier {
         mnc = MNC(vNetworkOperator);
         netOperator = netOperator(tm);
         netType = netType(tm);
-        if(rssi == null || rssi.isEmpty()) rssi = RSSI();
-        if(rssiAverage == null || rssiAverage.isEmpty())rssiAverage = RSSIAverage();
-        if(rssiBest == null || rssiBest.isEmpty())rssiBest = RSSIBest();
+        if (rssi == null || rssi.isEmpty()) rssi = RSSI();
+        if (rssiAverage == null || rssiAverage.isEmpty()) rssiAverage = RSSIAverage();
+        if (rssiBest == null || rssiBest.isEmpty()) rssiBest = RSSIBest();
         signalType = networkType(context);
         simOperator = simOperator(tm);
         this.shortTower = towerLong();
         this.longTower = towerShort();
     }
-    private String countryCode(TelephonyManager tm){
-        try{
+
+    protected Carrier(Parcel in) {
+        String s = in.readString();
+        Carrier c = RevSDK.gsonCreate().fromJson(s, Carrier.class);
+        this.countryCode = c.getCountryCode();
+        this.deviceID = c.getDeviceID();
+        this.mcc = c.getMCC();
+        this.mnc = c.getMNC();
+        this.netOperator = c.getNetOperator();
+        this.netType = c.getNetType();
+        this.rssi = c.getRSSI();
+        this.rssiAverage = c.getRSSIAverage();
+        this.rssiBest = c.getRSSIBest();
+        this.signalType = c.getNetworkType();
+        this.simOperator = c.getSimOperator();
+        this.shortTower = c.getTowerShort();
+        this.longTower = c.getTowerLong();
+
+    }
+
+
+    public static final Creator<Carrier> CREATOR = new Creator<Carrier>() {
+        @Override
+        public Carrier createFromParcel(Parcel in) {
+            return new Carrier(in);
+        }
+
+        @Override
+        public Carrier[] newArray(int size) {
+            return new Carrier[size];
+        }
+    };
+
+    private String countryCode(TelephonyManager tm) {
+        try {
             return tm.getNetworkCountryIso();
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
 
     }
+
     public String getCountryCode() {
         return countryCode.toUpperCase();
     }
-    private String deviceID(TelephonyManager tm){
+
+    private String deviceID(TelephonyManager tm) {
         try {
             return tm.getDeviceId();
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
-        }
-        catch (SecurityException ex){
+        } catch (SecurityException ex) {
             return Constants.UNDEFINED;
         }
     }
+
     public String getDeviceID() {
         return deviceID;
     }
-    private String MMC(String netOperator){
+
+    private String MMC(String netOperator) {
         try {
             return netOperator.substring(0, 3);
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
     }
+
     public String getMCC() {
         return mcc;
     }
-    private String MNC(String netOperator){
+
+    private String MNC(String netOperator) {
         try {
             return netOperator.substring(3);
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
     }
+
     public String getMNC() {
         return mnc;
     }
-    private String netOperator(TelephonyManager tm){
+
+    private String netOperator(TelephonyManager tm) {
         try {
             return tm.getNetworkOperatorName();
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
     }
-    public String getNetOperator(){
+
+    public String getNetOperator() {
         return netOperator;
     }
-    private String netType(TelephonyManager tm){
+
+    private String netType(TelephonyManager tm) {
         try {
             return networkType2String(tm.getNetworkType());
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
     }
+
     public String getNetType() {
         return netType;
     }
-    private String RSSI(){
+
+    private String RSSI() {
         return Constants.RSSI;
     }
+
     public String getRSSI() {
         return rssi;
     }
-    private String RSSIAverage(){
+
+    private String RSSIAverage() {
         return Constants.RSSI;
     }
+
     public String getRSSIAverage() {
         return rssiAverage;
     }
-    private String RSSIBest(){
+
+    private String RSSIBest() {
         return Constants.RSSI;
     }
+
     public String getRSSIBest() {
         return rssiBest;
     }
-    private String networkType(Context context){
+
+    private String networkType(Context context) {
         return getNetworkMobileType(context);
     }
-    public String getNetworkType(){
+
+    public String getNetworkType() {
         return signalType;
     }
-    private String simOperator(TelephonyManager tm){
+
+    private String simOperator(TelephonyManager tm) {
         try {
             return tm.getSimOperatorName();
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
 
     }
+
     public String getSimOperator() {
         return simOperator;
     }
-    private String towerLong(){
+
+    private String towerLong() {
         return Constants.UNDEFINED;
     }
-    public String getTowerLong(){
+
+    public String getTowerLong() {
         return longTower;
     }
-    private String towerShort(){
+
+    private String towerShort() {
         return Constants.UNDEFINED;
     }
-    public String getTowerShort(){
+
+    public String getTowerShort() {
         return shortTower;
     }
 
-    private String networkType2String(int netType){
+    private String networkType2String(int netType) {
         String result = context.getResources().getString(R.string.unknown);
-        switch (netType){
-            case TelephonyManager.NETWORK_TYPE_1xRTT:{result="1xRTT";break;}
-            case TelephonyManager.NETWORK_TYPE_CDMA:{result="CDMA";break;}
-            case TelephonyManager.NETWORK_TYPE_EDGE:{result="EDGE";break;}
-            case TelephonyManager.NETWORK_TYPE_EHRPD:{result="EHRPD";break;}
-            case TelephonyManager.NETWORK_TYPE_EVDO_0:{result="EVDO revision 0";break;}
-            case TelephonyManager.NETWORK_TYPE_EVDO_A:{result="EVDO revision A";break;}
-            case TelephonyManager.NETWORK_TYPE_EVDO_B:{result="EVDO revision B";break;}
-            case TelephonyManager.NETWORK_TYPE_GPRS:{result="GPRS";break;}
-            case TelephonyManager.NETWORK_TYPE_GSM:{result="GSM";break;}
-            case TelephonyManager.NETWORK_TYPE_HSDPA:{result="HSDPA";break;}
-            case TelephonyManager.NETWORK_TYPE_HSPA:{result="HSPA";break;}
-            case TelephonyManager.NETWORK_TYPE_HSUPA:{result="HSUPA";break;}
-            case TelephonyManager.NETWORK_TYPE_IDEN:{result="iDen";break;}
-            case TelephonyManager.NETWORK_TYPE_IWLAN:{result="IWLAN";break;}
-            case TelephonyManager.NETWORK_TYPE_LTE:{result="LTE";break;}
-            case TelephonyManager.NETWORK_TYPE_TD_SCDMA:{result="TD_SCDMA";break;}
-            case TelephonyManager.NETWORK_TYPE_UMTS:{result="UMTS";break;}
+        switch (netType) {
+            case TelephonyManager.NETWORK_TYPE_1xRTT: {
+                result = "1xRTT";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_CDMA: {
+                result = "CDMA";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_EDGE: {
+                result = "EDGE";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_EHRPD: {
+                result = "EHRPD";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_EVDO_0: {
+                result = "EVDO revision 0";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_EVDO_A: {
+                result = "EVDO revision A";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_EVDO_B: {
+                result = "EVDO revision B";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_GPRS: {
+                result = "GPRS";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_GSM: {
+                result = "GSM";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_HSDPA: {
+                result = "HSDPA";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_HSPA: {
+                result = "HSPA";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_HSUPA: {
+                result = "HSUPA";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_IDEN: {
+                result = "iDen";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_IWLAN: {
+                result = "IWLAN";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_LTE: {
+                result = "LTE";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_TD_SCDMA: {
+                result = "TD_SCDMA";
+                break;
+            }
+            case TelephonyManager.NETWORK_TYPE_UMTS: {
+                result = "UMTS";
+                break;
+            }
         }
         return result;
     }
+
     private String phoneType2String(int phoneType) {
         String result = context.getResources().getString(R.string.unknown);
-        switch (phoneType){
-            case TelephonyManager.PHONE_TYPE_CDMA:{result = "CDMA";break;}
-            case TelephonyManager.PHONE_TYPE_GSM:{result = "GSM";break;}
-            case TelephonyManager.PHONE_TYPE_SIP:{result = "SIP";break;}
+        switch (phoneType) {
+            case TelephonyManager.PHONE_TYPE_CDMA: {
+                result = "CDMA";
+                break;
+            }
+            case TelephonyManager.PHONE_TYPE_GSM: {
+                result = "GSM";
+                break;
+            }
+            case TelephonyManager.PHONE_TYPE_SIP: {
+                result = "SIP";
+                break;
+            }
         }
         return result;
     }
+
     public static String getNetworkMobileType(Context context) {
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -261,32 +382,71 @@ public class Carrier {
                 }
             }
             return context.getResources().getString(R.string.unknown);
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
     }
 
-    public static void runRSSIListener(){
+    public static void runRSSIListener() {
         try {
             Looper.prepare();
             TelephonyManager manager = (TelephonyManager) RevApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
             manager.listen(new RSSIPhoneStateListener(manager.getNetworkType()), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
             isListened = true;
             Looper.loop();
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             isListened = false;
         }
     }
 
-    public static boolean isIsListen(){
+    public static boolean isIsListen() {
         return isListened;
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("countryCode", countryCode));
+        result.add(new Pair("deviceID", deviceID));
+        result.add(new Pair("mcc", mcc));
+        result.add(new Pair("mnc", mnc));
+        result.add(new Pair("netOperator", netOperator));
+        result.add(new Pair("netType", netType));
+        result.add(new Pair("rssi", rssi));
+        result.add(new Pair("rssiAverage", rssiAverage));
+        result.add(new Pair("rssiBest", rssiBest));
+        result.add(new Pair("signalType", signalType));
+        result.add(new Pair("simOperator", simOperator));
+        result.add(new Pair("shortTower", shortTower));
+        result.add(new Pair("longTower", longTower));
+        return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(countryCode);
+        dest.writeString(deviceID);
+        dest.writeString(mcc);
+        dest.writeString(mnc);
+        dest.writeString(netOperator);
+        dest.writeString(netType);
+        dest.writeString(signalType);
+        dest.writeString(simOperator);
+        dest.writeString(shortTower);
+        dest.writeString(longTower);
     }
 
     public static class RSSIPhoneStateListener extends PhoneStateListener {
         private static int netWorkType;
         private static final String TAG = RSSIPhoneStateListener.class.getSimpleName();
         //private static ArrayList<Float> rssiArr = new ArrayList<>();
-        private static List<Float> rssiArr = Collections.synchronizedList(new ArrayList<Float>());
+        //private static List<Float> rssiArr = Collections.synchronizedList(new ArrayList<Float>());
+        private static ArrayBlockingQueue<Float> rssiArr = new ArrayBlockingQueue<Float>(1024, true);
 
         public RSSIPhoneStateListener(int netWorkType) {
             this.netWorkType = netWorkType;
@@ -296,10 +456,9 @@ public class Carrier {
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
             String[] parts = signalStrength.toString().split(" ");
-            if ( this.netWorkType == TelephonyManager.NETWORK_TYPE_LTE){
-                rssi = String.valueOf(Integer.parseInt(parts[8])-140);
-            }
-            else{
+            if (this.netWorkType == TelephonyManager.NETWORK_TYPE_LTE) {
+                rssi = String.valueOf(Integer.parseInt(parts[8]) - 140);
+            } else {
                 if (signalStrength.getGsmSignalStrength() != 99) {
                     rssi = String.valueOf(-113 + 2 * signalStrength.getGsmSignalStrength());
                 }
@@ -307,12 +466,9 @@ public class Carrier {
             rssiArr.add(Float.parseFloat(rssi));
             float rssiSum = 0;
             for (float rf : rssiArr) {
-                try {
-                    rssiSum += rf;
-                } catch (ConcurrentModificationException ex) {
-                }
+                rssiSum += rf;
             }
-            if(rssiArr.size() > 0) rssiAverage = String.valueOf(rssiSum/rssiArr.size());
+            if (rssiArr.size() > 0) rssiAverage = String.valueOf(rssiSum / rssiArr.size());
             else rssiAverage = rssi;
             rssiBest = String.valueOf(Math.max(Float.parseFloat(rssi), Float.parseFloat(rssiBest)));
         }

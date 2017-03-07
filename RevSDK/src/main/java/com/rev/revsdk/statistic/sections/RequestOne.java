@@ -22,9 +22,15 @@ package com.rev.revsdk.statistic.sections;
  * /
  */
 
-import com.rev.revsdk.protocols.Protocol;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class RequestOne {
+import com.rev.revsdk.protocols.Protocol;
+import com.rev.revsdk.utils.Pair;
+
+import java.util.ArrayList;
+
+public class RequestOne extends Data implements Parcelable {
     private long id;
     private int connectionID;
     private String contentEncode;
@@ -47,6 +53,69 @@ public class RequestOne {
     private String xRevCach;
     private String domain;
     private Protocol edge_transport;
+
+    public RequestOne() {
+
+    }
+
+    protected RequestOne(Parcel in) {
+        id = in.readLong();
+        connectionID = in.readInt();
+        contentEncode = in.readString();
+        contentType = in.readString();
+        startTS = in.readLong();
+        endTS = in.readLong();
+        firstByteTime = in.readLong();
+        keepAliveStatus = in.readInt();
+        localCacheStatus = in.readString();
+        method = in.readString();
+        network = in.readString();
+        receivedBytes = in.readLong();
+        sentBytes = in.readLong();
+        statusCode = in.readInt();
+        successStatus = in.readInt();
+        url = in.readString();
+        destination = in.readString();
+        xRevCach = in.readString();
+        domain = in.readString();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("id", String.valueOf(id)));
+        result.add(new Pair("connectionID", String.valueOf(connectionID)));
+        result.add(new Pair("contentEncode", String.valueOf(contentEncode)));
+        result.add(new Pair(contentType, String.valueOf(contentType)));
+        result.add(new Pair("startTS", String.valueOf(startTS)));
+        result.add(new Pair("endTS", String.valueOf(endTS)));
+        result.add(new Pair("firstByteTime", String.valueOf(firstByteTime)));
+        result.add(new Pair("keepAliveStatus", String.valueOf(keepAliveStatus)));
+        result.add(new Pair("localCacheStatus", String.valueOf(localCacheStatus)));
+        result.add(new Pair("method", String.valueOf(method)));
+        result.add(new Pair("network", String.valueOf(network)));
+        result.add(new Pair("receivedBytes", String.valueOf(receivedBytes)));
+        result.add(new Pair("sentBytes", String.valueOf(sentBytes)));
+        result.add(new Pair("statusCode", String.valueOf(statusCode)));
+        result.add(new Pair("successStatus", String.valueOf(successStatus)));
+        result.add(new Pair("url", String.valueOf(url)));
+        result.add(new Pair("destination", String.valueOf(destination)));
+        result.add(new Pair("xRevCach", String.valueOf(xRevCach)));
+        result.add(new Pair("domain", String.valueOf(domain)));
+        return result;
+    }
+
+    public static final Creator<RequestOne> CREATOR = new Creator<RequestOne>() {
+        @Override
+        public RequestOne createFromParcel(Parcel in) {
+            return new RequestOne(in);
+        }
+
+        @Override
+        public RequestOne[] newArray(int size) {
+            return new RequestOne[size];
+        }
+    };
 
     public long getID() {
         return id;
@@ -220,5 +289,33 @@ public class RequestOne {
 
     public void setEdgeTransport(Protocol edge_transport) {
         this.edge_transport = edge_transport;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(connectionID);
+        dest.writeString(contentEncode);
+        dest.writeString(contentType);
+        dest.writeLong(startTS);
+        dest.writeLong(endTS);
+        dest.writeLong(firstByteTime);
+        dest.writeInt(keepAliveStatus);
+        dest.writeString(localCacheStatus);
+        dest.writeString(method);
+        dest.writeString(network);
+        dest.writeLong(receivedBytes);
+        dest.writeLong(sentBytes);
+        dest.writeInt(statusCode);
+        dest.writeInt(successStatus);
+        dest.writeString(url);
+        dest.writeString(destination);
+        dest.writeString(xRevCach);
+        dest.writeString(domain);
     }
 }

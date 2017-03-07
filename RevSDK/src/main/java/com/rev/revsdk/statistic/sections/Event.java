@@ -22,9 +22,15 @@ package com.rev.revsdk.statistic.sections;
  * /
  */
 
-import com.rev.revsdk.Constants;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Event {
+import com.rev.revsdk.Constants;
+import com.rev.revsdk.utils.Pair;
+
+import java.util.ArrayList;
+
+public class Event extends Data implements Parcelable {
     private String logSeverity;
     private String logEventCode;
     private String logMessage;
@@ -38,6 +44,38 @@ public class Event {
         this.logInterval = logInterval();
         this.timestamp = timestamp();
     }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("logSeverity", String.valueOf(logSeverity)));
+        result.add(new Pair("logEventCode", String.valueOf(logEventCode)));
+        result.add(new Pair("logMessage", String.valueOf(logMessage)));
+        result.add(new Pair("logInterval", String.valueOf(logInterval)));
+        result.add(new Pair("timestamp", String.valueOf(timestamp)));
+        return result;
+    }
+
+    protected Event(Parcel in) {
+        logSeverity = in.readString();
+        logEventCode = in.readString();
+        logMessage = in.readString();
+        logInterval = in.readFloat();
+        timestamp = in.readLong();
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
+
     private String logSeverity(){
         return Constants.UNDEFINED;
     }
@@ -72,5 +110,35 @@ public class Event {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(logSeverity);
+        dest.writeString(logEventCode);
+        dest.writeString(logMessage);
+        dest.writeFloat(logInterval);
+        dest.writeLong(timestamp);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Severity: " + logSeverity);
+        builder.append("\n");
+        builder.append("Event code: " + logEventCode);
+        builder.append("\n");
+        builder.append("Message: " + logMessage);
+        builder.append("\n");
+        builder.append("Interval: " + logInterval);
+        builder.append("\n");
+        builder.append("Timestamp: " + timestamp);
+        builder.append("\n");
+        return builder.toString();
     }
 }

@@ -26,4 +26,5 @@ public class Actions {
     public static final String CONFIG_UPDATE_ACTION = "com.rev.revsdk.UPDATE_CONFIG";
     public static final String TEST_PROTOCOL_ACTION = "com.rev.revsdk.TEST_PROTOCOL_ACTION";
     public static final String STAT_ACTION = "com.rev.revsdk.STAT_ACTION";
+    public static final String CONFIG_LOADED = "com.rev.revsdk.CONFIG_LOADED";
 }

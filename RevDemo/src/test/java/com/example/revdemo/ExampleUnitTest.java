@@ -1,4 +1,4 @@
-package com.rev.revdemo;
+package com.example.revdemo;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.rev.revdemo;
+package com.example.revdemo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.rev.revdemo", appContext.getPackageName());
+        assertEquals("com.example.revconfigurator", appContext.getPackageName());
     }
 }

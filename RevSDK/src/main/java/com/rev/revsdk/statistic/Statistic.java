@@ -1,18 +1,24 @@
 package com.rev.revsdk.statistic;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.statistic.sections.App;
 import com.rev.revsdk.statistic.sections.AppInfo;
 import com.rev.revsdk.statistic.sections.Carrier;
+import com.rev.revsdk.statistic.sections.Data;
 import com.rev.revsdk.statistic.sections.Device;
 import com.rev.revsdk.statistic.sections.Location;
 import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.Requests;
 import com.rev.revsdk.statistic.sections.WiFi;
+import com.rev.revsdk.utils.Pair;
+
+import java.util.ArrayList;
 
 /*
  * ************************************************************************
@@ -36,7 +42,7 @@ import com.rev.revsdk.statistic.sections.WiFi;
  * /
  */
 
-public class Statistic {
+public class Statistic extends Data implements Parcelable {
     private Context context;
 
     @SerializedName("version")
@@ -51,13 +57,13 @@ public class Statistic {
     private boolean abMode;
     @SerializedName("IP")
     private String ip;
-    @SerializedName("HITS")
+    @SerializedName("hits")
     private int hits;
     @SerializedName("start_ts")
     private long startTS;
     @SerializedName("end_ts")
     private long endTS;
-    @SerializedName("LEVEL")
+    @SerializedName("level")
     private String level;
     @SerializedName("carrier")
     private Carrier carrier;
@@ -99,6 +105,64 @@ public class Statistic {
         requests = new Requests(this.context);
         wifi = new WiFi(this.context);
     }
+
+    protected Statistic(Parcel in) {
+        super(in);
+        version = in.readString();
+        appName = in.readString();
+        sdkKey = in.readString();
+        sdkVersion = in.readString();
+        abMode = in.readByte() != 0;
+        ip = in.readString();
+        hits = in.readInt();
+        startTS = in.readLong();
+        endTS = in.readLong();
+        level = in.readString();
+        carrier = in.readParcelable(Carrier.class.getClassLoader());
+        appInfo = in.readParcelable(AppInfo.class.getClassLoader());
+        device = in.readParcelable(Device.class.getClassLoader());
+        location = in.readParcelable(Location.class.getClassLoader());
+        network = in.readParcelable(Network.class.getClassLoader());
+        wifi = in.readParcelable(WiFi.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeString(version);
+        dest.writeString(appName);
+        dest.writeString(sdkKey);
+        dest.writeString(sdkVersion);
+        dest.writeByte((byte) (abMode ? 1 : 0));
+        dest.writeString(ip);
+        dest.writeInt(hits);
+        dest.writeLong(startTS);
+        dest.writeLong(endTS);
+        dest.writeString(level);
+        dest.writeParcelable(carrier, flags);
+        dest.writeParcelable(appInfo, flags);
+        dest.writeParcelable(device, flags);
+        dest.writeParcelable(location, flags);
+        dest.writeParcelable(network, flags);
+        dest.writeParcelable(wifi, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Statistic> CREATOR = new Creator<Statistic>() {
+        @Override
+        public Statistic createFromParcel(Parcel in) {
+            return new Statistic(in);
+        }
+
+        @Override
+        public Statistic[] newArray(int size) {
+            return new Statistic[size];
+        }
+    };
 
     public String getVersion() {
         return version;
@@ -243,5 +307,21 @@ public class Statistic {
 
     public void setAppInfo(AppInfo appInfo) {
         this.appInfo = appInfo;
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("version", String.valueOf(version)));
+        result.add(new Pair("appName", String.valueOf(appName)));
+        result.add(new Pair("sdkKey", String.valueOf(sdkKey)));
+        result.add(new Pair("sdkVersion", String.valueOf(sdkVersion)));
+        result.add(new Pair("abMode", String.valueOf(abMode)));
+        result.add(new Pair("ip", String.valueOf(ip)));
+        result.add(new Pair("hits", String.valueOf(hits)));
+        result.add(new Pair("startTS", String.valueOf(startTS)));
+        result.add(new Pair("endTS", String.valueOf(endTS)));
+        result.add(new Pair("level", String.valueOf(level)));
+        return result;
     }
 }

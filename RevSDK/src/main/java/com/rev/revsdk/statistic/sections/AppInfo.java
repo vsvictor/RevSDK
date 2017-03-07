@@ -23,10 +23,15 @@ package com.rev.revsdk.statistic.sections;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.rev.revsdk.RevApplication;
+import com.rev.revsdk.utils.Pair;
 
-public class AppInfo {
+import java.util.ArrayList;
+
+public class AppInfo extends Data implements Parcelable {
     private Context context;
 
     private String masterAppName;
@@ -35,12 +40,42 @@ public class AppInfo {
     private String masterAppVersion;
 
     public AppInfo(Context context){
+        super();
         this.context = context;
         this.masterAppName = masterAppName();
         this.masterAppBuild = masterAppBuild();
         this.masterAppBuildID = masterAppBuildID();
         this.masterAppVersion = masterAppVersion();
     }
+
+    protected AppInfo(Parcel in) {
+        masterAppName = in.readString();
+        masterAppBuild = in.readString();
+        masterAppBuildID = in.readString();
+        masterAppVersion = in.readString();
+    }
+
+    @Override
+    public ArrayList<Pair> toArray() {
+        ArrayList<Pair> result = new ArrayList<Pair>();
+        result.add(new Pair("masterAppName", masterAppName));
+        result.add(new Pair("masterAppBuild", masterAppBuild));
+        result.add(new Pair("masterAppBuildID", masterAppBuildID));
+        result.add(new Pair("masterAppVersion", masterAppVersion));
+        return result;
+    }
+
+    public static final Creator<AppInfo> CREATOR = new Creator<AppInfo>() {
+        @Override
+        public AppInfo createFromParcel(Parcel in) {
+            return new AppInfo(in);
+        }
+
+        @Override
+        public AppInfo[] newArray(int size) {
+            return new AppInfo[size];
+        }
+    };
 
     private String masterAppName(){return ((RevApplication)context).getConfig().getAppName();}
     private String masterAppBuild(){return ((RevApplication)context).getVersion();}
@@ -61,5 +96,18 @@ public class AppInfo {
 
     public String getMasterAppVersion() {
         return masterAppVersion;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(masterAppName);
+        dest.writeString(masterAppBuild);
+        dest.writeString(masterAppBuildID);
+        dest.writeString(masterAppVersion);
     }
 }

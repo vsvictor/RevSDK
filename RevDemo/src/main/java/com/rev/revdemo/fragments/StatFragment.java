@@ -38,27 +38,6 @@ public class StatFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle bundle) {
-        /*
-        PairFragment main = PairFragment.newInstance(stat);
-        PairFragment carrier = PairFragment.newInstance(stat.getCarrier());
-        PairFragment device = PairFragment.newInstance(stat.getDevice());
-        PairFragment events = PairFragment.newInstance(stat.getEvents());
-        PairFragment location = PairFragment.newInstance(stat.getLocation());
-        PairFragment network = PairFragment.newInstance(stat.getNetwork());
-        PairFragment requests = PairFragment.newInstance(stat.getRequests());
-        PairFragment wifi = PairFragment.newInstance(stat.getWifi());
-        getActivity().getFragmentManager().beginTransaction()
-                .add(R.id.llContainer, main)
-                .add(R.id.llContainer, carrier)
-                .add(R.id.llContainer, device)
-                //.add(R.id.llContainer, events)
-                .add(R.id.llContainer, location)
-                .add(R.id.llContainer, network)
-                //.add(R.id.llContainer, requests)
-                .add(R.id.llContainer, wifi)
-                .commit();
-        */
-
         RecyclerView rvMain = (RecyclerView) view.findViewById(R.id.rvMain);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvMain.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.toArray(), PairRecyclerViewAdapter.listener));
@@ -95,26 +74,4 @@ public class StatFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-/*
-    public static class ListUtils {
-        public static void setDynamicHeight(RecyclerView mListView) {
-            PairRecyclerViewAdapter mListAdapter = (PairRecyclerViewAdapter) mListView.getAdapter();
-            if (mListAdapter == null) {
-                // when adapter is null
-                return;
-            }
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-            for (int i = 0; i < mListAdapter.getItemCount(); i++) {
-                View listItem = mListAdapter.getView(i, null, mListView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams params = mListView.getLayoutParams();
-            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-            mListView.setLayoutParams(params);
-            mListView.requestLayout();
-        }
-    }
-*/
 }

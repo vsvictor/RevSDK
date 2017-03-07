@@ -40,28 +40,28 @@ public class StatFragment extends Fragment {
     public void onViewCreated(View view, Bundle bundle) {
         RecyclerView rvMain = (RecyclerView) view.findViewById(R.id.rvMain);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMain.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.toArray(), PairRecyclerViewAdapter.listener));
+        rvMain.setAdapter(new PairAdapter(getActivity(), stat.toArray(), PairAdapter.listener));
         RecyclerView rvCarrier = (RecyclerView) view.findViewById(R.id.rvCarrier);
         rvCarrier.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvCarrier.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.getCarrier().toArray(), PairRecyclerViewAdapter.listener));
+        rvCarrier.setAdapter(new PairAdapter(getActivity(), stat.getCarrier().toArray(), PairAdapter.listener));
         RecyclerView rvDevice = (RecyclerView) view.findViewById(R.id.rvDevice);
         rvDevice.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvDevice.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.getDevice().toArray(), PairRecyclerViewAdapter.listener));
+        rvDevice.setAdapter(new PairAdapter(getActivity(), stat.getDevice().toArray(), PairAdapter.listener));
         RecyclerView rvEvents = (RecyclerView) view.findViewById(R.id.rvEvents);
         rvEvents.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //rvEvents.setAdapter(new PairRecyclerViewAdapter(getActivity(),stat.getEvents().toArray(), PairRecyclerViewAdapter.listener));
+        //rvEvents.setAdapter(new PairAdapter(getActivity(),stat.getEvents().toArray(), PairAdapter.listener));
         RecyclerView rvLocation = (RecyclerView) view.findViewById(R.id.rvLocation);
         rvLocation.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvLocation.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.getLocation().toArray(), PairRecyclerViewAdapter.listener));
+        rvLocation.setAdapter(new PairAdapter(getActivity(), stat.getLocation().toArray(), PairAdapter.listener));
         RecyclerView rvNetwork = (RecyclerView) view.findViewById(R.id.rvNetwork);
         rvNetwork.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvNetwork.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.getNetwork().toArray(), PairRecyclerViewAdapter.listener));
+        rvNetwork.setAdapter(new PairAdapter(getActivity(), stat.getNetwork().toArray(), PairAdapter.listener));
         RecyclerView rvRequests = (RecyclerView) view.findViewById(R.id.rvRequests);
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //rvRequests.setAdapter(new PairRecyclerViewAdapter(RevApp.getInstance(),stat.getRequests().toArray(), PairRecyclerViewAdapter.listener));
+        //rvRequests.setAdapter(new PairAdapter(RevApp.getInstance(),stat.getRequests().toArray(), PairAdapter.listener));
         RecyclerView rvWiFi = (RecyclerView) view.findViewById(R.id.rvWiFi);
         rvWiFi.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvWiFi.setAdapter(new PairRecyclerViewAdapter(getActivity(), stat.getWifi().toArray(), PairRecyclerViewAdapter.listener));
+        rvWiFi.setAdapter(new PairAdapter(getActivity(), stat.getWifi().toArray(), PairAdapter.listener));
     }
 
 

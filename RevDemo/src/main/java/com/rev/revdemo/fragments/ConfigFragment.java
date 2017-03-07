@@ -53,7 +53,7 @@ public class ConfigFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PairRecyclerViewAdapter(getActivity(), config.toArray(), PairRecyclerViewAdapter.listener));
+            recyclerView.setAdapter(new PairAdapter(getActivity(), config.toArray(), PairAdapter.listener));
         }
         return view;
     }

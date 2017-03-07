@@ -14,13 +14,13 @@ import com.rev.revsdk.utils.Pair;
 
 import java.util.List;
 
-public class PairRecyclerViewAdapter extends RecyclerView.Adapter<PairRecyclerViewAdapter.ViewHolder> {
+public class PairAdapter extends RecyclerView.Adapter<PairAdapter.ViewHolder> {
 
     private static Context context;
     private final List<Pair> mValues;
     private final OnClickPair mListener;
 
-    public PairRecyclerViewAdapter(Context context, List<Pair> items, OnClickPair listener) {
+    public PairAdapter(Context context, List<Pair> items, OnClickPair listener) {
         this.context = context;
         mValues = items;
         mListener = listener;

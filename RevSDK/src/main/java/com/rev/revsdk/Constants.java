@@ -40,6 +40,10 @@ public class Constants {
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
     public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
 
+    public static String REV = "rev";
+    public static String ORIGIN = "origin";
+    public static String SYSTEM = "system";
+
     /* Temporaty constants */
     public static final String UNDEFINED = "_";
     public static final String NET_IP = "10.0.0.1";

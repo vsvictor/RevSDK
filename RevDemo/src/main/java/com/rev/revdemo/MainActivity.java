@@ -1,5 +1,6 @@
 package com.rev.revdemo;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnMainListener {
 
+    private Fragment current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getFragmentManager().beginTransaction().add(R.id.rlMainContainer, MainFragment.newInstance()).commit();
+        current = MainFragment.newInstance();
+        getFragmentManager().beginTransaction().add(R.id.rlMainContainer, current).commit();
         startActivity(new Intent(this, SplachActivity.class));
     }
 
@@ -57,7 +60,11 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (current instanceof MainFragment) super.onBackPressed();
+            else {
+                current = MainFragment.newInstance();
+                getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
+            }
         }
     }
 
@@ -89,25 +96,21 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.main) {
-            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, MainFragment.newInstance()).commit();
+            current = MainFragment.newInstance();
+            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.config_view) {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.rlMainContainer, ConfigFragment.newInstance(1, RevApp.getInstance().getConfig()))
-                    .commit();
+            current = ConfigFragment.newInstance(1, RevApp.getInstance().getConfig());
+            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.stat_view) {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.rlMainContainer, StatFragment.newInstance())
-                    .commit();
+            current = StatFragment.newInstance();
+            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.log_view) {
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     @Override
     public void onMain() {
-
     }
 }

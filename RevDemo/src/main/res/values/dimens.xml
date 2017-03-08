@@ -5,11 +5,9 @@
 
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="middle">16dp</dimen>
     <dimen name="big">32dp</dimen>
     <dimen name="small">8dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
     <dimen name="big_size">16sp</dimen>
 
 </resources>

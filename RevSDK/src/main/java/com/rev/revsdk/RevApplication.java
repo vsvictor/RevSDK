@@ -75,7 +75,6 @@ public class RevApplication extends Application {
         instance = this;
         firstActivity = true;
         counter = new RequestCounter();
-
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -171,7 +170,6 @@ public class RevApplication extends Application {
         }
         return result.toLowerCase();
     }
-
     private void init() {
         firstActivity = true;
         try {

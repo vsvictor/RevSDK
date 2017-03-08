@@ -92,6 +92,9 @@ public class RequestCounter {
         return result;
     }
 
+    private long getAllRequest() {
+        return getRevRequestsCount() + getOriginRequestsCount() + getSystemRequestsCount();
+    }
     private long getRevRequestsCount() {
         return revRequests;
     }
@@ -137,18 +140,13 @@ public class RequestCounter {
 
     public ArrayList<Pair> toArray() {
         ArrayList<Pair> result = new ArrayList<Pair>();
-        result.add(new Pair("revRequests", String.valueOf(revRequests)));
-        ;
-        result.add(new Pair("originRequests", String.valueOf(originRequests)));
-        ;
-        result.add(new Pair("systemRequests", String.valueOf(systemRequests)));
-        ;
-        result.add(new Pair("standartProtocol", String.valueOf(standartProtocol)));
-        ;
-        result.add(new Pair("quicProtocol", String.valueOf(quicProtocol)));
-        ;
-        result.add(new Pair("revProtocol", String.valueOf(revProtocol)));
-        ;
+        result.add(new Pair("allRequest", String.valueOf(getAllRequest())));
+        result.add(new Pair("revRequests", String.valueOf(getRevRequestsCount())));
+        result.add(new Pair("originRequests", String.valueOf(getOriginRequestsCount())));
+        result.add(new Pair("systemRequests", String.valueOf(getSystemRequestsCount())));
+        result.add(new Pair("standartProtocol", String.valueOf(getRequestsOverStandart())));
+        result.add(new Pair("quicProtocol", String.valueOf(getRequestsOverQUIC())));
+        result.add(new Pair("rpmProtocol", String.valueOf(getRequestsOverRPM())));
         return result;
     }
 }

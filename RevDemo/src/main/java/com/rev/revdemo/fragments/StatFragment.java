@@ -58,7 +58,7 @@ public class StatFragment extends Fragment {
         rvNetwork.setAdapter(new PairAdapter(getActivity(), stat.getNetwork().toArray(), PairAdapter.listener));
         RecyclerView rvRequests = (RecyclerView) view.findViewById(R.id.rvRequests);
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //rvRequests.setAdapter(new PairAdapter(RevApp.getInstance(),stat.getRequests().toArray(), PairAdapter.listener));
+        rvRequests.setAdapter(new PairAdapter(RevApp.getInstance(), RevApp.getInstance().getCounter().toArray(), PairAdapter.listener));
         RecyclerView rvWiFi = (RecyclerView) view.findViewById(R.id.rvWiFi);
         rvWiFi.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWiFi.setAdapter(new PairAdapter(getActivity(), stat.getWifi().toArray(), PairAdapter.listener));

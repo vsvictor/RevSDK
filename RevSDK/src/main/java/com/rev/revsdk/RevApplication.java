@@ -21,6 +21,7 @@ import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.services.Configurator;
 import com.rev.revsdk.services.Statist;
 import com.rev.revsdk.services.Tester;
+import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
 
 import java.util.Timer;
@@ -66,11 +67,15 @@ public class RevApplication extends Application {
     private BroadcastReceiver testReceiver;
     private BroadcastReceiver statReceiver;
 
+    private RequestCounter counter;
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         firstActivity = true;
+        counter = new RequestCounter();
+
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -140,7 +145,7 @@ public class RevApplication extends Application {
 
             @Override
             public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
+                counter.save(share);
             }
 
             @Override
@@ -179,12 +184,14 @@ public class RevApplication extends Application {
             version = "1.0";
         }
         sdkKey = getKeyFromManifest();
+        counter.load(share);
         config = Config.load(RevSDK.gsonCreate(), share);
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
+        counter.save(share);
     }
 
     public static RevApplication getInstance() {
@@ -209,6 +216,10 @@ public class RevApplication extends Application {
 
     public String getPackage() {
         return getApplicationContext().getPackageName();
+    }
+
+    public RequestCounter getCounter() {
+        return counter;
     }
 
     public RequestUserPermission getPermission() {

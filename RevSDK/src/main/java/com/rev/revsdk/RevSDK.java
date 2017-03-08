@@ -106,36 +106,51 @@ public class RevSDK {
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
-                Request result = null;
-                Request original = chain.request();
-                boolean systemRequest = isSystem(original);
-                if (!systemRequest) {
-                    result = processingRequest(original);
-                    int i = 0;
-                } else {
-                    Log.i("System", original.toString());
-                    result = original;
-                }
-
-                Response response = chain.proceed(result);
-
-                if (!systemRequest && isStatistic()) {
-                    try {
-                        final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
-                        Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                                .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                        Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                                .query(RequestTable.URI, null, null, null, null);
-                        Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
-                    } catch (NullPointerException ex) {
-
+                Protocol protocol = RevApplication.getInstance().getBest();
+                Response response = null;
+                switch (protocol) {
+                    case QUIC: {
+                    }
+                    case REV: {
+                    }
+                    default: {
+                        response = standartInterceptor(chain);
+                        break;
                     }
                 }
-
                 return response;
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
         return httpClient.build();
+    }
+
+    private static Response standartInterceptor(Interceptor.Chain chain) throws IOException {
+        Request result = null;
+        Request original = chain.request();
+        boolean systemRequest = isSystem(original);
+        if (!systemRequest) {
+            result = processingRequest(original);
+        } else {
+            Log.i("System", original.toString());
+            result = original;
+        }
+
+        RevApplication.getInstance().getCounter().addRequest(result, Protocol.STANDART);
+        Response response = chain.proceed(result);
+
+        if (!systemRequest && isStatistic()) {
+            try {
+                final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
+                Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                        .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                        .query(RequestTable.URI, null, null, null, null);
+                Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
+            } catch (NullPointerException ex) {
+
+            }
+        }
+        return response;
     }
 
     public static Gson gsonCreate() {
@@ -161,7 +176,7 @@ public class RevSDK {
         return gsonBuilder.create();
     }
 
-    private static boolean isSystem(Request req) {
+    public static boolean isSystem(Request req) {
         boolean result = false;
         try {
             Tag tag = (Tag) req.tag();

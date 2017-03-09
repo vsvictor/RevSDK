@@ -25,6 +25,8 @@ package com.rev.revsdk;
 public class Constants {
     public static final String KEY_TAG = "com.revsdk.key";
     public static final String MAIN_CONFIG_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
+    public static final int DEFAULT_STALE_INTERVAL = 360000;
+    public static final int DEFAULT_CONFIG_INTERVAL = 60000;
 
     public static final String CONFIG = "config";
     public static final String TIMEOUT = "timeout";

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continu">Continue</string>
+    <string name="switching_protocols">Switching Protocols</string>
+    <string name="ok">Ok</string>
+    <string name="created">Created</string>
+    <string name="accepted">Accepted</string>
+    <string name="non_authoritative_information">Non-Authoritative Information</string>
+    <string name="no_content">No content</string>
+    <string name="reset_content">Reset content</string>
+    <string name="multiple_choices">Multiple Choices</string>
+    <string name="moved_permanently">Moved Permanently</string>
+    <string name="found">Found</string>
+    <string name="see_other">See other</string>
+    <string name="use_proxy">Use proxy</string>
+    <string name="temporary_redirect">Temporary redirect</string>
+    <string name="bad_request">Bad request</string>
+    <string name="payment_required">Payment required</string>
+    <string name="forbidden">Forbidden</string>
+    <string name="not_found">Not found</string>
+    <string name="method_not_allowed">Method not allowed</string>
+    <string name="not_acceptable">Not acceptable</string>
+    <string name="request_timeout">Request timeout</string>
+    <string name="conflict">Conflict</string>
+    <string name="gone">Gone</string>
+    <string name="length_required">Length Required</string>
+    <string name="payload_to_large">Payload to large</string>
+    <string name="uri_too_long">URI Too Long</string>
+    <string name="unsupported_media_type">Unsupported Media Type</string>
+    <string name="expectation_failed">Expectation Failed</string>
+    <string name="upgrade_required">Upgrade Required</string>
+    <string name="internal_server_error">Internal Server Error</string>
+    <string name="not_implemented">Not Implemented</string>
+    <string name="bad_gateway">Bad Gateway</string>
+    <string name="service_unavailable">Service Unavailable</string>
+    <string name="gateway_timeout">Gateway Timeout</string>
+    <string name="http_version_not_supported">HTTP Version Not Supported</string>
+    <string name="undefined">Undefined</string>
+
+</resources>

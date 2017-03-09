@@ -42,6 +42,8 @@ public class SplachActivity extends AppCompatActivity {
         IntentFilter ifLoader = new IntentFilter();
         ifLoader.addAction(Actions.CONFIG_LOADED);
         registerReceiver(loader, ifLoader);
+        if (RevApp.getInstance().getConfig() != null)
+            sendBroadcast(new Intent(Actions.CONFIG_LOADED));
     }
 
     @Override

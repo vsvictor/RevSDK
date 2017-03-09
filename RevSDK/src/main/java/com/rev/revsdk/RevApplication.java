@@ -1,6 +1,5 @@
 package com.rev.revsdk;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,11 +10,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rev.revsdk.config.Config;
-import com.rev.revsdk.permission.PostPermissionGranted;
+import com.rev.revsdk.config.OperationMode;
 import com.rev.revsdk.permission.RequestUserPermission;
 import com.rev.revsdk.protocols.Protocol;
 import com.rev.revsdk.services.Configurator;
@@ -23,6 +21,7 @@ import com.rev.revsdk.services.Statist;
 import com.rev.revsdk.services.Tester;
 import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
+import com.rev.revsdk.utils.DateTimeUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -61,96 +60,29 @@ public class RevApplication extends Application {
     private SharedPreferences share;
     private Protocol best = Protocol.STANDART;
 
+    private boolean configuratorRunning = false;
+
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
+    private BroadcastReceiver configStaleReceiver;
     private BroadcastReceiver testReceiver;
     private BroadcastReceiver statReceiver;
 
     private RequestCounter counter;
+
+    private Timer configTimer = new Timer();
+    private Timer staleTimer = new Timer();
+    private Object monitor = new Object();
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         firstActivity = true;
+        share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         counter = new RequestCounter();
-        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                share = getSharedPreferences("RevSDK", MODE_PRIVATE);
-                if (firstActivity) {
-                    permission = new RequestUserPermission(activity);
-                    permission.verifyPermissionsInternet(new PostPermissionGranted() {
-                        @Override
-                        public void onPermissionGranted() {
-                            init();
-                            isInternet = true;
-                            firstActivity = false;
-                        }
-
-                        @Override
-                        public void onPermissionDenied() {
-                            isInternet = false;
-                            firstActivity = true;
-                            Toast.makeText(RevApplication.this, RevApplication.this.getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    permission.verifyPermissionsReadPhoneState();
-                    permission.verifyPermissionsAccessNetworkState();
-                }
-            }
-
-            @Override
-            public void onActivityStarted(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivityResumed(final Activity activity) {
-                if (isInternet) {
-                    registration();
-                    configuratorRunner(true);
-                    testerRunner();
-                }
-                Timer t = new Timer();
-                t.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Carrier.runRSSIListener();
-                            }
-                        }).start();
-
-                    }
-                }, 10 * 1000);
-            }
-
-            @Override
-            public void onActivityPaused(Activity activity) {
-                if (isInternet) {
-                    unregisterReceiver(configReceiver);
-                    unregisterReceiver(testReceiver);
-                    unregisterReceiver(statReceiver);
-                }
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-
-            }
-
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-                counter.save(share);
-            }
-
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-            }
-        });
+        init();
     }
 
     private String getKeyFromManifest() {
@@ -184,11 +116,32 @@ public class RevApplication extends Application {
         sdkKey = getKeyFromManifest();
         counter.load(share);
         config = Config.load(RevSDK.gsonCreate(), share);
+        registration();
+        configuratorRunner(true);
+        testerRunner();
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Carrier.runRSSIListener();
+                    }
+                }).start();
+
+            }
+        }, 10 * 1000);
+
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
+        unregisterReceiver(configReceiver);
+        unregisterReceiver(configStaleReceiver);
+        unregisterReceiver(testReceiver);
+        unregisterReceiver(statReceiver);
         counter.save(share);
     }
 
@@ -220,18 +173,19 @@ public class RevApplication extends Application {
         return counter;
     }
 
-    public RequestUserPermission getPermission() {
-        return permission;
-    }
-
     private void registration() {
         configReceiver = createConfigReceiver();
+        configStaleReceiver = createStaleConfig();
         testReceiver = createTestReceiver();
         statReceiver = createStatReceiver();
 
         IntentFilter intentFilterConfig = new IntentFilter();
         intentFilterConfig.addAction(Actions.CONFIG_UPDATE_ACTION);
         registerReceiver(configReceiver, intentFilterConfig);
+
+        IntentFilter intentFilterStaleConfig = new IntentFilter();
+        intentFilterStaleConfig.addAction(Actions.CONFIG_LOADED);
+        registerReceiver(configStaleReceiver, intentFilterStaleConfig);
 
         IntentFilter intentFilterTester = new IntentFilter();
         intentFilterTester.addAction(Actions.TEST_PROTOCOL_ACTION);
@@ -259,9 +213,37 @@ public class RevApplication extends Application {
                         if (RevSDK.isStatistic()) {
                             statRunner();
                         }
+                        configuratorRunning = true;
                     }
                 }
                 configuratorRunner(false);
+            }
+        };
+    }
+
+    private BroadcastReceiver createStaleConfig() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(final Context context, Intent intent) {
+                while (staleTimer != null) {
+                    staleTimer.cancel();
+                    staleTimer.purge();
+                    staleTimer = null;
+                }
+                staleTimer = new Timer();
+                long time = (config == null ?
+                        Constants.DEFAULT_STALE_INTERVAL
+                        : config.getParam().get(0).getConfigurationStaleTimeoutSec()) * 1000;
+
+                staleTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        config.getParam().get(0).setOperationMode(OperationMode.off);
+                        Log.i(TAG, "Off SDK");
+                    }
+                }, time);
+                Log.i(TAG, "Stale timeout: " + time);
+                Log.i(TAG, "Reset stale timer: " + DateTimeUtil.getDateCurrentTimeZone(System.currentTimeMillis()));
             }
         };
     }
@@ -313,7 +295,13 @@ public class RevApplication extends Application {
         if (now) {
             startService(updateIntent);
         } else {
-            Timer configTimer = new Timer();
+            //Timer configTimer = new Timer();
+            while (configTimer != null) {
+                configTimer.cancel();
+                configTimer.purge();
+                configTimer = null;
+            }
+            configTimer = new Timer();
             if (configTimer == null) configTimer = new Timer();
             configTimer.schedule(new TimerTask() {
                 @Override
@@ -322,14 +310,14 @@ public class RevApplication extends Application {
 
                 }
             }, config == null ?
-                    0 : config.getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
+                    Constants.DEFAULT_CONFIG_INTERVAL
+                    : config.getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
         }
     }
 
     private void statRunner() {
-        Timer statTimer = new Timer();
         String isStatistic = "Statistic is off";
-        Log.i("isstat", String.valueOf(RevSDK.isStatistic()));
+        Log.i(TAG, String.valueOf(RevSDK.isStatistic()));
         if (config != null && RevSDK.isStatistic()) {
             Intent statIntent = new Intent(RevApplication.this, Statist.class);
             statIntent.putExtra(Constants.TIMEOUT,

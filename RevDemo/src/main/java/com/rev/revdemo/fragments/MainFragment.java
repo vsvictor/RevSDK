@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +22,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnMainListener } interface
- * to handle interaction events.
- * Use the {@link ConfigFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainFragment extends Fragment {
 
+    private static final String TAG = MainFragment.class.getSimpleName();
     private OnMainListener listener;
 
     private OkHttpClient client = RevSDK.OkHttpCreate();
@@ -60,7 +54,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
-        edQuery.setText("hTTp://stackoverflow.com/questions/3961589/android-webview-and-loaddata");
+        edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
+        //edQuery.setText("https://google.com");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(RevSDK.createWebViewClient());
 
@@ -75,7 +70,19 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = edQuery.getText().toString();
                 if (url != null && !url.isEmpty()) {
-                    new Reader().execute(url);
+                    String sRes = url.substring(0, url.length());
+                    Log.i(TAG, "1:" + sRes);
+                    String s1 = url.substring(0, 7);
+                    String s2 = url.substring(0, 8);
+                    Log.i(TAG, s1 + "---" + s2);
+                    if (!s1.equalsIgnoreCase("http://") && !s2.equalsIgnoreCase("https://")) {
+                        sRes = "http://" + url;
+                        Log.i(TAG, "2:" + sRes);
+                    }
+                    Log.i(TAG, "3:" + sRes);
+                    edQuery.setText(sRes);
+                    //Log.i(TAG, sRes);
+                    new Reader().execute(sRes);
                 }
             }
         });
@@ -112,15 +119,7 @@ public class MainFragment extends Fragment {
             Response response = null;
             String body = null;
             if (url != null && !url.isEmpty()) {
-                Request req = new Request.Builder()
-                        .url(url)
-                        .build();
-                try {
-                    response = client.newCall(req).execute();
-                } catch (IOException e) {
-                    response = null;
-                    e.printStackTrace();
-                }
+                response = runRequest(url);
                 try {
                     body = response.body().string();
                 } catch (IOException e) {
@@ -129,10 +128,23 @@ public class MainFragment extends Fragment {
             }
             return body;
         }
-
         @Override
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
+        }
+
+        private Response runRequest(String url) {
+            Response response;
+            Request req = new Request.Builder()
+                    .url(url)
+                    .build();
+            try {
+                response = client.newCall(req).execute();
+            } catch (IOException e) {
+                response = null;
+                e.printStackTrace();
+            }
+            return response;
         }
     }
 }

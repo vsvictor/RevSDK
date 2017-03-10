@@ -23,6 +23,11 @@ import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.utils.DateTimeUtil;
 
+import org.acra.ACRA;
+import org.acra.ReportField;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,6 +53,12 @@ import java.util.TimerTask;
  * /
  */
 
+@ReportsCrashes(mailTo = "dvictor74@gmail.com",
+        customReportContent = {
+                ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME,
+                ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
+                ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT},
+        mode = ReportingInteractionMode.TOAST)
 public class RevApplication extends Application {
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
@@ -55,13 +66,11 @@ public class RevApplication extends Application {
     private String sdkKey;
     private String version;
     private Config config;
-    private boolean firstActivity;
 
     private SharedPreferences share;
     private Protocol best = Protocol.STANDART;
 
     private boolean configuratorRunning = false;
-
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
@@ -79,12 +88,11 @@ public class RevApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        firstActivity = true;
+        ACRA.init(this);
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         counter = new RequestCounter();
         init();
     }
-
     private String getKeyFromManifest() {
         String result = "key";
         try {
@@ -103,7 +111,6 @@ public class RevApplication extends Application {
         return result.toLowerCase();
     }
     private void init() {
-        firstActivity = true;
         try {
             version = getApplicationContext()
                     .getPackageManager()

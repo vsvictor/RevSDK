@@ -90,7 +90,7 @@ public class RevSDK {
     private static final String TAG = RevSDK.class.getSimpleName();
 
     public static RevWebViewClient createWebViewClient(OkHttpClient client) {
-        return new RevWebViewClient();
+        return new RevWebViewClient(client);
     }
 
     public static RevWebViewClient createWebViewClient() {
@@ -98,11 +98,15 @@ public class RevSDK {
     }
 
     public static OkHttpClient OkHttpCreate() {
-        return OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC);
+        return OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
+    }
+    public static OkHttpClient OkHttpCreate(int timeoutSec) {
+        return OkHttpCreate(timeoutSec, false, false);
     }
 
-    public static OkHttpClient OkHttpCreate(int timeoutSec) {
+    public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSllRedirect) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
@@ -120,8 +124,11 @@ public class RevSDK {
                 }
                 return response;
             }
-        }).connectTimeout(timeoutSec, TimeUnit.SECONDS);
-        return httpClient.build();
+        }).connectTimeout(timeoutSec, TimeUnit.SECONDS)
+        .followRedirects(followRedirect)
+        .followSslRedirects(followSllRedirect).cookieJar(new RevCookie());
+        OkHttpClient result = httpClient.build();
+        return result;
     }
 
     private static Response standartInterceptor(Interceptor.Chain chain) throws IOException {

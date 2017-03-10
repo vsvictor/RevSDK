@@ -33,7 +33,7 @@
                 android:id="@+id/edQuery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textWebEditText"
                 android:singleLine="true"
                 android:hint="@string/query" />
         </android.support.design.widget.TextInputLayout>

@@ -14,13 +14,17 @@ import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.rev.revdemo.R;
+import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.utils.HTTPCode;
 
 import java.io.IOException;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.framed.Header;
 
 public class MainFragment extends Fragment {
 
@@ -54,8 +58,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
-        edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        //edQuery.setText("https://google.com");
+        //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
+        edQuery.setText("google.com");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(RevSDK.createWebViewClient());
 
@@ -70,19 +74,17 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 String url = edQuery.getText().toString();
                 if (url != null && !url.isEmpty()) {
-                    String sRes = url.substring(0, url.length());
-                    Log.i(TAG, "1:" + sRes);
-                    String s1 = url.substring(0, 7);
-                    String s2 = url.substring(0, 8);
-                    Log.i(TAG, s1 + "---" + s2);
-                    if (!s1.equalsIgnoreCase("http://") && !s2.equalsIgnoreCase("https://")) {
-                        sRes = "http://" + url;
-                        Log.i(TAG, "2:" + sRes);
+                    HttpUrl test = HttpUrl.parse(url);
+                    String newURL = null;
+                    try {
+                        newURL = test.toString();
+
+                    } catch (NullPointerException ex) {
+                        newURL = "http://" + url;
+                        edQuery.setText(newURL);
                     }
-                    Log.i(TAG, "3:" + sRes);
-                    edQuery.setText(sRes);
-                    //Log.i(TAG, sRes);
-                    new Reader().execute(sRes);
+
+                    new Reader().execute(newURL);
                 }
             }
         });
@@ -112,25 +114,49 @@ public class MainFragment extends Fragment {
     private class Reader extends AsyncTask<String, Void, String> {
         private String contentType;
         private String codePage;
+        private String currURL;
 
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0];
+            final String url = params[0];
+            currURL = url;
             Response response = null;
             String body = null;
             if (url != null && !url.isEmpty()) {
-                response = runRequest(url);
                 try {
+                    response = runRequest(url);
+                    String location = "";
+                    while ((response.code() == HTTPCode.MOVED_PERMANENTLY.getCode()) ||
+                            (response.code() == HTTPCode.FOUND.getCode())) {
+                        location = response.header("location");
+                        response = runRequest(location);
+                    }
                     body = response.body().string();
+                    /*
+                    Log.i(TAG, "end req:"+response.toString());
+                    Log.i(TAG, "end headers:"+response.headers().toString());
+                    Log.i(TAG, "end body:"+body);
+                    Log.i(TAG, body);
+                    */
+                    final String endURL = location;
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            edQuery.setText(endURL);
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             return body;
         }
+
         @Override
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
+            //edQuery.setText(currURL);
         }
 
         private Response runRequest(String url) {

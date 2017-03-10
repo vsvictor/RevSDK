@@ -30,6 +30,10 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.rev.revsdk.utils.HTTPCode;
+
+import java.io.IOException;
+
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,7 +64,14 @@ public class RevWebViewClient extends WebViewClient {
             WebResourceRequest request) {
         return handleRequestViaOkHttp(request.getUrl().toString());
     }
+/*
 
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url){
+        handleRequestViaOkHttp(url);
+        return true;
+    }
+*/
     @NonNull
     private WebResourceResponse handleRequestViaOkHttp(@NonNull String url) {
         Response response = null;
@@ -74,6 +85,12 @@ public class RevWebViewClient extends WebViewClient {
             );
 
             response = call.execute();
+            String location = "";
+            while ((response.code() == HTTPCode.MOVED_PERMANENTLY.getCode()) ||
+                    (response.code() == HTTPCode.FOUND.getCode())) {
+                location = response.header("location");
+                response = runRequest(location);
+            }
 
             String header = response.header("content-type");
             String[] ss = header.split(";");
@@ -89,7 +106,6 @@ public class RevWebViewClient extends WebViewClient {
                     break;
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,6 +117,21 @@ public class RevWebViewClient extends WebViewClient {
         } catch (NullPointerException ex) {
             result = null;
         }
+        result.setMimeType(ct);
+        result.setEncoding(cp);
         return result;
+    }
+    private Response runRequest(String url) {
+        Response response;
+        Request req = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            response = client.newCall(req).execute();
+        } catch (IOException e) {
+            response = null;
+            e.printStackTrace();
+        }
+        return response;
     }
 }

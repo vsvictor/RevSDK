@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private Fragment current;
-
+    private Fragment old;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,14 +83,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.main) {
+            old = current;
             current = MainFragment.newInstance();
-            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.config_view) {
+            old = current;
             current = ConfigFragment.newInstance(1, RevApp.getInstance().getConfig());
-            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.stat_view) {
+            old = current;
             current = StatFragment.newInstance();
-            getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.log_view) {
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

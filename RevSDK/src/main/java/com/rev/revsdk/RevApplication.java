@@ -53,12 +53,6 @@ import java.util.TimerTask;
  * /
  */
 
-@ReportsCrashes(mailTo = "dvictor74@gmail.com",
-        customReportContent = {
-                ReportField.APP_VERSION_CODE, ReportField.APP_VERSION_NAME,
-                ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
-                ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT},
-        mode = ReportingInteractionMode.TOAST)
 public class RevApplication extends Application {
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
@@ -88,7 +82,6 @@ public class RevApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        ACRA.init(this);
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         counter = new RequestCounter();
         init();

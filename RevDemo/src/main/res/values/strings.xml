@@ -26,5 +26,6 @@
     <string name="stat_network">Network:</string>
     <string name="stat_Requests">Requests:</string>
     <string name="stat_wifi">WiFi:</string>
+    <string name="crash_toast_text">Text</string>
 
 </resources>

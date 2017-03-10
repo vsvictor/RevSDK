@@ -23,6 +23,11 @@ import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.utils.DateTimeUtil;
 
+import org.acra.ACRA;
+import org.acra.ReportField;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,13 +60,11 @@ public class RevApplication extends Application {
     private String sdkKey;
     private String version;
     private Config config;
-    private boolean firstActivity;
 
     private SharedPreferences share;
     private Protocol best = Protocol.STANDART;
 
     private boolean configuratorRunning = false;
-
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
@@ -79,12 +82,10 @@ public class RevApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        firstActivity = true;
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         counter = new RequestCounter();
         init();
     }
-
     private String getKeyFromManifest() {
         String result = "key";
         try {
@@ -103,7 +104,6 @@ public class RevApplication extends Application {
         return result.toLowerCase();
     }
     private void init() {
-        firstActivity = true;
         try {
             version = getApplicationContext()
                     .getPackageManager()

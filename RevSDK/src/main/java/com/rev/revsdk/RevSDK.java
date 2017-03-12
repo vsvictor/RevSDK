@@ -53,7 +53,9 @@ import com.rev.revsdk.statistic.serialize.RequestsSerialize;
 import com.rev.revsdk.statistic.serialize.StatisticSerializer;
 import com.rev.revsdk.statistic.serialize.WiFiDeserialize;
 import com.rev.revsdk.statistic.serialize.WiFiSerialize;
-import com.rev.revsdk.utils.Tag;
+import com.rev.revsdk.types.Tag;
+import com.rev.revsdk.web.RevCookie;
+import com.rev.revsdk.web.RevWebViewClient;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

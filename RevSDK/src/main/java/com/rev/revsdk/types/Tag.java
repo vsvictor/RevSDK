@@ -1,4 +1,4 @@
-package com.rev.revsdk.utils;
+package com.rev.revsdk.types;
 
 /*
  * ************************************************************************

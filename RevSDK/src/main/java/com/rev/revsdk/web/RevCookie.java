@@ -1,4 +1,4 @@
-package com.rev.revsdk;
+package com.rev.revsdk.web;
 
 import java.util.ArrayList;
 import java.util.List;

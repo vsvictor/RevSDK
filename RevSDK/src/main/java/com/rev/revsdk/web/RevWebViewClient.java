@@ -1,4 +1,4 @@
-package com.rev.revsdk;
+package com.rev.revsdk.web;
 
 /*
  * ************************************************************************
@@ -23,24 +23,30 @@ package com.rev.revsdk;
  */
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.rev.revsdk.utils.HTTPCode;
+import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.types.HTTPCode;
 
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class RevWebViewClient extends WebViewClient {
 
+    private static final String TAG = RevWebViewClient.class.getSimpleName();
+    private ProgressDialog progressDialog;
     private OkHttpClient client;
 
     public RevWebViewClient(OkHttpClient client) {
@@ -55,43 +61,55 @@ public class RevWebViewClient extends WebViewClient {
     @SuppressWarnings("deprecation")
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
-        return handleRequestViaOkHttp(url);
+        return handleRequest(url, "GET", null);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull
-            WebResourceRequest request) {
-        return handleRequestViaOkHttp(request.getUrl().toString());
+    public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
+        return handleRequest(request.getUrl().toString(), request.getMethod(), null);
     }
-/*
 
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url){
-        handleRequestViaOkHttp(url);
-        return true;
-    }
-*/
     @NonNull
-    private WebResourceResponse handleRequestViaOkHttp(@NonNull String url) {
+    private WebResourceResponse handleRequest(@NonNull String url, String method, RequestBody aBody) {
+        Log.i(TAG, url);
         Response response = null;
         WebResourceResponse result = null;
         String ct = "text/html";
         String cp = "utf-8";
+        RequestBody body = aBody;
+        final String fct = ct;
+        if (body == null && method.equalsIgnoreCase("POST")) {
+            body = RequestBody.create(null, new byte[0]);
+        }
         try {
-            final Call call = client.newCall(new Request.Builder()
-                    .url(url)
-                    .build()
-            );
+            HTTPCode code = HTTPCode.UNDEFINED;
+            while (code != HTTPCode.OK) {
+                final Call call = client.newCall(new Request.Builder()
+                        .url(url)
+                        .method(method, body)
+                        .build()
+                );
 
-            response = call.execute();
-            String location = "";
-            while ((response.code() == HTTPCode.MOVED_PERMANENTLY.getCode()) ||
-                    (response.code() == HTTPCode.FOUND.getCode())) {
-                location = response.header("location");
-                response = runRequest(location);
+                response = call.execute();
+                String location = "";
+                code = HTTPCode.create(response.code());
+                if ((code == HTTPCode.MOVED_PERMANENTLY) ||
+                        (code == HTTPCode.FOUND)) {
+                    //location = response.header("location");
+                    //response = runGetRequest(location);
+                    url = response.header("location");
+                    code = HTTPCode.create(response.code());
+                    continue;
+                }
+                if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
+                    //response = runGetRequest(response.request().url().toString());
+                    url = response.request().url().toString();
+                    code = HTTPCode.create(response.code());
+                    continue;
+                }
             }
-
+            Log.i(TAG, response.toString());
             String header = response.header("content-type");
             String[] ss = header.split(";");
             switch (ss.length) {
@@ -121,7 +139,8 @@ public class RevWebViewClient extends WebViewClient {
         result.setEncoding(cp);
         return result;
     }
-    private Response runRequest(String url) {
+
+    private Response runGetRequest(String url) {
         Response response;
         Request req = new Request.Builder()
                 .url(url)
@@ -133,5 +152,17 @@ public class RevWebViewClient extends WebViewClient {
             e.printStackTrace();
         }
         return response;
+    }
+
+    private PostInterceptor.FormRequestContents mNextFormRequestContents = null;
+
+    public void nextMessageIsFormRequest(PostInterceptor.FormRequestContents formRequestContents) {
+        mNextFormRequestContents = formRequestContents;
+    }
+
+    private PostInterceptor.AjaxRequestContents mNextAjaxRequestContents = null;
+
+    public void nextMessageIsAjaxRequest(PostInterceptor.AjaxRequestContents ajaxRequestContents) {
+        mNextAjaxRequestContents = ajaxRequestContents;
     }
 }

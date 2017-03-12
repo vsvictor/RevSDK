@@ -16,7 +16,7 @@ import com.rev.revsdk.statistic.sections.LogEvents;
 import com.rev.revsdk.statistic.sections.Network;
 import com.rev.revsdk.statistic.sections.Requests;
 import com.rev.revsdk.statistic.sections.WiFi;
-import com.rev.revsdk.utils.Pair;
+import com.rev.revsdk.types.Pair;
 
 import java.util.ArrayList;
 

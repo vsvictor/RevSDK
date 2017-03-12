@@ -23,11 +23,6 @@ import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
 import com.rev.revsdk.utils.DateTimeUtil;
 
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -76,6 +71,7 @@ public class RevApplication extends Application {
 
     private Timer configTimer = new Timer();
     private Timer staleTimer = new Timer();
+    private Timer statTimer = new Timer();
     private Object monitor = new Object();
 
     @Override
@@ -138,6 +134,21 @@ public class RevApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+        while (configTimer != null) {
+            configTimer.cancel();
+            configTimer.purge();
+            configTimer = null;
+        }
+        while (staleTimer != null) {
+            staleTimer.cancel();
+            staleTimer.purge();
+            staleTimer = null;
+        }
+        while (statTimer != null) {
+            statTimer.cancel();
+            statTimer.purge();
+            statTimer = null;
+        }
         unregisterReceiver(configReceiver);
         unregisterReceiver(configStaleReceiver);
         unregisterReceiver(testReceiver);
@@ -274,7 +285,13 @@ public class RevApplication extends Application {
                     Log.i(TAG + " statistic receiver", "Response: " + sResponce);
                 }
                 if (RevSDK.isStatistic()) {
-                    Timer statTimer = new Timer();
+                    //Timer statTimer = new Timer();
+                    while (statTimer != null) {
+                        statTimer.cancel();
+                        statTimer.purge();
+                        statTimer = null;
+                    }
+                    statTimer = new Timer();
                     statTimer.schedule(new TimerTask() {
                         @Override
                         public void run() {

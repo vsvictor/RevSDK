@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +15,22 @@ import android.widget.RelativeLayout;
 import com.rev.revdemo.R;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevSDK;
-import com.rev.revsdk.utils.HTTPCode;
+import com.rev.revsdk.types.HTTPCode;
 
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.framed.Header;
+
+import static com.rev.revsdk.utils.IOUtils.runRequest;
 
 public class MainFragment extends Fragment {
 
     private static final String TAG = MainFragment.class.getSimpleName();
     private OnMainListener listener;
 
-    private OkHttpClient client = RevSDK.OkHttpCreate();
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, true, true);
     private TextInputEditText edQuery;
     private WebView wvMain;
     private RelativeLayout rlRun;
@@ -61,7 +60,7 @@ public class MainFragment extends Fragment {
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
         edQuery.setText("google.com");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
-        wvMain.setWebViewClient(RevSDK.createWebViewClient());
+        wvMain.setWebViewClient(RevSDK.createWebViewClient(client));
 
         wvMain.getSettings().setJavaScriptEnabled(true);
         wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
@@ -124,13 +123,19 @@ public class MainFragment extends Fragment {
             String body = null;
             if (url != null && !url.isEmpty()) {
                 try {
-                    response = runRequest(url);
+                    response = runRequest(client, url, "GET", null);
                     String location = "";
-                    while ((response.code() == HTTPCode.MOVED_PERMANENTLY.getCode()) ||
-                            (response.code() == HTTPCode.FOUND.getCode())) {
+                    //HTTPCode code = HTTPCode.create(response.code());
+                    while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
+                            (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");
-                        response = runRequest(location);
+                        response = runRequest(client, location, response.request().method(), null);
                     }
+                    HTTPCode code = HTTPCode.create(response.code());
+                    if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
+                        response = runRequest(client, response.request().url().toString(), response.request().method(), null);
+                    }
+
                     body = response.body().string();
                     /*
                     Log.i(TAG, "end req:"+response.toString());
@@ -157,20 +162,6 @@ public class MainFragment extends Fragment {
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
             //edQuery.setText(currURL);
-        }
-
-        private Response runRequest(String url) {
-            Response response;
-            Request req = new Request.Builder()
-                    .url(url)
-                    .build();
-            try {
-                response = client.newCall(req).execute();
-            } catch (IOException e) {
-                response = null;
-                e.printStackTrace();
-            }
-            return response;
         }
     }
 }

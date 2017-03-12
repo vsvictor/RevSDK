@@ -14,7 +14,7 @@ import com.rev.revsdk.Constants;
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.RevSDK;
-import com.rev.revsdk.utils.Pair;
+import com.rev.revsdk.types.Pair;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;

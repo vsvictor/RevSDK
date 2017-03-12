@@ -1,4 +1,4 @@
-package com.rev.revsdk.utils;
+package com.rev.revsdk.types;
 
 import com.rev.revsdk.R;
 import com.rev.revsdk.RevApplication;
@@ -88,7 +88,7 @@ public enum HTTPCode {
             case 307:
                 return TEMPORARY_REDIRECT;
             case 400:
-                return CONTINUE;
+                return BAD_REQUEST;
             case 402:
                 return PAYMENT_REQUIRED;
             case 403:
@@ -147,7 +147,7 @@ public enum HTTPCode {
         if (code < 200) return Type.INFORMATIONAL;
         else if (code >= 200 && code < 300) return Type.SUCCESSFULL;
         else if (code >= 300 && code < 400) return Type.REDIRECTION;
-        else if (code > 400 && code < 500) return Type.CLIENT_ERROR;
+        else if (code >= 400 && code < 500) return Type.CLIENT_ERROR;
         else if (code >= 500 && code < 600) return Type.SERVER_ERROR;
         else return Type.UNDEFINED;
     }

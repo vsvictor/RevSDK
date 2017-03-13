@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 
 import com.rev.revdemo.fragments.ConfigFragment;
 import com.rev.revdemo.fragments.MainFragment;
@@ -55,7 +56,14 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (current instanceof MainFragment) super.onBackPressed();
+            if (current instanceof MainFragment) {
+                WebView browser = ((MainFragment) current).getBrowser();
+                if(browser != null){
+                    if(browser.canGoBack()) browser.goBack();
+                    else super.onBackPressed();
+                }
+                //super.onBackPressed();
+            }
             else {
                 current = MainFragment.newInstance();
                 getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();

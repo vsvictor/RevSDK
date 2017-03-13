@@ -1,5 +1,7 @@
 package com.rev.revsdk.utils;
 
+import com.rev.revsdk.Constants;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,7 @@ public class IOUtils {
             body = RequestBody.create(null, new byte[0]);
         Request req = new Request.Builder()
                 .url(url)
+                .header(Constants.USER_AGENT, Constants.USER_AGENT_VALUE)
                 .method(method, body)
                 .build();
         try {

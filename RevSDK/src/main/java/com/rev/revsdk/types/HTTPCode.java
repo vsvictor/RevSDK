@@ -154,4 +154,12 @@ public enum HTTPCode {
 
     public static enum Type {INFORMATIONAL, SUCCESSFULL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, UNDEFINED}
 
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Code: ");
+        builder.append(this.code);
+        builder.append(" Message");
+        builder.append(this.getMessage());
+        return builder.toString();
+    }
 }

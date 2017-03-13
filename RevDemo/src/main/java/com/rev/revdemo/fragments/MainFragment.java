@@ -30,7 +30,7 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
     private OnMainListener listener;
 
-    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, true, true);
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
     private TextInputEditText edQuery;
     private WebView wvMain;
     private RelativeLayout rlRun;
@@ -58,9 +58,10 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        edQuery.setText("google.com");
+        //edQuery.setText("google.com");
+        edQuery.setText("mail.ru");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
-        wvMain.setWebViewClient(RevSDK.createWebViewClient(client));
+        wvMain.setWebViewClient(RevSDK.createWebViewClient(getActivity(), wvMain, client));
 
         wvMain.getSettings().setJavaScriptEnabled(true);
         wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
@@ -106,6 +107,10 @@ public class MainFragment extends Fragment {
         listener = null;
     }
 
+    public WebView getBrowser(){
+        return wvMain;
+    }
+
     public interface OnMainListener {
         void onMain();
     }
@@ -125,26 +130,19 @@ public class MainFragment extends Fragment {
                 try {
                     response = runRequest(client, url, "GET", null);
                     String location = "";
-                    //HTTPCode code = HTTPCode.create(response.code());
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");
                         response = runRequest(client, location, response.request().method(), null);
                     }
+
                     HTTPCode code = HTTPCode.create(response.code());
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
                         response = runRequest(client, response.request().url().toString(), response.request().method(), null);
                     }
 
                     body = response.body().string();
-                    /*
-                    Log.i(TAG, "end req:"+response.toString());
-                    Log.i(TAG, "end headers:"+response.headers().toString());
-                    Log.i(TAG, "end body:"+body);
-                    Log.i(TAG, body);
-                    */
-                    final String endURL = location;
-
+                    final String endURL = location == null?url:location;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

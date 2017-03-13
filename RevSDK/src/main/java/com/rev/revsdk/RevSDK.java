@@ -1,8 +1,10 @@
 package com.rev.revsdk;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.WebView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -91,6 +93,10 @@ import okhttp3.Response;
 public class RevSDK {
     private static final String TAG = RevSDK.class.getSimpleName();
 
+    public static RevWebViewClient createWebViewClient(Context context, WebView view, OkHttpClient client){
+        return new RevWebViewClient(context, view, client);
+    }
+
     public static RevWebViewClient createWebViewClient(OkHttpClient client) {
         return new RevWebViewClient(client);
     }
@@ -108,7 +114,6 @@ public class RevSDK {
 
     public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSllRedirect) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
@@ -201,11 +206,26 @@ public class RevSDK {
         return req.url().toString().equals(statURL);
     }
     private static Request processingRequest(Request original) {
-        Log.i(TAG, "Original:" + original.toString());
+        StringBuilder sHeaders = new StringBuilder();
+        for(String name : original.headers().names()){
+            sHeaders.append("\n"+name);
+            sHeaders.append(":");
+            sHeaders.append(original.headers().get(name)+"\n");
+        }
+        Log.i(TAG, "Original:" + original.toString()+"\n Headers: "+sHeaders);
+
         RequestCreator creator = new RequestCreator(RevApplication.getInstance().getConfig());
         Request result = creator.create(original);
-        Log.i(TAG, "Transfered: \n" + result.toString());
-        return creator.create(original);
+
+        sHeaders = new StringBuilder();
+        for(String name : result.headers().names()){
+            sHeaders.append("\n"+name);
+            sHeaders.append(":");
+            sHeaders.append(result.headers().get(name)+"\n");
+        }
+
+        Log.i(TAG, "Transfered: \n" + result.toString()+"\n Headers: "+sHeaders.toString());
+        return result; //creator.create(original);
     }
 
     private static RequestOne toRequestOne(Request original, Request processed, Response response, Protocol edge_transport) {
@@ -218,7 +238,7 @@ public class RevSDK {
         result.setStartTS(response.sentRequestAtMillis());
         result.setEndTS(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
         result.setFirstByteTime(-1);
-        result.setKeepAliveStatus(1); //TODO how
+        result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response.cacheControl().toString());
         result.setMethod(original.method());
         result.setEdgeTransport(edge_transport);

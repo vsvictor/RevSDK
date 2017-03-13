@@ -34,7 +34,7 @@ import com.rev.revsdk.RevSDK;
 import com.rev.revsdk.database.RequestTable;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.RequestOne;
-import com.rev.revsdk.utils.Tag;
+import com.rev.revsdk.types.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;

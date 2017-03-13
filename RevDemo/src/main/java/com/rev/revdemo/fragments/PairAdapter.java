@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rev.revdemo.R;
-import com.rev.revsdk.utils.Pair;
+import com.rev.revsdk.types.Pair;
 
 import java.util.List;
 

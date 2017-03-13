@@ -31,7 +31,7 @@ import com.rev.revsdk.Actions;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.RevSDK;
-import com.rev.revsdk.utils.Tag;
+import com.rev.revsdk.types.Tag;
 
 import java.io.IOException;
 

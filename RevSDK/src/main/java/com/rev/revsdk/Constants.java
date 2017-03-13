@@ -38,6 +38,8 @@ public class Constants {
 
     public static final String SYSTEM_REQUEST = "system";
 
+    public static final String USER_AGENT = "User-Agent";
+    public static final String USER_AGENT_VALUE = "Mozilla/5.0 (Linux; Android 7.1.1; Nexus 6P Build/N4F26T; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/56.0.2924.87 Mobile Safari/537.36";
     public static final String HOST_HEADER_NAME = "Host";
     public static final String HOST_REV_HEADER_NAME = "X-Rev-Host";
     public static final String PROTOCOL_REV_HEADER_NAME = "X-Rev-Proto";
@@ -45,6 +47,8 @@ public class Constants {
     public static String REV = "rev";
     public static String ORIGIN = "origin";
     public static String SYSTEM = "system";
+
+    public static int MAX_REDIRECT = 20;
 
     /* Temporaty constants */
     public static final String UNDEFINED = "_";

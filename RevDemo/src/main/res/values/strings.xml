@@ -15,7 +15,6 @@
     <string name="log_view">Log view</string>
     <string name="about">About...</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="name">Name:</string>
     <string name="value">Value:</string>
     <string name="stat_main">Main:</string>

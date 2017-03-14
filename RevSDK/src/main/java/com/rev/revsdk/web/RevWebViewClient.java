@@ -27,10 +27,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -38,10 +41,14 @@ import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevSDK;
 import com.rev.revsdk.types.HTTPCode;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -55,11 +62,29 @@ public class RevWebViewClient extends WebViewClient {
     private WebView view;
     private OkHttpClient client;
 
+    private String sData;
+
+    private class JavaScriptInterface {
+        private final String TAG = JavaScriptInterface.class.getSimpleName();
+        @JavascriptInterface
+        public void processHTML(String formData) {
+            Log.d(TAG, "form data: " + formData);
+            sData = formData;
+        }
+    }
+
+
     public RevWebViewClient(Context context, WebView view, OkHttpClient client) {
         super();
         this.context = context;
         this.view = view;
         this.client = client;
+
+        view.getSettings().setJavaScriptEnabled(true);
+        view.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
+        view.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+        view.getSettings().setPluginState(WebSettings.PluginState.ON);
+        view.addJavascriptInterface(new JavaScriptInterface(), "AndroidInterface");
     }
 
     public RevWebViewClient(OkHttpClient client) {
@@ -71,6 +96,21 @@ public class RevWebViewClient extends WebViewClient {
     }
 
     @Override
+    public void onPageFinished(WebView view, String url) {
+        try {
+            view.loadUrl("javascript:" + buildInjection());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onFormResubmission(WebView view, Message dontResend, Message resend){
+        Log.i("FormResubmission",dontResend.toString());
+        Log.i("FormResubmission", resend.toString());
+    }
+    @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
         WebResourсeRequestDefault request = new WebResourсeRequestDefault(Uri.parse(url));
         return handleRequest(request);
@@ -79,8 +119,7 @@ public class RevWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
-        WebResourceRequest aReq = request;
-        return handleRequest(aReq);
+        return handleRequest(request);
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @NonNull
@@ -96,11 +135,14 @@ public class RevWebViewClient extends WebViewClient {
         Log.i(TAG, url);
         Response response = null;
         WebResourceResponse result = null;
-        String ct = "text/html";
+
+        String ct = aRequest.getRequestHeaders().get("content-type")==null?"text/html":
+                aRequest.getRequestHeaders().get("content-type");
         String cp = "utf-8";
+
         final String fct = ct;
         if (body == null && method.equalsIgnoreCase("POST")) {
-            body = RequestBody.create(null, new byte[0]);
+            body = RequestBody.create(MediaType.parse(ct), sData==null?"":sData);
         }
         try {
             HTTPCode code = HTTPCode.UNDEFINED;
@@ -137,7 +179,6 @@ public class RevWebViewClient extends WebViewClient {
                 Log.i("Code", "Cycle out: "+code.toString());
             else
                 Log.i("Error", "Cycle out: "+code.toString());
-
 
             if(response != null) {
                 String header = response.header("content-type");
@@ -178,15 +219,36 @@ public class RevWebViewClient extends WebViewClient {
         return result;
     }
 
-    private PostInterceptor.FormRequestContents mNextFormRequestContents = null;
-
-    public void nextMessageIsFormRequest(PostInterceptor.FormRequestContents formRequestContents) {
-        mNextFormRequestContents = formRequestContents;
+/*
+    private String buildInjection() throws IOException {
+        String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
+                "    var objPWD, objAccount, objSave;\n" +
+                "    var str = '';\n" +
+                "    var inputs = document.querySelectorAll('form input[type=\"text\"], form input[type=\"password\"], form input[type=\"email\"]');\n" +
+                "    for (var i = 0; i < inputs.length; i++) {\n" +
+                "       str += inputs[i].name+'='+inputs[i].value; \n"+
+                "       if(i!=inputs.length-1) str+='&'"+
+                "    }\n" +
+                "    AndroidInterface.processHTML(str);\n" +
+                "    return true;\n" +
+                "};\n";
+        return sBuf;
+    }
+*/
+    private String buildInjection() throws IOException {
+        String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
+                "    var objPWD, objAccount, objSave;\n" +
+                "    var str = '';\n" +
+                "    var inputs = document.querySelectorAll('form input[type=\"text\"], form input[type=\"password\"], form input[type=\"email\"], form input[type=\"hidden\"]');\n" +
+                "    for (var i = 0; i < inputs.length; i++) {\n" +
+                "       str += inputs[i].name+'='+inputs[i].value; \n"+
+                "       if(i!=inputs.length-1) str+='&'"+
+                "    }\n" +
+                "    AndroidInterface.processHTML(str);\n" +
+                "    return true;\n" +
+                "};\n";
+        return sBuf;
     }
 
-    private PostInterceptor.AjaxRequestContents mNextAjaxRequestContents = null;
-
-    public void nextMessageIsAjaxRequest(PostInterceptor.AjaxRequestContents ajaxRequestContents) {
-        mNextAjaxRequestContents = ajaxRequestContents;
-    }
 }
+

@@ -30,7 +30,7 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
     private OnMainListener listener;
 
-    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, true, true);
     private TextInputEditText edQuery;
     private WebView wvMain;
     private RelativeLayout rlRun;
@@ -58,15 +58,11 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        //edQuery.setText("google.com");
-        edQuery.setText("mail.ru");
+        edQuery.setText("google.com.ua");
+        //edQuery.setText("mail.ru");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(RevSDK.createWebViewClient(getActivity(), wvMain, client));
-
-        wvMain.getSettings().setJavaScriptEnabled(true);
-        wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
-        wvMain.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
-        wvMain.getSettings().setPluginState(WebSettings.PluginState.ON);
+        wvMain.setWebChromeClient(RevSDK.createWebChromeClient());
 
         rlRun = (RelativeLayout) view.findViewById(R.id.rlRun);
         rlRun.setOnClickListener(new View.OnClickListener() {

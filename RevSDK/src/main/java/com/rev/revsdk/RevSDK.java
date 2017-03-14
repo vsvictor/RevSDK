@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
 import com.google.gson.Gson;
@@ -57,6 +58,7 @@ import com.rev.revsdk.statistic.serialize.WiFiDeserialize;
 import com.rev.revsdk.statistic.serialize.WiFiSerialize;
 import com.rev.revsdk.types.Tag;
 import com.rev.revsdk.web.RevCookie;
+import com.rev.revsdk.web.RevWebChromeClient;
 import com.rev.revsdk.web.RevWebViewClient;
 
 import java.io.IOException;
@@ -103,6 +105,10 @@ public class RevSDK {
 
     public static RevWebViewClient createWebViewClient() {
         return new RevWebViewClient();
+    }
+
+    public static RevWebChromeClient createWebChromeClient(){
+        return new RevWebChromeClient();
     }
 
     public static OkHttpClient OkHttpCreate() {

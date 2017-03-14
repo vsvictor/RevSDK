@@ -158,7 +158,7 @@ public enum HTTPCode {
         StringBuilder builder = new StringBuilder();
         builder.append("Code: ");
         builder.append(this.code);
-        builder.append(" Message");
+        builder.append(" Message: ");
         builder.append(this.getMessage());
         return builder.toString();
     }

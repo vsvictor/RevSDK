@@ -119,8 +119,7 @@ public class RevWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
-        WebResourceRequest aReq = request;
-        return handleRequest(aReq);
+        return handleRequest(request);
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @NonNull
@@ -132,30 +131,18 @@ public class RevWebViewClient extends WebViewClient {
         for(String key : aRequest.getRequestHeaders().keySet()){
             hBuilder.add(key, aRequest.getRequestHeaders().get(key));
         }
-/*
-        String sData = null;
-        JavaScriptInterface sc = new JavaScriptInterface();
-        sc.processHTML(sData);
-*/
-/*
-        if(sData == null) {
-            sData = "(empty)";
-            Log.i("JavaScriptInterface", sData);
-            sData = null;
-        }
-*/
         RequestBody body = null;
         Log.i(TAG, url);
         Response response = null;
         WebResourceResponse result = null;
 
-        String ct = aRequest.getRequestHeaders().get("content-type")==null?"text/html":aRequest.getRequestHeaders().get("content-type");
+        String ct = aRequest.getRequestHeaders().get("content-type")==null?"text/html":
+                aRequest.getRequestHeaders().get("content-type");
         String cp = "utf-8";
 
         final String fct = ct;
         if (body == null && method.equalsIgnoreCase("POST")) {
-            //sData = "Email=dvictor74@gmail.com";
-            body = RequestBody.create(MediaType.parse("text/html"), sData==null?"":sData);
+            body = RequestBody.create(MediaType.parse(ct), sData==null?"":sData);
         }
         try {
             HTTPCode code = HTTPCode.UNDEFINED;
@@ -168,12 +155,6 @@ public class RevWebViewClient extends WebViewClient {
             while (code.getType() != HTTPCode.Type.SUCCESSFULL && redirectCounter< Constants.MAX_REDIRECT) {
                 final Call call = client.newCall(request);
                 response = call.execute();
-                if(sData == null){
-                    sData = "[empty]";
-                    Log.i("JavaScriptInterface", sData);
-                    sData = null;
-                }
-
                 code = HTTPCode.create(response.code());
                 if ((code == HTTPCode.MOVED_PERMANENTLY) || (code == HTTPCode.FOUND)) {
                     url = response.header("location");
@@ -198,7 +179,6 @@ public class RevWebViewClient extends WebViewClient {
                 Log.i("Code", "Cycle out: "+code.toString());
             else
                 Log.i("Error", "Cycle out: "+code.toString());
-
 
             if(response != null) {
                 String header = response.header("content-type");
@@ -239,7 +219,7 @@ public class RevWebViewClient extends WebViewClient {
         return result;
     }
 
-
+/*
     private String buildInjection() throws IOException {
         String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
                 "    var objPWD, objAccount, objSave;\n" +
@@ -254,5 +234,21 @@ public class RevWebViewClient extends WebViewClient {
                 "};\n";
         return sBuf;
     }
+*/
+    private String buildInjection() throws IOException {
+        String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
+                "    var objPWD, objAccount, objSave;\n" +
+                "    var str = '';\n" +
+                "    var inputs = document.querySelectorAll('form input[type=\"text\"], form input[type=\"password\"], form input[type=\"email\"], form input[type=\"hidden\"]');\n" +
+                "    for (var i = 0; i < inputs.length; i++) {\n" +
+                "       str += inputs[i].name+'='+inputs[i].value; \n"+
+                "       if(i!=inputs.length-1) str+='&'"+
+                "    }\n" +
+                "    AndroidInterface.processHTML(str);\n" +
+                "    return true;\n" +
+                "};\n";
+        return sBuf;
+    }
+
 }
 

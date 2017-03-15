@@ -33,6 +33,10 @@
             android:name=".SplachActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".CompatibilityActivity"
+            android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

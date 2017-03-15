@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/RevBanshee/RevBanshee.iml" filepath="$PROJECT_DIR$/RevBanshee/RevBanshee.iml" />
       <module fileurl="file://$PROJECT_DIR$/RevDemo/RevDemo.iml" filepath="$PROJECT_DIR$/RevDemo/RevDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/RevSDK/RevSDK.iml" filepath="$PROJECT_DIR$/RevSDK/RevSDK.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Wather/Wather.iml" filepath="$PROJECT_DIR$/Wather/Wather.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
     </modules>
   </component>

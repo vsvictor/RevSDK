@@ -34,6 +34,7 @@ import com.rev.revsdk.RevSDK;
 import com.rev.revsdk.database.RequestTable;
 import com.rev.revsdk.statistic.Statistic;
 import com.rev.revsdk.statistic.sections.RequestOne;
+import com.rev.revsdk.types.HTTPCode;
 import com.rev.revsdk.types.Tag;
 
 import java.io.IOException;
@@ -90,8 +91,9 @@ public class Statist extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if(response.code() == 200){
+        HTTPCode resCode = HTTPCode.create(response.code());
+        String textMessage = null;
+        if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
             ArrayList<RequestOne> rows = statistic.getRequests();
             ContentValues values = new ContentValues();
             values.put(RequestTable.Columns.CONFIRMED, 1);
@@ -105,11 +107,15 @@ public class Statist extends IntentService {
                         RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
                         new String[]{String.valueOf(mixIndex), String.valueOf(maxIndex)});
             }
+            textMessage = "Success";
             Log.i(TAG, "Updated: "+String.valueOf(count));
+        } else {
+            textMessage = resCode.getMessage();
         }
 
         Intent statIntent = new Intent(Actions.STAT_ACTION);
-        statIntent.putExtra(Constants.STATISTIC, response.toString());
+        statIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
+        statIntent.putExtra(Constants.STATISTIC, textMessage);
         sendBroadcast(statIntent);
         Log.i(TAG, response.toString());
     }

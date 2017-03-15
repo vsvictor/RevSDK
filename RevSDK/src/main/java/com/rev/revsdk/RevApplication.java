@@ -21,6 +21,7 @@ import com.rev.revsdk.services.Statist;
 import com.rev.revsdk.services.Tester;
 import com.rev.revsdk.statistic.RequestCounter;
 import com.rev.revsdk.statistic.sections.Carrier;
+import com.rev.revsdk.types.HTTPCode;
 import com.rev.revsdk.utils.DateTimeUtil;
 
 import java.util.Timer;
@@ -59,7 +60,7 @@ public class RevApplication extends Application {
     private SharedPreferences share;
     private Protocol best = Protocol.STANDART;
 
-    private boolean configuratorRunning = false;
+    //private boolean configuratorRunning = false;
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
@@ -213,18 +214,21 @@ public class RevApplication extends Application {
             public void onReceive(final Context context, Intent intent) {
                 Bundle result = intent.getExtras();
                 if (result != null) {
-                    String newConfig = result.getString(Constants.CONFIG);
-                    if (newConfig != null) {
-                        Log.i(TAG + " configurator receiver", newConfig);
-                        Gson gson = RevSDK.gsonCreate();
-                        config = gson.fromJson(newConfig, Config.class);
-                        config.save(gson, share);
-                        sendBroadcast(new Intent(Actions.CONFIG_LOADED));
-                        Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
-                        if (RevSDK.isStatistic()) {
-                            statRunner();
+                    HTTPCode httpCode = HTTPCode.create(result.getInt(Constants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
+                    if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                        String newConfig = result.getString(Constants.CONFIG);
+                        if (newConfig != null) {
+                            Log.i(TAG + " configurator receiver", newConfig);
+                            Gson gson = RevSDK.gsonCreate();
+                            config = gson.fromJson(newConfig, Config.class);
+                            config.save(gson, share);
+                            sendBroadcast(new Intent(Actions.CONFIG_LOADED));
+                            Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
+                            if (RevSDK.isStatistic()) {
+                                statRunner();
+                            }
+                            //configuratorRunning = true;
                         }
-                        configuratorRunning = true;
                     }
                 }
                 configuratorRunner(false);
@@ -281,7 +285,13 @@ public class RevApplication extends Application {
             public void onReceive(Context context, Intent intent) {
                 Bundle bundle = intent.getExtras();
                 if (bundle != null) {
-                    String sResponce = bundle.getString(Constants.STATISTIC);
+                    HTTPCode resCode = HTTPCode.create(bundle.getInt(Constants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
+                    String sResponce;
+                    if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                        sResponce = bundle.getString(Constants.STATISTIC);
+                    } else {
+                        sResponce = resCode.getMessage();
+                    }
                     Log.i(TAG + " statistic receiver", "Response: " + sResponce);
                 }
                 if (RevSDK.isStatistic()) {

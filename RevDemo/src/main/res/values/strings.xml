@@ -13,6 +13,7 @@
     <string name="config_view">Configuration view</string>
     <string name="stat_view">Statistic view</string>
     <string name="log_view">Log view</string>
+    <string name="compatibility">Compatibility</string>
     <string name="about">About...</string>
 
     <string name="name">Name:</string>
@@ -27,4 +28,7 @@
     <string name="stat_wifi">WiFi:</string>
     <string name="crash_toast_text">Text</string>
 
+    <string name="today">Today</string>
+    <string name="day5">For 5 days</string>
+    <string name="day16">For 16 days</string>
 </resources>

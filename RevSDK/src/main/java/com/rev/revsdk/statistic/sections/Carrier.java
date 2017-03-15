@@ -384,7 +384,10 @@ public class Carrier extends Data implements Parcelable {
             return context.getResources().getString(R.string.unknown);
         } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
         }
+
     }
 
     public static void runRSSIListener() {

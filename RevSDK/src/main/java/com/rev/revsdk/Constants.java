@@ -28,6 +28,7 @@ public class Constants {
     public static final int DEFAULT_STALE_INTERVAL = 360000;
     public static final int DEFAULT_CONFIG_INTERVAL = 60000;
 
+    public static final String HTTP_RESULT = "http_result";
     public static final String CONFIG = "config";
     public static final String TIMEOUT = "timeout";
     public static final String TEST_PROTOCOL = "protocol";

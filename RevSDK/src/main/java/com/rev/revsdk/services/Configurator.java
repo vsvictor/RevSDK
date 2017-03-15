@@ -31,6 +31,7 @@ import com.rev.revsdk.Actions;
 import com.rev.revsdk.Constants;
 import com.rev.revsdk.RevApplication;
 import com.rev.revsdk.RevSDK;
+import com.rev.revsdk.types.HTTPCode;
 import com.rev.revsdk.types.Tag;
 
 import java.io.IOException;
@@ -93,13 +94,15 @@ public class Configurator extends IntentService {
         }
         try {
             if (response == null) throw new IOException("Response null");
-            if (response.code() == 200) {
+            HTTPCode resCode = HTTPCode.create(response.code());
+            if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                 result = response.body().string();
             } else {
-                result = null;
+                result = resCode.getMessage();
                 Log.i(TAG, "Request error!!! Status code:" + String.valueOf(response.code()));
             }
             Intent configIntent = new Intent(Actions.CONFIG_UPDATE_ACTION);
+            configIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
             configIntent.putExtra(Constants.CONFIG, result);
             sendBroadcast(configIntent);
         } catch (IOException ex) {

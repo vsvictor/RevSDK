@@ -1,4 +1,4 @@
-package com.rev.wather.fragments;
+package com.rev.revdemo.fragments.weather;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,17 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rev.wather.R;
+import com.rev.revdemo.R;
 
-public class SixteenDays extends Fragment {
+public class SixteenDaysFragment extends Fragment {
 
     private OnSixteenDaysListener listener;
 
-    public SixteenDays() {
+    public SixteenDaysFragment() {
     }
 
-    public static SixteenDays newInstance() {
-        SixteenDays fragment = new SixteenDays();
+    public static SixteenDaysFragment newInstance() {
+        SixteenDaysFragment fragment = new SixteenDaysFragment();
         return fragment;
     }
 
@@ -29,13 +29,7 @@ public class SixteenDays extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.sixteen_days, container, false);
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (listener != null) {
-            listener.onSixteetDays(uri);
-        }
+        return inflater.inflate(R.layout.fragment_sixteen_days, container, false);
     }
 
     @Override
@@ -55,6 +49,6 @@ public class SixteenDays extends Fragment {
     }
 
     public interface OnSixteenDaysListener {
-        void onSixteetDays(Uri uri);
+        void onSixteenDaysWeather(Uri uri);
     }
 }

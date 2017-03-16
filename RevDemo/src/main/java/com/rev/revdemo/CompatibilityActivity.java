@@ -1,4 +1,4 @@
-package com.rev.wather;
+package com.rev.revdemo;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,38 +10,36 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.rev.wather.fragments.FiveDays;
-import com.rev.wather.fragments.SixteenDays;
-import com.rev.wather.fragments.TodayWather;
+import com.rev.revdemo.fragments.FiveDaysFragment;
+import com.rev.revdemo.fragments.SixteenDaysFragment;
+import com.rev.revdemo.fragments.TodayFragment;
 
-public class MainActivity extends AppCompatActivity implements
-        TodayWather.OnTodayListener,
-        FiveDays.OnFiveDaysListener,
-        SixteenDays.OnSixteenDaysListener {
-
+public class CompatibilityActivity extends AppCompatActivity implements
+        TodayFragment.OnTodayListener,
+        FiveDaysFragment.OnFiveDaysListener,
+        SixteenDaysFragment.OnSixteenDaysListener {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.activity_compatibility);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle(R.string.weather);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        mViewPager.setCurrentItem(0);
     }
 
     /*
         @Override
         public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+            getMenuInflater().inflate(R.menu.menu_compatibility, menu);
             return true;
         }
 
@@ -56,49 +54,39 @@ public class MainActivity extends AppCompatActivity implements
         }
     */
     @Override
-    public void onToday(Uri uri) {
+    public void onTodayWeather(Uri uri) {
 
     }
 
     @Override
-    public void onFiveDays(Uri uri) {
+    public void onFiveDaysWeather(Uri uri) {
 
     }
 
     @Override
-    public void onSixteetDays(Uri uri) {
+    public void onSixteenDaysWeather(Uri uri) {
 
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            Fragment result = null;
             switch (position) {
-                case 0: {
-                    result = TodayWather.newInstance();
-                    break;
-                }
-                case 1: {
-                    result = FiveDays.newInstance();
-                    break;
-                }
-                case 2: {
-                    result = SixteenDays.newInstance();
-                    break;
-                }
-                default: {
-                    result = TodayWather.newInstance();
-                    break;
-                }
+                case 0:
+                    return TodayFragment.newInstance();
+                case 1:
+                    return FiveDaysFragment.newInstance();
+                case 2:
+                    return SixteenDaysFragment.newInstance();
+                default:
+                    return TodayFragment.newInstance();
             }
-            return result;
         }
-
         @Override
         public int getCount() {
             return 3;

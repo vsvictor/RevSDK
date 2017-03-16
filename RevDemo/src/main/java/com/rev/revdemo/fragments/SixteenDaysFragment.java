@@ -1,4 +1,4 @@
-package com.rev.wather.fragments;
+package com.rev.revdemo.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,17 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rev.wather.R;
+import com.rev.revdemo.R;
 
-public class FiveDays extends Fragment {
+public class SixteenDaysFragment extends Fragment {
 
-    private OnFiveDaysListener listener;
+    private OnSixteenDaysListener listener;
 
-    public FiveDays() {
+    public SixteenDaysFragment() {
     }
 
-    public static FiveDays newInstance() {
-        FiveDays fragment = new FiveDays();
+    public static SixteenDaysFragment newInstance() {
+        SixteenDaysFragment fragment = new SixteenDaysFragment();
         return fragment;
     }
 
@@ -29,14 +29,14 @@ public class FiveDays extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.five_days, container, false);
+        return inflater.inflate(R.layout.fragment_sixteen_days, container, false);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFiveDaysListener) {
-            listener = (OnFiveDaysListener) context;
+        if (context instanceof OnSixteenDaysListener) {
+            listener = (OnSixteenDaysListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
@@ -48,7 +48,7 @@ public class FiveDays extends Fragment {
         listener = null;
     }
 
-    public interface OnFiveDaysListener {
-        void onFiveDays(Uri uri);
+    public interface OnSixteenDaysListener {
+        void onSixteenDaysWeather(Uri uri);
     }
 }

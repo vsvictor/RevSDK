@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
             getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.log_view) {
         } else if (id == R.id.compatibility) {
-            //startActivity(new Intent(this, CompatibilityActivity.class));
+            startActivity(new Intent(this, CompatibilityActivity.class));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

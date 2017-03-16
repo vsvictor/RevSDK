@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".RevApp"
@@ -33,7 +34,7 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".CompatibilityActivity"
-            android:label="@string/title_activity_compatibility"
+            android:label="@string/weather"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 

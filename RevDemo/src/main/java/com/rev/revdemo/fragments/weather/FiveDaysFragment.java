@@ -1,4 +1,4 @@
-package com.rev.revdemo.fragments;
+package com.rev.revdemo.fragments.weather;
 
 import android.content.Context;
 import android.net.Uri;

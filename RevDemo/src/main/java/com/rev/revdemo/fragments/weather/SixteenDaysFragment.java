@@ -1,4 +1,4 @@
-package com.rev.revdemo.fragments;
+package com.rev.revdemo.fragments.weather;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,15 +10,15 @@ import android.view.ViewGroup;
 
 import com.rev.revdemo.R;
 
-public class TodayFragment extends Fragment {
+public class SixteenDaysFragment extends Fragment {
 
-    private OnTodayListener listener;
+    private OnSixteenDaysListener listener;
 
-    public TodayFragment() {
+    public SixteenDaysFragment() {
     }
 
-    public static TodayFragment newInstance() {
-        TodayFragment fragment = new TodayFragment();
+    public static SixteenDaysFragment newInstance() {
+        SixteenDaysFragment fragment = new SixteenDaysFragment();
         return fragment;
     }
 
@@ -29,13 +29,14 @@ public class TodayFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_today, container, false);
+        return inflater.inflate(R.layout.fragment_sixteen_days, container, false);
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnTodayListener) {
-            listener = (OnTodayListener) context;
+        if (context instanceof OnSixteenDaysListener) {
+            listener = (OnSixteenDaysListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
@@ -47,7 +48,7 @@ public class TodayFragment extends Fragment {
         listener = null;
     }
 
-    public interface OnTodayListener {
-        void onTodayWeather(Uri uri);
+    public interface OnSixteenDaysListener {
+        void onSixteenDaysWeather(Uri uri);
     }
 }

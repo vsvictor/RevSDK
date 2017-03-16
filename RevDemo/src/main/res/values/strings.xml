@@ -32,7 +32,7 @@
     <string name="today">Today</string>
     <string name="day5">For 5 days</string>
     <string name="day16">For 16 days</string>
-    <string name="title_activity_compatibility">CompatibilityActivity</string>
+    <string name="weather_api_key">65e8cf8e51dbd1e999dabb56f569651a</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- TODO: Remove or change this placeholder text -->

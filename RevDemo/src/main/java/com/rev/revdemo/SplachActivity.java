@@ -10,7 +10,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
-import com.rev.revsdk.Actions;
+import com.rev.sdk.Actions;
 
 import java.util.Timer;
 import java.util.TimerTask;

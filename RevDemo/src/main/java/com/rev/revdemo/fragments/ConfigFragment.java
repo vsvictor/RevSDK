@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rev.revdemo.R;
-import com.rev.revsdk.config.Config;
+import com.rev.sdk.config.Config;
 
 public class ConfigFragment extends Fragment {
 

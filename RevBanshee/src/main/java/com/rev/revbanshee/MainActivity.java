@@ -12,7 +12,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
-import com.rev.revsdk.RevSDK;
+import com.rev.sdk.RevSDK;
 
 import java.io.IOException;
 

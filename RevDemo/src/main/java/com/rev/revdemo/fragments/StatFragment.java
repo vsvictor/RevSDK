@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.rev.revdemo.R;
 import com.rev.revdemo.RevApp;
-import com.rev.revsdk.statistic.Statistic;
+import com.rev.sdk.statistic.Statistic;
 
 public class StatFragment extends Fragment {
     private Statistic stat;

@@ -1,6 +1,6 @@
 package com.rev.revdemo.fragments;
 
-import com.rev.revsdk.types.Pair;
+import com.rev.sdk.types.Pair;
 
 /**
  * Created by victor on 06.03.17.

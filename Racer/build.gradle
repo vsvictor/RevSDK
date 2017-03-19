@@ -6,29 +6,34 @@ android {
 
     defaultConfig {
         applicationId "com.rev.racer"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:design:25.3.0'
-    compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
+    compile project(':RevSDK')
+    //compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
     testCompile 'junit:junit:4.12'
+
 }

@@ -12,6 +12,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
+import com.rev.sdk.Constants;
 import com.rev.sdk.RevSDK;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private OkHttpClient client = RevSDK.OkHttpCreate();
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, true, true);
 
     private TextInputEditText edQuery;
     private WebView wvMain;
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         wvMain.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
         wvMain.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         wvMain.getSettings().setPluginState(WebSettings.PluginState.ON);
+        wvMain.setWebViewClient(RevSDK.createWebViewClient(this, wvMain, client));
+        wvMain.setWebChromeClient(RevSDK.createWebChromeClient());
+
 
         rlRun = (RelativeLayout) findViewById(R.id.rlRun);
         rlRun.setOnClickListener(new View.OnClickListener() {

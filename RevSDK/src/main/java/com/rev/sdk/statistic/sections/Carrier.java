@@ -455,8 +455,6 @@ public class Carrier extends Data implements Parcelable {
     public static class RSSIPhoneStateListener extends PhoneStateListener {
         private static int netWorkType;
         private static final String TAG = RSSIPhoneStateListener.class.getSimpleName();
-        //private static ArrayList<Float> rssiArr = new ArrayList<>();
-        //private static List<Float> rssiArr = Collections.synchronizedList(new ArrayList<Float>());
         private static ArrayBlockingQueue<Float> rssiArr = new ArrayBlockingQueue<Float>(1024, true);
 
         public RSSIPhoneStateListener(int netWorkType) {

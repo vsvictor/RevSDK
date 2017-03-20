@@ -169,6 +169,7 @@ public class RevSDK {
 
             }
         }
+        Log.i(TAG, "Response:" + response.toString());
         return response;
     }
 

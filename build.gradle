@@ -45,8 +45,8 @@ sonarqube {
         property "sonar.sources", "src/main/java"
         property "sonar.language", "java"
         property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.binaries", "build/intermediates/classes/debug"
-        property "sonar.java.binaries", "build/intermediates/classes/debug"
+        //property "sonar.binaries", "build/intermediates/classes/debug"
+        //property "sonar.java.binaries", "build/intermediates/classes/debug"
         property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
 //        property "sonar.exclusions", "src/main/java/com/foo/Foo.java"
     }

@@ -34,6 +34,4 @@ dependencies {
     //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
     compile project(':RevSDK')
     //compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
-    testCompile 'junit:junit:4.12'
-    compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
 }

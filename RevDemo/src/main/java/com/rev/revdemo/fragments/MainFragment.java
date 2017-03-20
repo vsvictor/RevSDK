@@ -29,7 +29,7 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
     private OnMainListener listener;
 
-    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, true, true);
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
     private TextInputEditText edQuery;
     private WebView wvMain;
     private RelativeLayout rlRun;

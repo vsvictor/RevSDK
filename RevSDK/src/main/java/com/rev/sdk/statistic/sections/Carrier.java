@@ -146,14 +146,15 @@ public class Carrier extends Data implements Parcelable {
     }
 
     private String MMC(String netOperator) {
+        String res;
         try {
-            String res = netOperator.substring(0, 3);
-            return res;
+            res = netOperator.substring(0, 3);
         } catch (StringIndexOutOfBoundsException ex) {
             return Constants.UNDEFINED;
         } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
+        return res;
     }
 
     public String getMCC() {
@@ -161,14 +162,15 @@ public class Carrier extends Data implements Parcelable {
     }
 
     private String MNC(String netOperator) {
+        String res;
         try {
-            String res = netOperator.substring(3);
-            return res;
+            res = netOperator.substring(3);
         } catch (StringIndexOutOfBoundsException ex) {
             return Constants.UNDEFINED;
         } catch (NullPointerException ex) {
             return Constants.UNDEFINED;
         }
+        return res;
     }
 
     public String getMNC() {
@@ -331,6 +333,8 @@ public class Carrier extends Data implements Parcelable {
                 result = "UMTS";
                 break;
             }
+            default:
+                result = Constants.UNDEFINED;
         }
         return result;
     }
@@ -389,11 +393,9 @@ public class Carrier extends Data implements Parcelable {
             }
             return context.getResources().getString(R.string.unknown);
         } catch (NullPointerException ex) {
-            return Constants.UNDEFINED;
         } catch (SecurityException ex) {
-            return Constants.UNDEFINED;
         }
-
+        return Constants.UNDEFINED;
     }
 
     public static void runRSSIListener() {

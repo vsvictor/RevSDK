@@ -32,7 +32,7 @@ public class FiveDaysFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_five_days, container, false);
     }
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context) throws RuntimeException {
         super.onAttach(context);
         if (context instanceof OnFiveDaysListener) {
             listener = (OnFiveDaysListener) context;

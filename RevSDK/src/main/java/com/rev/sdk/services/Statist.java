@@ -84,21 +84,21 @@ public class Statist extends IntentService {
                 .post(RequestBody.create(MediaType.parse("application/json"),stat))
                 .tag(new Tag(Constants.SYSTEM_REQUEST, true))
                 .build();
-        Response response = null;
+        Response response;
 
         try {
             response = client.newCall(req).execute();
         } catch (IOException e) {
             e.printStackTrace();
+            response = null;
         }
         HTTPCode resCode = HTTPCode.create(response.code());
-        String textMessage = null;
+        String textMessage;
         if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
             ArrayList<RequestOne> rows = statistic.getRequests();
             ContentValues values = new ContentValues();
             values.put(RequestTable.Columns.CONFIRMED, 1);
             int count = 0;
-            //if(statistic.getRequests().size()>0) {
             if (!statistic.getRequests().isEmpty()) {
                 long mixIndex = statistic.getRequests().get(0).getID();
                 long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();

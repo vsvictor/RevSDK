@@ -33,7 +33,7 @@ public class SixteenDaysFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context) throws RuntimeException {
         super.onAttach(context);
         if (context instanceof OnSixteenDaysListener) {
             listener = (OnSixteenDaysListener) context;

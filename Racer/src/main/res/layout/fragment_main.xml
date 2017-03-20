@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rev.racer.fragments.MainFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/main_fragment_container"
+        android:alpha="@dimen/half"
+        android:background="@color/colorBalck"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvNativeMobileApp"
+                android:text="@string/native_mobile_app"
+                android:textSize="@dimen/big_font"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvWebApp"
+                android:text="@string/web_app"
+                android:textSize="@dimen/big_font"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,6 +1,6 @@
 package com.rev.revbanshee;
 
-import com.rev.revsdk.RevApplication;
+import com.rev.sdk.RevApplication;
 
 import org.acra.ACRA;
 import org.acra.ReportField;

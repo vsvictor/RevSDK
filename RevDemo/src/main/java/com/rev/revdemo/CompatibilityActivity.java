@@ -173,8 +173,8 @@ public class CompatibilityActivity extends AppCompatActivity implements
                 case 2:
                     return SixteenDaysFragment.newInstance();
                 default:
-                    return TodayFragment.newInstance();
             }
+            return TodayFragment.newInstance();
         }
         @Override
         public int getCount() {

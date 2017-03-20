@@ -32,7 +32,7 @@ public class TodayFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_today, container, false);
     }
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context) throws RuntimeException {
         super.onAttach(context);
         if (context instanceof OnTodayListener) {
             listener = (OnTodayListener) context;

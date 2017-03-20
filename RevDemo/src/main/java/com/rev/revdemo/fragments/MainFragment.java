@@ -8,14 +8,13 @@ import android.support.design.widget.TextInputEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.rev.revdemo.R;
-import com.rev.revsdk.Constants;
-import com.rev.revsdk.RevSDK;
-import com.rev.revsdk.types.HTTPCode;
+import com.rev.sdk.Constants;
+import com.rev.sdk.RevSDK;
+import com.rev.sdk.types.HTTPCode;
 
 import java.io.IOException;
 
@@ -23,7 +22,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
-import static com.rev.revsdk.utils.IOUtils.runRequest;
+import static com.rev.sdk.utils.IOUtils.runRequest;
 
 public class MainFragment extends Fragment {
 

@@ -43,23 +43,21 @@ public class RequestCreator {
     }
 
     public Request create(Request original){
-        Request result = null;
+        Request result;
 
-        if(config == null) return original;
+        if (config == null) {
+            return original;
+        }
+
         switch (config.getParam().get(0).getOperationMode()){
-            case transfer_and_report:{
-                result = transfer(original);
-                break;
-            }
+            case transfer_and_report:
             case transfer_only: {
                 result = transfer(original);
                 break;
             }
-            case report_only: {
-                result = original;
-                break;
-            }
-            case off:{
+            case report_only:
+            case off:
+            default: {
                 result = original;
                 break;
             }
@@ -70,17 +68,22 @@ public class RequestCreator {
 
     private Request transfer(Request original) {
 
-        if (checker.isInternalBlack(original) || checker.isBlack(original)) return original;
+        if (checker.isInternalBlack(original) || checker.isBlack(original)) {
+            return original;
+        }
 
         if (checker.isWhite(original)) {
             Request.Builder builder = new Request.Builder();
             HttpUrl oldURL = original.url();
             String oldDomen = oldURL.host();
 
-            HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen, RevApplication.getInstance().getSDKKey() + "." + config.getParam().get(0).getEdgeSdkDomain()));
+            HttpUrl newURL = HttpUrl.parse(oldURL.toString().replace(oldDomen,
+                    RevApplication.getInstance().getSDKKey() + "." +
+                            config.getParam().get(0).getEdgeSdkDomain()));
             if (!newURL.isHttps()) {
                 newURL = HttpUrl.parse("https://" + newURL.toString().split("://")[1]);
             }
+            Log.i(TAG, "-----------New URL: " + newURL + "---------------");
             builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
             return builder.build();
         }
@@ -98,7 +101,7 @@ public class RequestCreator {
         }
 
         if (checker.isProvosion(original)) {
-            if (original.url().scheme().equalsIgnoreCase("http")) {
+            if ("http".equalsIgnoreCase(original.url().scheme())) {
                 valueBuilder.append(RevApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");
                 valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeHost());

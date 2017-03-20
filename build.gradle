@@ -7,17 +7,25 @@ buildscript {
         maven {
             url "http://homedevelopment.bintray.com/revsdk"
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2.1"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 plugins {
     id "com.jfrog.bintray" version "1.7.3"
+}
+plugins {
+    id "org.sonarqube" version "2.2.1"
 }
 allprojects {
 
@@ -26,6 +34,53 @@ allprojects {
         mavenCentral()
         maven {
             url "http://homedevelopment.bintray.com/revsdk"
+        }
+    }
+}
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonar.x2link.co"
+        property "sonar.projectName", "RevSDK"
+        property "sonar.projectKey", "vestern"
+        property "sonar.sources", "src/main/java"
+        property "sonar.language", "java"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.binaries", "build/intermediates/classes/debug"
+        property "sonar.java.binaries", "build/intermediates/classes/debug"
+        property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
+//        property "sonar.exclusions", "src/main/java/com/foo/Foo.java"
+    }
+}
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "RevSDK/src/main/java"
+            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
+        }
+    }
+}
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "RevDemo/src/main/java"
+            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
+        }
+    }
+}
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "RevBanshee/src/main/java"
+            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
+        }
+    }
+}
+
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "Racer/src/main/java"
+            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
         }
     }
 }

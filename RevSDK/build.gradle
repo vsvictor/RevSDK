@@ -56,6 +56,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.1'
     compile 'ch.acra:acra:4.9.0'
 }
+
+
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.rev.sdk'                               // Maven Group ID for the artifact

@@ -25,6 +25,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
+    compile project(':RevSDK')
+    //testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.google.android.gms:play-services:10.2.0'
     compile 'com.android.support:design:25.3.0'
@@ -33,8 +36,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
-    compile project(':RevSDK')
     compile 'ch.acra:acra:4.9.0'
-    //testCompile 'junit:junit:4.12'
 }

@@ -1,8 +1,6 @@
 package com.rev.sdk;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -160,11 +158,12 @@ public class RevSDK {
         if (!systemRequest && isStatistic()) {
             try {
                 final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
-                Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                        .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                        .query(RequestTable.URI, null, null, null, null);
-                Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
+                //Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                //        .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                //Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
+                //        .query(RequestTable.URI, null, null, null, null);
+                //Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
             } catch (NullPointerException ex) {
 
             }

@@ -44,7 +44,9 @@ package com.rev.sdk.database;
  * /
  */
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -73,5 +75,34 @@ public class DBHelper extends SQLiteOpenHelper{
         db.execSQL(RequestTable.Requests.DROP_REQUEST);
         db.execSQL(AppTable.Requests.DROP_REQUEST);
         onCreate(db);
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(RequestTable.Requests.TABLE_NAME, null, null);
+    }
+
+    public long insertRequest(ContentValues values) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.update(RequestTable.Requests.TABLE_NAME, values, null, null);
+    }
+
+    public int updateRequest(ContentValues values) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.update(RequestTable.Requests.TABLE_NAME, values, null, null);
+    }
+
+    public int updateRequestFromTo(ContentValues values, long from, long to) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.update(RequestTable.Requests.TABLE_NAME,
+                values,
+                RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
+                new String[]{String.valueOf(from), String.valueOf(to)});
+    }
+
+    public Cursor getUnsent() {
+        String[] args = {"1", "0"};
+        SQLiteDatabase db = getWritableDatabase();
+        return db.query(RequestTable.Requests.TABLE_NAME, null, RequestTable.Columns.SENT + "=? AND " + RequestTable.Columns.CONFIRMED + "=?", args, null, null, null);
     }
 }

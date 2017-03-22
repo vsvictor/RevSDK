@@ -25,7 +25,6 @@ package com.rev.sdk.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.rev.sdk.RevApplication;
@@ -37,20 +36,29 @@ import java.util.List;
 
 public class RequestTable {
     private static final String TAG = "RequestTable";
-    public static final Uri URI = DBHelper.BASE_CONTENT_URI.buildUpon().appendPath(RequestTable.Requests.TABLE_NAME).build();
 
+    //public static final Uri URI = DBHelper.BASE_CONTENT_URI.buildUpon().appendPath(RequestTable.Requests.TABLE_NAME).build();
+/*
     public static Uri insert(Context context, RequestOne req){
         RevApplication con = (RevApplication) context;
         return context.getContentResolver().insert(URI, toContentValues(con.getConfig().getAppName(), req));
     }
-    public static void insert(Context context, @NonNull List<RequestOne> reqs){
+*/
+    public static void insert(Context context, RequestOne req) {
         RevApplication con = (RevApplication) context;
-        ContentValues[] values = new ContentValues[reqs.size()];
-        for(int i = 0; i<reqs.size();i++){
-            values[i] = toContentValues(con.getConfig().getAppName(), reqs.get(i));
-        }
-        context.getContentResolver().bulkInsert(URI, values);
+        con.getDatabase().insertRequest(toContentValues(con.getConfig().getAppName(), req));
     }
+
+    /*
+        public static void insertRequests(@NonNull List<RequestOne> reqs){
+            RevApplication con = (RevApplication) context;
+            ContentValues[] values = new ContentValues[reqs.size()];
+            for(int i = 0; i<reqs.size();i++){
+                values[i] = toContentValues(con.getConfig().getAppName(), reqs.get(i));
+            }
+            context.getContentResolver().bulkInsert(URI, values);
+        }
+    */
     @NonNull
     public static RequestOne fromCursor(@NonNull Cursor cursor){
         RequestOne value = new RequestOne();
@@ -104,7 +112,8 @@ public class RequestTable {
 */
     @NonNull
     public static void clear(Context context){
-        context.getContentResolver().delete(URI, null, null);
+        //context.getContentResolver().delete(URI, null, null);
+        RevApplication.getInstance().getDatabase().deleteAll();
     }
     @NonNull
     public static ContentValues toContentValues(String appName, @NonNull RequestOne req) {

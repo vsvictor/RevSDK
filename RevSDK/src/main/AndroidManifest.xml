@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.rev.sdk">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -24,12 +23,23 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <provider
-            tools:replace="android:authorities"
-            android:authorities="${applicationId}"
-            android:exported="false"
-            android:name=".RevContentProvider"
-            android:label="SporticsProvider"/>
+        <!--
+                <provider
+                    android:authorities="com.rev.sdk"
+                    android:name=".RevContentProvider"
+                    android:grantUriPermissions="true"
+                    android:readPermission="android.permission.READ_STAT_DATABASE"
+                    android:writePermission="android.permission.WRITE_STAT_DATABASE"
+                    android:enabled="true"
+                    android:multiprocess="true"
+                    android:exported="true"
+                    android:label="SporticsProvider">
 
+                    <path-permission android:path="/"
+                        android:readPermission="android.permission.READ_STAT_DATABASE"
+                        android:writePermission="android.permission.WRITE_STAT_DATABASE"/>
+
+                </provider>
+        -->
     </application>
 </manifest>

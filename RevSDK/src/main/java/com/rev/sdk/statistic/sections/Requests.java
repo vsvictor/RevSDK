@@ -47,8 +47,11 @@ public class Requests extends ArrayList<RequestOne>{
         String[] args = {"1","0"};
         ContentValues update = new ContentValues();
         update.put(RequestTable.Columns.SENT, 1);
-        context.getContentResolver().update(RequestTable.URI, update,null,null);
-        Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? AND "+RequestTable.Columns.CONFIRMED+"=?", args, null);
+        //context.getContentResolver().update(RequestTable.URI, update,null,null);
+        RevApplication.getInstance().getDatabase().updateRequest(update);
+
+        //Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? AND "+RequestTable.Columns.CONFIRMED+"=?", args, null);
+        Cursor c = RevApplication.getInstance().getDatabase().getUnsent();
         List<RequestOne> rows = RequestTable.listFromCursor(c);
         int perReport = RevApplication.getInstance().getConfig().getParam().get(0).getStatsReportingMaxRequestsPerReport();
         Log.i(TAG, "Max per report:"+String.valueOf(perReport));

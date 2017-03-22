@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="method">
+        <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
+        <item>DELETE</item>
+        <item>HEAD</item>
+        <item>CONNECT</item>
+        <item>OPTIONS</item>
+        <item>TRACE</item>
+    </string-array>
+    <string-array name="mode">
+        <item>Transfer and Report</item>
+        <item>Transfer only</item>
+        <item>Report only</item>
+        <item>Off</item>
+    </string-array>
+
+</resources>

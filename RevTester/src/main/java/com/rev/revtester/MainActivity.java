@@ -2,22 +2,26 @@ package com.rev.revtester;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.rev.revdemo.fragments.MainFragment;
+import com.rev.revtester.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener {
     private Fragment main;
-
+    private AppBarLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        layout = (AppBarLayout) findViewById(R.id.app_bar);
+        layout.setExpanded(true);
+
 /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

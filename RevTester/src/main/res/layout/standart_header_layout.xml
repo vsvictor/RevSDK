@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/cbHost"
+        android:text="@string/host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/cbXRevHost"
+        android:text="@string/x_rev_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/llProto"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cbXRevProto"
+            android:text="@string/x_rev_proto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioGroup
+            android:id="@+id/rgProto"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rbHTTP"
+                android:checked="true"
+                android:text="@string/http"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rbHTTPS"
+                android:checked="false"
+                android:text="@string/HTTPS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+    </LinearLayout>
+
+</LinearLayout>

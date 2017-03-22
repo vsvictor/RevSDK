@@ -104,7 +104,7 @@ public class RequestCreator {
             if ("http".equalsIgnoreCase(original.url().scheme())) {
                 valueBuilder.append(RevApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");
-                valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeHost());
+                valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
                 builder.add(Constants.HOST_HEADER_NAME,valueBuilder.toString());
             }
             builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
@@ -112,7 +112,7 @@ public class RequestCreator {
         } else if (checker.isWhite(original)) {
             valueBuilder.append(RevApplication.getInstance().getSDKKey());
             valueBuilder.append(".");
-            valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeHost());
+            valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
             builder.add(Constants.HOST_HEADER_NAME,valueBuilder.toString());
             builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
             builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());

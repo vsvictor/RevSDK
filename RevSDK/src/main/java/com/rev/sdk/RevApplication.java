@@ -14,6 +14,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.rev.sdk.config.Config;
 import com.rev.sdk.config.OperationMode;
+import com.rev.sdk.database.DBHelper;
 import com.rev.sdk.permission.RequestUserPermission;
 import com.rev.sdk.protocols.Protocol;
 import com.rev.sdk.services.Configurator;
@@ -77,12 +78,15 @@ public class RevApplication extends Application {
 
     protected String MAIN_PACKAGE;
 
+    private DBHelper dbHelper;
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         MAIN_PACKAGE = instance.getPackage();
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
+        dbHelper = new DBHelper(this);
         counter = new RequestCounter();
         init();
     }
@@ -190,6 +194,10 @@ public class RevApplication extends Application {
 
     public RequestCounter getCounter() {
         return counter;
+    }
+
+    public DBHelper getDatabase() {
+        return dbHelper;
     }
 
     private void registration() {

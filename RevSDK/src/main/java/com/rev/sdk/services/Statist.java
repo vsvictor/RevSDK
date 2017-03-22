@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
+import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
 import com.rev.sdk.database.RequestTable;
 import com.rev.sdk.statistic.Statistic;
@@ -102,10 +103,11 @@ public class Statist extends IntentService {
             if (!statistic.getRequests().isEmpty()) {
                 long mixIndex = statistic.getRequests().get(0).getID();
                 long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
-                count = getApplicationContext().getContentResolver().update(RequestTable.URI,
-                        values,
-                        RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
-                        new String[]{String.valueOf(mixIndex), String.valueOf(maxIndex)});
+                //count = getApplicationContext().getContentResolver().update(RequestTable.URI,
+                //        values,
+                //        RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
+                //        new String[]{String.valueOf(mixIndex), String.valueOf(maxIndex)});
+                count = RevApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
             }
             textMessage = "Success";
             Log.i(TAG, "Updated: "+String.valueOf(count));

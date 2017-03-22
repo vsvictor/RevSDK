@@ -16,6 +16,7 @@
 #   public *;
 #}
 
+#-keep public class com.rev.sdk.RevContentProvider
 #-keepattributes InnerClasses
-#-dontoptimize
+-dontoptimize
 

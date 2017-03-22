@@ -103,8 +103,14 @@ public class MainActivity extends AppCompatActivity
             current = StatFragment.newInstance();
             getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.log_view) {
+
         } else if (id == R.id.compatibility) {
             startActivity(new Intent(this, CompatibilityActivity.class));
+        } else if (id == R.id.tester) {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.rev.revtester");
+            if (launchIntent != null) {
+                startActivity(launchIntent);
+            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -114,3 +120,18 @@ public class MainActivity extends AppCompatActivity
     public void onMain() {
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,6 +22,11 @@
             android:id="@+id/compatibility"
             android:icon="@drawable/ic_menu_compatibility"
             android:title="@string/compatibility" />
+        <item
+            android:id="@+id/tester"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/tester" />
+
     </group>
 
     <item android:title="Communicate">

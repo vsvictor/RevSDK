@@ -1,5 +1,6 @@
 package com.rev.sdk;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -111,6 +112,26 @@ public class RevApplication extends Application {
         }
         return result.toLowerCase();
     }
+
+    /*
+        private String getNameFromManifest() {
+            String result = "name";
+            try {
+                ApplicationInfo app = this.getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+                Bundle bundle = app.metaData;
+                for (String key : bundle.keySet()) {
+                    if (key.equals("com.revsdk.name")) {
+                        result = bundle.getString(Constants.KEY_TAG);
+                    }
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+            return result.toLowerCase();
+        }
+    */
     private void init() {
         try {
             version = getApplicationContext()
@@ -124,48 +145,65 @@ public class RevApplication extends Application {
         sdkKey = getKeyFromManifest();
         counter.load(share);
         config = Config.load(RevSDK.gsonCreate(), share);
-        registration();
-        configuratorRunner(true);
-        testerRunner();
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Carrier.runRSSIListener();
-                    }
-                }).start();
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
             }
-        }, 10 * 1000);
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                registration();
+                configuratorRunner(true);
+                testerRunner();
+                Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Carrier.runRSSIListener();
+                            }
+                        }).start();
+
+                    }
+                }, 10 * 1000);
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+                shutdown();
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
 
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-        while (configTimer != null) {
-            configTimer.cancel();
-            configTimer.purge();
-            configTimer = null;
-        }
-        while (staleTimer != null) {
-            staleTimer.cancel();
-            staleTimer.purge();
-            staleTimer = null;
-        }
-        while (statTimer != null) {
-            statTimer.cancel();
-            statTimer.purge();
-            statTimer = null;
-        }
-        unregisterReceiver(configReceiver);
-        unregisterReceiver(configStaleReceiver);
-        unregisterReceiver(testReceiver);
-        unregisterReceiver(statReceiver);
-        counter.save(share);
+        shutdown();
     }
 
     public static RevApplication getInstance() {
@@ -221,6 +259,31 @@ public class RevApplication extends Application {
         IntentFilter intentFilterStat = new IntentFilter();
         intentFilterStat.addAction(Actions.STAT_ACTION);
         registerReceiver(statReceiver, intentFilterStat);
+        Log.i("PROMO", config.getAppName() + ": Start all receivers");
+    }
+
+    public void shutdown() {
+        while (configTimer != null) {
+            configTimer.cancel();
+            configTimer.purge();
+            configTimer = null;
+        }
+        while (staleTimer != null) {
+            staleTimer.cancel();
+            staleTimer.purge();
+            staleTimer = null;
+        }
+        while (statTimer != null) {
+            statTimer.cancel();
+            statTimer.purge();
+            statTimer = null;
+        }
+        unregisterReceiver(configReceiver);
+        unregisterReceiver(configStaleReceiver);
+        unregisterReceiver(testReceiver);
+        unregisterReceiver(statReceiver);
+        counter.save(share);
+        Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
 
     private BroadcastReceiver createConfigReceiver() {
@@ -231,12 +294,17 @@ public class RevApplication extends Application {
                 if (result != null) {
                     HTTPCode httpCode = HTTPCode.create(result.getInt(Constants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
                     if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                        Log.i(TAG, "HTTP config success");
                         String newConfig = result.getString(Constants.CONFIG);
                         if (newConfig != null) {
                             Log.i(TAG + " configurator receiver", newConfig);
                             Gson gson = RevSDK.gsonCreate();
                             config = gson.fromJson(newConfig, Config.class);
-                            config.save(gson, share);
+                            ///if(config.ge)
+                            Log.i(TAG, "Parce to POJO");
+                            //config.save(gson, share);
+                            config.save(newConfig, share);
+                            Log.i(TAG, "Save config");
                             sendBroadcast(new Intent(Actions.CONFIG_LOADED));
                             Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
                             if (RevSDK.isStatistic()) {
@@ -351,9 +419,9 @@ public class RevApplication extends Application {
                     startService(updateIntent);
 
                 }
-            }, config == null ?
+            }, RevApplication.getInstance().getConfig() == null ?
                     Constants.DEFAULT_CONFIG_INTERVAL
-                    : config.getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
+                    : RevApplication.getInstance().getConfig().getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
         }
     }
 

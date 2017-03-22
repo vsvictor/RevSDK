@@ -1,8 +1,11 @@
 package com.rev.revtester.fragments;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -12,10 +15,13 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
@@ -26,6 +32,7 @@ import android.widget.Toast;
 
 import com.rev.revtester.R;
 import com.rev.revtester.RevApp;
+import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevSDK;
 import com.rev.sdk.config.OperationMode;
@@ -62,6 +69,7 @@ public class MainFragment extends Fragment {
     private TextInputEditText edHeaders;
     private String headers;
     private AppCompatCheckBox cbView;
+    private AppCompatCheckBox cbClient;
     private ScrollView svText;
     private ScrollView svWeb;
     private WebView wvMain;
@@ -93,8 +101,8 @@ public class MainFragment extends Fragment {
 
 
         wvMain = (WebView) view.findViewById(R.id.wvMain);
-        wvMain.setWebViewClient(RevSDK.createWebViewClient(getActivity(), wvMain, client));
-        wvMain.setWebChromeClient(RevSDK.createWebChromeClient());
+        wvMain.setWebViewClient(new WebViewClient());
+        wvMain.setWebChromeClient(new WebChromeClient());
 
         tvMain = (TextView) view.findViewById(R.id.tvMain);
         tvHeader = (TextView) view.findViewById(R.id.tvHeaders);
@@ -293,6 +301,7 @@ public class MainFragment extends Fragment {
 
         svText = (ScrollView) view.findViewById(R.id.svText);
         svWeb = (ScrollView) view.findViewById(R.id.svWeb);
+        cbClient = (AppCompatCheckBox) view.findViewById(R.id.cbClient);
 
         cbView = (AppCompatCheckBox) view.findViewById(R.id.cbView);
         cbView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -301,9 +310,23 @@ public class MainFragment extends Fragment {
                 if (isChecked) {
                     svText.setVisibility(View.INVISIBLE);
                     svWeb.setVisibility(View.VISIBLE);
+                    cbClient.setVisibility(View.VISIBLE);
                 } else {
                     svText.setVisibility(View.VISIBLE);
                     svWeb.setVisibility(View.INVISIBLE);
+                    cbClient.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        cbClient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if ((cbClient.getVisibility() == View.VISIBLE) && (cbClient.isChecked())) {
+                    wvMain.setWebViewClient(RevSDK.createWebViewClient(getActivity(), wvMain, client));
+                    wvMain.setWebChromeClient(RevSDK.createWebChromeClient());
+                } else {
+                    wvMain.setWebViewClient(new WebViewClient());
+                    wvMain.setWebChromeClient(new WebChromeClient());
                 }
             }
         });
@@ -388,4 +411,38 @@ public class MainFragment extends Fragment {
             tvHeader.setText(resHeader.toString());
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter ifConfig = new IntentFilter();
+        ifConfig.addAction(Actions.CONFIG_LOADED);
+        getActivity().registerReceiver(configReceiver, ifConfig);
+    }
+
+    private BroadcastReceiver configReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, RevApp.getInstance().getConfig().getParam().get(0).getOperationMode().toString());
+            switch (RevApp.getInstance().getConfig().getParam().get(0).getOperationMode()) {
+                case transfer_and_report: {
+                    spMode.setSelection(0);
+                    break;
+                }
+                case transfer_only: {
+                    spMode.setSelection(1);
+                    break;
+                }
+                case report_only: {
+                    spMode.setSelection(2);
+                    break;
+                }
+                case off: {
+                    spMode.setSelection(3);
+                    break;
+                }
+                //default:{spMode.setSelection(0);break;}
+            }
+        }
+    };
 }

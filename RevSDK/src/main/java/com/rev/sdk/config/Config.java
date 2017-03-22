@@ -61,6 +61,14 @@ public class Config extends Data implements Parcelable {
         editor.putString("config", s);
         editor.apply();
     }
+
+    public void save(String s, SharedPreferences share) {
+        //String s = gson.toJson(this);
+        SharedPreferences.Editor editor = share.edit();
+        editor.putString("config", s);
+        editor.apply();
+    }
+
     public static Config load(Gson gson, SharedPreferences share){
         String s = share.getString("config", "");
         if(!s.isEmpty()){

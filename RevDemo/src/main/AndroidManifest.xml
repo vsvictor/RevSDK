@@ -17,6 +17,9 @@
         <meta-data
             android:name="com.revsdk.key"
             android:value="5f0cbda0-108c-434d-9ebf-d4ecd88e6d6c" />
+        <meta-data
+            android:name="com.revsdk.name"
+            android:value="Android Demo Application" />
 
         <activity
             android:name=".MainActivity"

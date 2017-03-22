@@ -103,4 +103,5 @@
     <string name="http">HTTP</string>
     <string name="HTTPS">HTTPS</string>
     <string name="empty">(Empty)</string>
+    <string name="with_client">with client</string>
 </resources>

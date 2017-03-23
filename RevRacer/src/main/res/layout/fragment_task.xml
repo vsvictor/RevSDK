@@ -17,7 +17,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.75"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical">
 
@@ -30,7 +30,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_weight="2.9"
                 android:gravity="center_vertical|center_horizontal">
 
                 <android.support.design.widget.TextInputLayout
@@ -53,7 +53,6 @@
                         android:gravity="top"
                         android:hint="@string/url"
                         android:inputType="textWebEmailAddress"
-                        android:maxLines="50"
                         android:paddingLeft="@dimen/middle"
                         android:singleLine="false" />
                 </android.support.design.widget.TextInputLayout>
@@ -65,13 +64,30 @@
                 android:layout_weight="3"
                 android:gravity="center_vertical|center_horizontal">
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                 <SeekBar
                     android:id="@+id/sbTests"
                     style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:gravity="center_vertical|center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="10"
-                    android:progress="1" />
+                    android:layout_weight="1"
+                    android:max="20"
+                    android:progress="3" />
+
+                    <TextView
+                        android:id="@+id/tvTests"
+                        android:text="@string/steps"
+                        android:textSize="@dimen/seekbar_font_size"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_weight="4.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -80,13 +96,31 @@
                 android:layout_weight="3"
                 android:gravity="center_vertical|center_horizontal">
 
-                <SeekBar
-                    android:id="@+id/sbPayloads"
-                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|center_horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:max="10"
-                    android:progress="1" />
+                    android:layout_height="match_parent">
+
+                    <SeekBar
+                        android:id="@+id/sbPayload"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:progress="1" />
+
+                    <TextView
+                        android:id="@+id/tvSize"
+                        android:text="@string/size"
+                        android:textSize="@dimen/seekbar_font_size"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_weight="5"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -146,12 +180,67 @@
 
                 </LinearLayout>
             </RelativeLayout>
-        </LinearLayout>
 
+            <RelativeLayout
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/rlHistory"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/big"
+                    android:layout_marginRight="@dimen/big"
+                    android:layout_marginBottom="@dimen/small"
+                    android:background="@drawable/background_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:text="@string/history"
+                    android:textSize="@dimen/button_font"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/rlStart"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/big"
+                    android:layout_marginRight="@dimen/big"
+                    android:layout_marginTop="@dimen/small"
+                    android:background="@drawable/background_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:text="@string/start"
+                    android:textSize="@dimen/button_font"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+        </LinearLayout>
         <RelativeLayout
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/rvResult"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
     </LinearLayout>

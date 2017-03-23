@@ -1,6 +1,7 @@
 package com.rev.racer;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,7 +11,7 @@ import com.rev.racer.fragments.MainFragment;
 import com.rev.racer.fragments.TaskFragment;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
-
+    private Fragment current;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +19,22 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, MainFragment.newInstance()).commit();
+        current = MainFragment.newInstance();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, current)
+                .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (current instanceof TaskFragment) {
+            current = MainFragment.newInstance();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, current)
+                    .commit();
+        } else super.onBackPressed();
     }
 
     @Override
@@ -38,9 +54,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onNativeMobile() {
+        current = TaskFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, TaskFragment.newInstance())
+                .replace(R.id.container, current)
                 .commit();
     }
 

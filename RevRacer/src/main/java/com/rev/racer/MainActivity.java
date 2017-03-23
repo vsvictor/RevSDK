@@ -7,8 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.rev.racer.fragments.MainFragment;
+import com.rev.racer.fragments.TaskFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,14 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-/*
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-*/
         getSupportFragmentManager().beginTransaction().replace(R.id.container, MainFragment.newInstance()).commit();
     }
 
@@ -42,36 +35,22 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-/*
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment result;
-            switch (position){
-                case 0:{result = MainFragment.newInstance();break;}
-                default:{result = MainFragment.newInstance();break;}
-            }
-            return MainFragment.newInstance();
-        }
-
-        @Override
-        public int getCount() {
-            return 1;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getResources().getString(R.string.main_title);
-            }
-            return null;
-        }
+    @Override
+    public void onNativeMobile() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, TaskFragment.newInstance())
+                .commit();
     }
-*/
+
+    @Override
+    public void onWeb() {
+
+    }
+
+    @Override
+    public void onStartTask() {
+
+    }
 }

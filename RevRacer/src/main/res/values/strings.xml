@@ -5,4 +5,9 @@
     <string name="main_title">Select</string>
     <string name="native_mobile_app">Native mobile App</string>
     <string name="web_app">Web App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="url">Please enter URL...</string>
+    <string name="get">GET</string>
 </resources>

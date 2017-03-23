@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "com.rev.racer"
+        applicationId "com.rev.racer_start"
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
@@ -27,11 +27,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
+    compile project(':RevSDK')
+    //compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:design:25.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
-    compile project(':RevSDK')
-    //compile files('libs/selendroid-standalone-0.17.0-with-dependencies.jar')
+    compile 'com.android.support:support-v4:25.3.0'
 }

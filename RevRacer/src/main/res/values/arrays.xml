@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="method">
+        <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
+    </string-array>
+    <string-array name="payloads">
+        <item>JSON</item>
+        <item>XML</item>
+    </string-array>
+</resources>

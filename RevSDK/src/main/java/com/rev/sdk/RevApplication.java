@@ -113,7 +113,7 @@ public class RevApplication extends Application {
         return result.toLowerCase();
     }
 
-    /*
+
         private String getNameFromManifest() {
             String result = "name";
             try {
@@ -131,7 +131,7 @@ public class RevApplication extends Application {
             }
             return result.toLowerCase();
         }
-    */
+
     private void init() {
         try {
             version = getApplicationContext()
@@ -259,7 +259,7 @@ public class RevApplication extends Application {
         IntentFilter intentFilterStat = new IntentFilter();
         intentFilterStat.addAction(Actions.STAT_ACTION);
         registerReceiver(statReceiver, intentFilterStat);
-        Log.i("PROMO", config.getAppName() + ": Start all receivers");
+        //Log.i("PROMO", config.getAppName() + ": Start all receivers");
     }
 
     public void shutdown() {

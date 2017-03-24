@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import com.rev.racer.fragments.MainFragment;
 import com.rev.racer.fragments.TaskFragment;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener {
     private Fragment current;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +63,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onWeb() {
-
-    }
-
-    @Override
-    public void onStartTask() {
 
     }
 }

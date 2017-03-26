@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/RevRacer" />
             <option value="$PROJECT_DIR$/RevSDK" />
             <option value="$PROJECT_DIR$/RevTester" />
+            <option value="$PROJECT_DIR$/RevWeather" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

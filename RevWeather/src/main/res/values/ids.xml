@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="today_loader" type="id" />
+    <item name="day5_loader" type="id" />
+    <item name="day16_loader" type="id" />
+</resources>

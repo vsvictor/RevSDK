@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/RevRacer/RevRacer.iml" filepath="$PROJECT_DIR$/RevRacer/RevRacer.iml" />
       <module fileurl="file://$PROJECT_DIR$/RevSDK/RevSDK.iml" filepath="$PROJECT_DIR$/RevSDK/RevSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/RevTester/RevTester.iml" filepath="$PROJECT_DIR$/RevTester/RevTester.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RevWeather/RevWeather.iml" filepath="$PROJECT_DIR$/RevWeather/RevWeather.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
     </modules>
   </component>

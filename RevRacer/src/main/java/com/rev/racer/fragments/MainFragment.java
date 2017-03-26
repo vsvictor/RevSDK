@@ -120,7 +120,6 @@ public class MainFragment extends Fragment {
 
     public interface OnMainListener {
         void onNativeMobile();
-
         void onWeb();
     }
 }

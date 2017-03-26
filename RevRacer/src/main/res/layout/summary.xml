@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cvMain"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/tvAverage"
+            android:textSize="@dimen/small_font"
+            android:paddingLeft="@dimen/middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAppearance="?attr/textAppearanceListItem" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/tvMedian"
+            android:textSize="@dimen/small_font"
+            android:paddingRight="@dimen/small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAppearance="?attr/textAppearanceListItem" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

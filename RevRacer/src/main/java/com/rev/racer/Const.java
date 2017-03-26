@@ -5,6 +5,9 @@ package com.rev.racer;
  */
 
 public class Const {
+    public static final String DATA = "data";
+    public static final String EMAIL = "email";
+
     public static String STEPS = "steps";
     public static String SIZE = "size";
     public static String URL = "url";

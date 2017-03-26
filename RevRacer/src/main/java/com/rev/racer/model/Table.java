@@ -15,6 +15,10 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
             builder.append(r.toString());
             builder.append("\n");
         }
+        //builder.append("Average: ");
+        //builder.append(this.average());
+        //builder.append(" Mediane: ");
+        //builder.append(this.median());
         return builder.toString();
     }
 
@@ -23,14 +27,16 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         for (Row r : this) {
             sum += r.getTimeInMillis();
         }
-        return sum / this.size();
+        if (size() == 0) return 0;
+        else return sum / this.size();
     }
 
     public long median() {
         if (this.size() == 0) return 0;
         else if (this.size() == 1) return this.get(0).getTimeInMillis();
         else {
-            Collections.sort(this, this);
+            ArrayList<Row> c = (ArrayList<Row>) this.clone();
+            Collections.sort(c, this);
 
             if (this.size() % 2 == 0) {
                 Row m1 = this.get(this.size() / 2);

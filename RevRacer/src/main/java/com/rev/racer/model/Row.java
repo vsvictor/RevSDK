@@ -5,10 +5,19 @@ package com.rev.racer.model;
  */
 
 public class Row {
+    private String source;
     private long start;
     private long finish;
     private long body;
     private long payload;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public long getStart() {
         return start;
@@ -48,7 +57,9 @@ public class Row {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Start: ");
+        builder.append("Source:");
+        builder.append(" '" + this.getSource() + "'");
+        builder.append(" Start: ");
         builder.append(this.getStart());
         builder.append(" Finish: ");
         builder.append(this.getFinish());

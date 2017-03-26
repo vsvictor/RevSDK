@@ -1,16 +1,11 @@
 <resources>
     <string name="app_name">Racer</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="main_title">Select</string>
     <string name="native_mobile_app">Native mobile App</string>
     <string name="web_app">Web App</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="url">Please enter URL...</string>
-    <string name="get">GET</string>
-    <string name="url_text_size">12sp</string>
     <string name="history">History</string>
     <string name="start">Start</string>
     <string name="steps">3 steps</string>
@@ -22,4 +17,16 @@
     <string name="time_ms">Time, ms</string>
     <string name="body_kb">Body, KB</string>
     <string name="payload_kb">Payload, KB</string>
+    <string name="r_source">R</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <!-- Example settings for Data & Sync -->
+
+    <!-- Example settings for Notifications -->
+
+    <string name="email">Enter your email...</string>
+    <string name="choiser">Select</string>
 </resources>

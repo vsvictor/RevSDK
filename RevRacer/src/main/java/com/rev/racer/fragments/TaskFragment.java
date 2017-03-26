@@ -89,7 +89,9 @@ public class TaskFragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         });
-        edURL.setText("https://google.com.ua");
+        edURL.setText("google.com.ua");
+        //edURL.setText("https://google.com.ua");
+        //edURL.setText("https://www.dell.com");
         sbSteps = (SeekBar) view.findViewById(R.id.sbTests);
         tvSteps = (TextView) view.findViewById(R.id.tvTests);
         sbSteps.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

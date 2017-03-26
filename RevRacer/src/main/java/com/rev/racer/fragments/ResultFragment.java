@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,7 @@ import com.rev.racer.model.Table;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevSDK;
 import com.rev.sdk.types.HTTPCode;
+import com.rev.sdk.types.Tag;
 
 import java.io.IOException;
 import java.util.Random;
@@ -39,7 +42,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ResultFragment extends Fragment {
-    private static final String TAG = TaskFragment.class.getSimpleName();
+    private static final String TAG = ResultFragment.class.getSimpleName();
     private Typeface main;
     private LinearLayout llBackground;
     private RelativeLayout rlMainContainer;
@@ -56,12 +59,14 @@ public class ResultFragment extends Fragment {
     private ResultAdapter adapter;
     private TextView tvAverage;
     private TextView tvMedian;
+    private FloatingActionButton fbEMail;
+    private Table all;
 
     //private HttpUrl url;
     private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
 
     public ResultFragment() {
-        //this.table = ((MainActivity)getActivity()).getTable();
+        this.all = new Table();
     }
 
     public static ResultFragment newInstance(int steps, long body, String url, String method, String type) {
@@ -92,7 +97,8 @@ public class ResultFragment extends Fragment {
         main = Typeface.createFromAsset(getActivity().getAssets(), "fonts/crochet.ttf");
         View rootView = inflater.inflate(R.layout.fragment_result, container, false);
         racer = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_result);
-        adapter = new ResultAdapter(getActivity(), ((MainActivity) getActivity()).getTable());
+        //adapter = new ResultAdapter(getActivity(), ((MainActivity) getActivity()).getTable());
+        adapter = new ResultAdapter(getActivity(), all);
         return rootView;
     }
 
@@ -107,6 +113,28 @@ public class ResultFragment extends Fragment {
         rvResult.setAdapter(adapter);
         tvAverage = (TextView) view.findViewById(R.id.tvAverage);
         tvMedian = (TextView) view.findViewById(R.id.tvMedian);
+        fbEMail = (FloatingActionButton) view.findViewById(R.id.fbEmail);
+        fbEMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(all.toString());
+                builder.append("\n");
+                builder.append("Average: ");
+                builder.append(((MainActivity) getActivity()).getTable().average());
+                builder.append(" Mediane: ");
+                builder.append(((MainActivity) getActivity()).getTable().median());
+
+                ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("message/rfc822")
+                        .addEmailTo(((MainActivity) getActivity()).getEMail())
+                        .setSubject("Racer")
+                        .setText(builder.toString())
+                        //.setHtmlText(body) //If you are using HTML in your body text
+                        .setChooserTitle("Select:")
+                        .startChooser();
+            }
+        });
         startTask();
     }
 
@@ -122,7 +150,7 @@ public class ResultFragment extends Fragment {
 
     private void startTask() {
         ((MainActivity) getActivity()).getTable().clear();
-        for (int st = 0; st < steps; st++) {
+        for (int st = 0; st < steps * 2; st++) {
             Request.Builder builder = new Request.Builder();
             builder.url(url);
             RequestBody body = null;
@@ -145,8 +173,8 @@ public class ResultFragment extends Fragment {
             }
             builder.method(method, body);
             if (textBody == null) {
-                new Getter(0).execute(builder.build());
-            } else new Getter(textBody.length()).execute(builder.build());
+                new Getter(0, st % 2 == 0).execute(builder.build());
+            } else new Getter(textBody.length(), st % 2 == 0).execute(builder.build());
         }
     }
 
@@ -183,15 +211,17 @@ public class ResultFragment extends Fragment {
         return result.toString();
     }
 
-    private class Getter extends AsyncTask<Request, Void, Response> {
+    private class Getter extends AsyncTask<Request, Void, Row> {
         private long bodySize = 0;
+        private boolean serv;
 
-        public Getter(long bodySize) {
+        public Getter(long bodySize, boolean serv) {
             this.bodySize = bodySize;
+            this.serv = serv;
         }
 
         @Override
-        protected Response doInBackground(Request... params) {
+        protected Row doInBackground(Request... params) {
             Request req = params[0];
             HTTPCode res = HTTPCode.UNDEFINED;
             Response response = null;
@@ -205,6 +235,7 @@ public class ResultFragment extends Fragment {
                     builder.method(req.method(), req.body());
                     builder.tag(req.tag());
                     builder.headers(req.headers());
+                    if (serv) builder.tag(new Tag(Constants.SYSTEM_REQUEST, true));
                     req = builder.build();
                     //Log.i(TAG, req.toString());
                 }
@@ -220,13 +251,8 @@ public class ResultFragment extends Fragment {
                 //Log.i(TAG, res.toString());
                 //Log.i(TAG, response.headers().toString());
             } while (res.getType() == HTTPCode.Type.REDIRECTION);
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(Response response) {
+            Row row = new Row();
             if (response != null) {
-                Row row = new Row();
                 row.setStart(response.sentRequestAtMillis());
                 row.setFinish(response.receivedResponseAtMillis());
                 try {
@@ -240,12 +266,26 @@ public class ResultFragment extends Fragment {
                 } catch (IOException e) {
                     row.setPayload(0);
                 }
-                ((MainActivity) getActivity()).getTable().add(row);
-                tvAverage.setText("Average: " + String.valueOf(((MainActivity) getActivity()).getTable().average()));
-                tvMedian.setText("Mediane: " + String.valueOf(((MainActivity) getActivity()).getTable().median()));
-                adapter.notifyDataSetChanged();
-                Log.i(TAG, ((MainActivity) getActivity()).getTable().toString());
+                Log.i(TAG, response.toString() + "----------" + String.valueOf(row.getTimeInMillis()) + "-------------");
             }
+            return row;
+        }
+
+        @Override
+        protected void onPostExecute(Row row) {
+            if (!this.serv) {
+                row.setSource("R");
+                ;
+                ((MainActivity) getActivity()).getTable().add(row);
+            } else {
+                row.setSource("O");
+                ((MainActivity) getActivity()).getTableOriginal().add(row);
+            }
+            all.add(row);
+            tvAverage.setText("Average: " + String.valueOf(((MainActivity) getActivity()).getTable().average()));
+            tvMedian.setText("Mediane: " + String.valueOf(((MainActivity) getActivity()).getTable().median()));
+            adapter.notifyDataSetChanged();
+            Log.i(TAG, ((MainActivity) getActivity()).getTable().toString());
         }
     }
 
@@ -274,6 +314,7 @@ public class ResultFragment extends Fragment {
                 holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGray));
             else
                 holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
+            holder.tvSource.setText(data.get(pos).getSource());
             holder.tvStart.setText(String.valueOf(data.get(pos).getStart()));
             holder.tvFinish.setText(String.valueOf(data.get(pos).getFinish()));
             holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
@@ -297,6 +338,7 @@ public class ResultFragment extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View view;
             public final CardView cvMain;
+            public final TextView tvSource;
             public final TextView tvStart;
             public final TextView tvFinish;
             public final TextView tvTime;
@@ -308,6 +350,7 @@ public class ResultFragment extends Fragment {
                 super(view);
                 this.view = view;
                 this.cvMain = (CardView) view.findViewById(R.id.cvMain);
+                tvSource = (TextView) view.findViewById(R.id.tvSource);
                 tvStart = (TextView) view.findViewById(R.id.tvStart);
                 tvFinish = (TextView) view.findViewById(R.id.tvFinish);
                 tvTime = (TextView) view.findViewById(R.id.tvTime);

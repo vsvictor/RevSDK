@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frMainContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    tools:context="com.rev.racer.fragments.TaskFragment">
+
+
+    <RelativeLayout
+        android:id="@+id/rlMainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/llMainFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorBackground"
+            android:elevation="1dp"
+            android:orientation="vertical">
+
+            <include layout="@layout/result_item" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:background="@color/colorWhite">
+
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/rvResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="LinearLayoutManager">
+
+                </android.support.v7.widget.RecyclerView>
+
+            </RelativeLayout>
+
+            <include layout="@layout/summary" />
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

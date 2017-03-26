@@ -41,4 +41,23 @@ public class Row {
     public void setPayload(long payload) {
         this.payload = payload;
     }
+
+    public long getTimeInMillis() {
+        return this.getFinish() - this.getStart();
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Start: ");
+        builder.append(this.getStart());
+        builder.append(" Finish: ");
+        builder.append(this.getFinish());
+        builder.append(" Time:");
+        builder.append(this.getTimeInMillis());
+        builder.append(" Body: ");
+        builder.append(this.getBody());
+        builder.append(" Payload: ");
+        builder.append(this.getPayload());
+        return builder.toString();
+    }
 }

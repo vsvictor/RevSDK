@@ -6,4 +6,6 @@
     <color name="colorBalck">#FF000000</color>
     <color name="colorWhite">#FFFFFFFF</color>
     <color name="colorBackground">#FF444444</color>
+    <color name="colorGray">#1F000000</color>
+    <color name="colorGrayLight">#0F000000</color>
 </resources>

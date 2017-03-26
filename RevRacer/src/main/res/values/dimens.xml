@@ -11,5 +11,6 @@
     <dimen name="tiny">4dp</dimen>
     <dimen name="small">8dp</dimen>
     <dimen name="seekbar_font_size">18sp</dimen>
+    <dimen name="small_font">14sp</dimen>
     <item name="half" type="dimen" format="float">0.75</item>
 </resources>

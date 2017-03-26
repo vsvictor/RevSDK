@@ -16,6 +16,27 @@ import android.webkit.WebView;
 import com.rev.revdemo.fragments.ConfigFragment;
 import com.rev.revdemo.fragments.MainFragment;
 import com.rev.revdemo.fragments.StatFragment;
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
+ */
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -105,7 +126,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.log_view) {
 
         } else if (id == R.id.compatibility) {
-            startActivity(new Intent(this, CompatibilityActivity.class));
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.rev.weather");
+            if (launchIntent != null) {
+                startActivity(launchIntent);
+            }
         } else if (id == R.id.tester) {
             Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.rev.revtester");
             if (launchIntent != null) {

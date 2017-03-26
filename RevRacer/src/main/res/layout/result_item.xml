@@ -13,9 +13,20 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:layout_weight="1.6"
+            android:id="@+id/tvSource"
+            android:textSize="@dimen/tiny_font"
+            android:text="@string/r_source"
+            android:paddingLeft="@dimen/middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textAppearance="?attr/textAppearanceListItem" />
+
+        <TextView
             android:layout_weight="1.2"
             android:id="@+id/tvStart"
-            android:textSize="@dimen/small_font"
+            android:textSize="@dimen/tiny_font"
             android:text="@string/start_ms"
             android:paddingLeft="@dimen/middle"
             android:layout_width="match_parent"
@@ -26,7 +37,7 @@
         <TextView
             android:layout_weight="1.2"
             android:id="@+id/tvFinish"
-            android:textSize="@dimen/small_font"
+            android:textSize="@dimen/tiny_font"
             android:text="@string/finish_ms"
             android:paddingRight="@dimen/small"
             android:layout_width="match_parent"

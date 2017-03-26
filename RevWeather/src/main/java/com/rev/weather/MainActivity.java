@@ -1,4 +1,4 @@
-package com.rev.revdemo;
+package com.rev.weather;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -21,19 +21,40 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.rev.revdemo.fragments.weather.FiveDaysFragment;
-import com.rev.revdemo.fragments.weather.SixteenDaysFragment;
-import com.rev.revdemo.fragments.weather.TodayFragment;
-import com.rev.revdemo.fragments.weather.model.WeatherMain;
+import com.rev.weather.fragments.FiveDaysFragment;
+import com.rev.weather.fragments.SixteenDaysFragment;
+import com.rev.weather.fragments.TodayFragment;
+import com.rev.weather.model.WeatherMain;
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
+ */
 
-public class CompatibilityActivity extends AppCompatActivity implements
+public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LoaderManager.LoaderCallbacks<WeatherMain>,
         TodayFragment.OnTodayListener,
         FiveDaysFragment.OnFiveDaysListener,
         SixteenDaysFragment.OnSixteenDaysListener {
-    private static final String TAG = CompatibilityActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GoogleApiClient googleClient;
@@ -42,7 +63,7 @@ public class CompatibilityActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_compatibility);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.weather);
@@ -134,6 +155,7 @@ public class CompatibilityActivity extends AppCompatActivity implements
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         Loader<WeatherMain> loader = null;
+
         switch (id) {
             case R.id.today_loader: {
                 break;
@@ -143,6 +165,7 @@ public class CompatibilityActivity extends AppCompatActivity implements
                 break;
             }
         }
+
         return loader;
     }
 

@@ -1,14 +1,41 @@
 package com.rev.racer.model;
 
-/**
- * Created by victor on 24.03.17.
+/*
+ * ************************************************************************
+ *
+ *
+ * NUU:BIT CONFIDENTIAL
+ * [2013] - [2017] NUU:BIT, INC.
+ * All Rights Reserved.
+ * NOTICE: All information contained herein is, and remains
+ * the property of NUU:BIT, INC. and its suppliers,
+ * if any. The intellectual and technical concepts contained
+ * herein are proprietary to NUU:BIT, INC.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from NUU:BIT, INC.
+ *
+ * Victor D. Djurlyak, 2017
+ *
+ * /
  */
 
 public class Row {
+    private String source;
     private long start;
     private long finish;
     private long body;
     private long payload;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public long getStart() {
         return start;
@@ -48,7 +75,9 @@ public class Row {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Start: ");
+        builder.append("Source:");
+        builder.append(" '" + this.getSource() + "'");
+        builder.append(" Start: ");
         builder.append(this.getStart());
         builder.append(" Finish: ");
         builder.append(this.getFinish());

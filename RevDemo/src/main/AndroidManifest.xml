@@ -35,11 +35,6 @@
         <activity
             android:name=".SplachActivity"
             android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".CompatibilityActivity"
-            android:label="@string/weather"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -1,1 +1,1 @@
-include ':RevDemo', ':RevSDK', ':RevBanshee', ':RevRacer', ':RevTester'
+include ':RevDemo', ':RevSDK', ':RevBanshee', ':RevRacer', ':RevTester', ':RevWeather'

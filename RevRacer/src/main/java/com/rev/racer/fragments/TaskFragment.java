@@ -1,6 +1,7 @@
 package com.rev.racer.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.rev.racer.Const;
+import com.rev.racer.MainActivity;
 import com.rev.racer.R;
 
 import okhttp3.HttpUrl;
@@ -62,6 +66,7 @@ public class TaskFragment extends Fragment {
     private HttpUrl url;
     private OnTaskListener listener;
 
+    private String currentURL;
     public TaskFragment() {
     }
 
@@ -73,6 +78,7 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentURL = ((MainActivity) getActivity()).getSettings().getString(Const.CURRENT_URL, "https://google.com");
     }
 
     @Override
@@ -96,21 +102,51 @@ public class TaskFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+/*
                 if ((s.toString().equalsIgnoreCase("http://")) || (s.toString().equalsIgnoreCase("https://")))
                     return;
+*/
                 url = HttpUrl.parse(s.toString());
+/*
                 if (url == null) {
                     url = HttpUrl.parse("http://" + s.toString());
                     edURL.setText(url.toString().substring(0, url.toString().length() - 1));
                     edURL.setSelection(edURL.getText().toString().length());
                 }
+*/
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                url = HttpUrl.parse(s.toString());
+/*
+                if (url == null) {
+                    url = HttpUrl.parse("http://" + s.toString());
+                    edURL.setText(url.toString().substring(0, url.toString().length() - 1));
+                    edURL.setSelection(edURL.getText().toString().length());
+                }
+*/
             }
         });
-        edURL.setText("google.com.ua");
+        edURL.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    url = HttpUrl.parse(edURL.getText().toString());
+                    if (url == null) {
+                        url = HttpUrl.parse("http://" + edURL.getText().toString());
+                        //edURL.setText(url.toString().substring(0, url.toString().length() - 1));
+                        edURL.setText(url.toString());
+                        edURL.setSelection(edURL.getText().toString().length());
+                    }
+                    Log.i(TAG, url.toString());
+                    SharedPreferences.Editor ed = ((MainActivity) getActivity()).getSettings().edit();
+                    ed.putString(Const.CURRENT_URL, url.toString());
+                    ed.commit();
+                }
+            }
+        });
+        edURL.setText(currentURL);
         //edURL.setText("https://google.com.ua");
         //edURL.setText("https://www.dell.com");
         sbSteps = (SeekBar) view.findViewById(R.id.sbTests);
@@ -127,6 +163,7 @@ public class TaskFragment extends Fragment {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                edURL.clearFocus();
             }
 
             @Override
@@ -147,7 +184,9 @@ public class TaskFragment extends Fragment {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                edURL.clearFocus();
             }
+
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -168,20 +207,40 @@ public class TaskFragment extends Fragment {
                     spMime.setSelection(0);
                     tvSize.setVisibility(View.VISIBLE);
                 }
+                edURL.clearFocus();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                edURL.clearFocus();
             }
         });
         spMime = (AppCompatSpinner) view.findViewById(R.id.spPayload);
+        spMime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                edURL.clearFocus();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                edURL.clearFocus();
+            }
+        });
         rlHistory = (RelativeLayout) view.findViewById(R.id.rlHistory);
+        rlHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edURL.clearFocus();
+            }
+        });
         rlStart = (RelativeLayout) view.findViewById(R.id.rlStart);
         rlStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onStartTask(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
+                edURL.clearFocus();
+                Log.i(TAG, url.toString());
+                listener.onStartTaskInSeries(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
             }
         });
     }
@@ -204,6 +263,6 @@ public class TaskFragment extends Fragment {
     }
 
     public interface OnTaskListener {
-        void onStartTask(int steps, long body, String url, String method, String type);
+        void onStartTaskInSeries(int steps, long body, String url, String method, String type);
     }
 }

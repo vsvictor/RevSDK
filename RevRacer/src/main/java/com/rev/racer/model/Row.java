@@ -26,6 +26,7 @@ public class Row {
     private String source;
     private long start;
     private long finish;
+    private int codeResult;
     private long body;
     private long payload;
 
@@ -51,6 +52,14 @@ public class Row {
 
     public void setFinish(long finish) {
         this.finish = finish;
+    }
+
+    public int getCodeResult() {
+        return codeResult;
+    }
+
+    public void setCodeResult(int codeResult) {
+        this.codeResult = codeResult;
     }
 
     public long getBody() {

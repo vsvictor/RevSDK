@@ -1,12 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frMainContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
-    tools:context="com.rev.racer.fragments.TaskFragment">
-
+    tools:context="com.rev.racer.fragments.SeriesFragment">
 
     <RelativeLayout
         android:id="@+id/rlMainContainer"
@@ -23,18 +20,17 @@
             android:elevation="1dp"
             android:orientation="vertical">
 
-            <include layout="@layout/result_item" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.9"
+                android:layout_weight="1.0"
                 android:background="@color/colorWhite">
 
                 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     xmlns:tools="http://schemas.android.com/tools"
                     android:id="@+id/rvResult"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutManager="LinearLayoutManager">
@@ -42,7 +38,6 @@
                 </android.support.v7.widget.RecyclerView>
 
             </RelativeLayout>
-            <include layout="@layout/summary" />
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -56,8 +51,6 @@
             android:clickable="true"
             app:fabSize="mini"
             app:srcCompat="@android:drawable/ic_dialog_email" />
-
     </RelativeLayout>
-
 
 </FrameLayout>

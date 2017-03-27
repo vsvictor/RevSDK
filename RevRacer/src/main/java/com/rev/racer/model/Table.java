@@ -66,6 +66,30 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         }
     }
 
+    public long min() {
+        Row r = Collections.min(this, this);
+        return r.getTimeInMillis();
+    }
+
+    public long max() {
+        Row r = Collections.max(this, this);
+        return r.getTimeInMillis();
+    }
+
+    public long disperse() {
+        long rr = max() - average();
+        double sum = 0;
+        for (int i = 0; i < this.size(); i++) {
+            sum += Math.pow(Math.abs(rr - this.get(i).getTimeInMillis()), 2);
+        }
+        double dd = sum / this.size();
+        return (new Double(dd)).longValue();
+    }
+
+    public long standDeviation() {
+        return (new Double(Math.sqrt(disperse()))).longValue();
+    }
+
     @Override
     public int compare(Row o1, Row o2) {
         if (o1.getTimeInMillis() == o2.getTimeInMillis()) return 0;

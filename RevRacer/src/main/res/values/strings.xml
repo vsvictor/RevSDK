@@ -12,12 +12,6 @@
     <string name="steps_one">steps</string>
     <string name="size">1 KB</string>
     <string name="size_one">KB</string>
-    <string name="start_ms">Start, ms</string>
-    <string name="finish_ms">Finish, ms</string>
-    <string name="time_ms">Time, ms</string>
-    <string name="body_kb">Body, KB</string>
-    <string name="payload_kb">Payload, KB</string>
-    <string name="r_source">R</string>
 
     <!-- Strings related to Settings -->
 
@@ -28,5 +22,8 @@
     <!-- Example settings for Notifications -->
 
     <string name="email">Enter your email...</string>
-    <string name="choiser">Select</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="title_activity_result">ResultActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

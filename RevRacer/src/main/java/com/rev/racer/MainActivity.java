@@ -1,6 +1,7 @@
 package com.rev.racer;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,9 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.rev.racer.fragments.MainFragment;
-import com.rev.racer.fragments.ResultFragment;
 import com.rev.racer.fragments.TaskFragment;
-import com.rev.racer.model.Table;
 import com.rev.sdk.Constants;
 /*
  * ************************************************************************
@@ -42,8 +41,6 @@ import com.rev.sdk.Constants;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
     public static Fragment current;
-    private Table table;
-    private Table tableOriginal;
     private SharedPreferences settings;
     private String email;
     @Override
@@ -58,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
                 .beginTransaction()
                 .replace(R.id.container, current)
                 .commit();
-        table = new Table();
-        tableOriginal = new Table();
         settings = getSharedPreferences(Const.DATA, MODE_PRIVATE);
         email = settings.getString(Const.EMAIL, Constants.UNDEFINED);
         if (email.equalsIgnoreCase(Constants.UNDEFINED)) {
@@ -72,12 +67,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     public void onBackPressed() {
         if (current instanceof TaskFragment) {
             current = MainFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, current)
-                    .commit();
-        } else if (current instanceof ResultFragment) {
-            current = TaskFragment.newInstance();
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, current)
@@ -100,14 +89,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public Table getTable() {
-        return table;
-    }
-
-    public Table getTableOriginal() {
-        return tableOriginal;
     }
 
     public String getEMail() {
@@ -155,13 +136,25 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     }
 
     @Override
-    public void onStartTask(int steps, long body, String url, String method, String type) {
-        current = ResultFragment.newInstance(steps, body, url, method, type);
+    public void onStartTaskInSeries(int steps, long body, String url, String method, String type) {
+        /*
+        current = ResultFragmentInSeries.newInstance(steps, body, url, method, type);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, current)
                 .commit();
+        */
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra(Const.STEPS, steps);
+        intent.putExtra(Const.SIZE, body);
+        intent.putExtra(Const.URL, url);
+        intent.putExtra(Const.METHOD, method);
+        intent.putExtra(Const.TYPE, type);
+        startActivity(intent);
     }
 
+    public SharedPreferences getSettings() {
+        return settings;
+    }
 
 }

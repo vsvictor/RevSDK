@@ -1,5 +1,6 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="big_font">70sp</dimen>
     <dimen name="button_font">18sp</dimen>
@@ -7,6 +8,5 @@
     <dimen name="big">16dp</dimen>
     <dimen name="small">8dp</dimen>
     <dimen name="seekbar_font_size">18sp</dimen>
-    <dimen name="small_font">14sp</dimen>
-    <dimen name="tiny_font">12sp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
 </resources>

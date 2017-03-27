@@ -25,6 +25,7 @@ package com.rev.racer;
 public class Const {
     public static final String DATA = "data";
     public static final String EMAIL = "email";
+    public static final String CURRENT_URL = "url";
 
     public static String STEPS = "steps";
     public static String SIZE = "size";

@@ -1,0 +1,415 @@
+package com.rev.racer;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.rev.racer.fragments.SeriesFragment;
+import com.rev.racer.fragments.SummaryFragment;
+import com.rev.racer.model.Row;
+import com.rev.racer.model.Table;
+import com.rev.sdk.Constants;
+import com.rev.sdk.RevSDK;
+import com.rev.sdk.types.HTTPCode;
+import com.rev.sdk.types.Tag;
+
+import java.io.IOException;
+import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class ResultActivity extends AppCompatActivity implements
+        SeriesFragment.OnSeriesListener,
+        SummaryFragment.OnSummaryListener {
+
+    private static final String TAG = ResultActivity.class.getSimpleName();
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+
+    private int steps;
+    private long size;
+    private String url;
+    private String method;
+    private String type;
+
+    private OkHttpClient client = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false);
+    private Table table;
+    private Table tableOriginal;
+
+    private ResultAdapter adapter;
+
+    private int counter;
+    private String textBody = null;
+    private String stype;
+    private ProgressDialog pd;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        steps = getIntent().getIntExtra(Const.STEPS, 0);
+        size = getIntent().getLongExtra(Const.SIZE, 0);
+        url = getIntent().getStringExtra(Const.URL);
+        method = getIntent().getStringExtra(Const.METHOD);
+        type = getIntent().getStringExtra(Const.TYPE);
+
+        table = new Table();
+        tableOriginal = new Table();
+
+        adapter = new ResultAdapter(this, getTable(), getTableOriginal());
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_result, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public Table getTableOriginal() {
+        return tableOriginal;
+    }
+
+    public ResultAdapter getAdapter() {
+        return adapter;
+    }
+
+    private Request buildRequest() {
+        Request.Builder builder = new Request.Builder();
+        builder.url(url);
+        RequestBody body = null;
+        Log.i(TAG, "Method N " + method);
+        textBody = null;
+        if (!method.equalsIgnoreCase("GET")) {
+            MediaType type = null;
+            String ssMime = "application/json";
+            if (stype.equalsIgnoreCase("JSON")) {
+                ssMime = "application/json";
+            } else if (stype.equalsIgnoreCase("XML")) {
+                ssMime = "application/xml";
+            }
+            type = MediaType.parse(ssMime);
+            Log.i(TAG, stype);
+            Log.i(TAG, type.toString());
+            textBody = generateBody(ssMime, size);
+            Log.i(TAG, textBody);
+            body = RequestBody.create(type, textBody);
+        }
+        builder.method(method, body);
+        return builder.build();
+    }
+
+    public void startTask() {
+        counter = 0;
+        getTable().clear();
+        if (textBody == null) {
+            new Getter(0, true).execute(buildRequest());
+        } else new Getter(textBody.length(), true).execute(buildRequest());
+        pd = new ProgressDialog(this);
+        //pd.setTitle(R.string.please_wait);
+        //pd.setMessage(String.valueOf(counter)+"/"+String.valueOf(steps));
+        pd.setTitle("");
+        pd.setMessage(this.getResources().getString(R.string.please_wait));
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgress(0);
+        pd.setMax(steps);
+        pd.setIndeterminate(false);
+        pd.show();
+    }
+
+    private String generateBody(String type, long size) {
+        StringBuilder result = new StringBuilder();
+        Random random = new Random();
+        Log.i(TAG + " generator", "Begin, " + type);
+        if (type.contains("application/json")) {
+            result.append("{");
+            while (result.toString().length() < (size * 1024)) {
+                Random r = new Random();
+                char c = (char) (r.nextInt(26) + 'a');
+                result.append("{\"" + c + "\":\"" + c + "\"},");
+                //Log.i(TAG+" generator",result.toString());
+
+            }
+            Log.i(TAG, "Size: " + result.toString().length());
+            String ss = result.toString().substring(0, result.length() - 1);
+            result = new StringBuilder();
+            result.append(ss);
+            result.append("}");
+        } else if (type.contains("application/xml")) {
+            result.append("<main>");
+            while (result.toString().length() < (size * 1024)) {
+                Random r = new Random();
+                char c = (char) (r.nextInt(26) + 'a');
+                result.append("<" + c + ">" + c + "</" + c + ">");
+                Log.i(TAG + " generator", result.toString());
+            }
+            result.append("</main>");
+        }
+        Log.i(TAG, result.toString());
+
+        return result.toString();
+    }
+
+    @Override
+    public void onSeries(Uri uri) {
+
+    }
+
+    @Override
+    public void onSummary(Uri uri) {
+
+    }
+
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0: {
+                    return SummaryFragment.newInstance();
+                }
+                case 1: {
+                    return SeriesFragment.newInstance();
+                }
+                default:
+                    return SummaryFragment.newInstance();
+            }
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Summary";
+                case 1:
+                    return "Advensed";
+            }
+            return null;
+        }
+    }
+
+    public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
+        private Context context;
+        private Table data;
+        private Table original;
+
+        public ResultAdapter(Context context, Table table, Table tableOriginal) {
+            this.context = context;
+            this.data = table;
+            this.original = tableOriginal;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_result, parent, false);
+            return new ViewHolder(view);
+
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int pos) {
+
+            holder.mItem = data.get(pos);
+            if ((pos) % 2 == 0)
+                holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGray));
+            else
+                holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
+            holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
+            holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
+            holder.tvBody.setText(String.valueOf(data.get(pos).getBody() / 1024));
+            holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
+            holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
+            holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
+            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody() / 1024));
+            holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return this.data.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View view;
+            public final CardView cvMain;
+            public final TextView tvTime;
+            public final TextView tvCode;
+            public final TextView tvBody;
+            public final TextView tvPayload;
+            public final TextView tvTimeOrigin;
+            public final TextView tvCodeOrigin;
+            public final TextView tvBodyOrigin;
+            public final TextView tvPayloadOrigin;
+
+            public Row mItem;
+
+            public ViewHolder(View view) {
+                super(view);
+                this.view = view;
+                this.cvMain = (CardView) view.findViewById(R.id.cvMain);
+                tvTime = (TextView) view.findViewById(R.id.tvTime);
+                tvCode = (TextView) view.findViewById(R.id.tvCode);
+                tvBody = (TextView) view.findViewById(R.id.tvBody);
+                tvPayload = (TextView) view.findViewById(R.id.tvPayload);
+                tvTimeOrigin = (TextView) view.findViewById(R.id.tvTimeOrigin);
+                tvCodeOrigin = (TextView) view.findViewById(R.id.tvCodeOrigin);
+                tvBodyOrigin = (TextView) view.findViewById(R.id.tvBodyOrigin);
+                tvPayloadOrigin = (TextView) view.findViewById(R.id.tvPayloadOrigin);
+
+            }
+        }
+    }
+
+    private class Getter extends AsyncTask<Request, Void, Row> {
+        private long bodySize = 0;
+        private boolean serv;
+
+        public Getter(long bodySize, boolean serv) {
+            this.bodySize = bodySize;
+            this.serv = serv;
+        }
+
+        @Override
+        protected Row doInBackground(Request... params) {
+            Request req = params[0];
+            HTTPCode res = HTTPCode.UNDEFINED;
+            Response response = null;
+            do {
+                //Log.i(TAG, res.toString());
+                if (res.getType() == HTTPCode.Type.REDIRECTION) {
+                    Request.Builder builder = new Request.Builder();
+                    String newURL = response.header("location");
+                    //Log.i(TAG, newURL);
+                    builder.url(newURL);
+                    builder.method(req.method(), req.body());
+                    builder.tag(req.tag());
+                    builder.headers(req.headers());
+                    if (serv) builder.tag(new Tag(Constants.SYSTEM_REQUEST, true));
+                    req = builder.build();
+                    //Log.i(TAG, req.toString());
+                }
+
+                Call callback = client.newCall(req);
+                try {
+                    response = callback.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                res = HTTPCode.create(response.code());
+
+                //Log.i(TAG, res.toString());
+                //Log.i(TAG, response.headers().toString());
+            } while (res.getType() == HTTPCode.Type.REDIRECTION);
+            Row row = new Row();
+            if (response != null) {
+                row.setStart(response.sentRequestAtMillis());
+                row.setFinish(response.receivedResponseAtMillis());
+                try {
+                    Log.i(TAG, String.valueOf(bodySize));
+                    row.setBody(bodySize / 1024);
+                } catch (NullPointerException e) {
+                    row.setBody(0);
+                }
+                try {
+                    row.setPayload(response.body().bytes().length);
+                } catch (IOException e) {
+                    row.setPayload(0);
+                }
+                row.setCodeResult(response.code());
+                Log.i(TAG, response.toString() + "----------" + String.valueOf(row.getTimeInMillis()) + "-------------");
+            }
+
+            return row;
+        }
+
+        @Override
+        protected void onPostExecute(Row row) {
+            if (!this.serv) {
+                row.setSource("R");
+                getTable().add(row);
+                pd.incrementProgressBy(1);
+            } else {
+                row.setSource("O");
+                getTableOriginal().add(row);
+            }
+//            all.add(row);
+/*
+            tvAverage.setText("Average: " + String.valueOf(((ResultActivity) getActivity()).getTable().average()));
+            tvMedian.setText("Mediane: " + String.valueOf(((ResultActivity) getActivity()).getTable().median()));
+            tvAverageOrigin.setText("Average: " + String.valueOf(((ResultActivity) getActivity()).getTableOriginal().average()));
+            tvMedianOrigin.setText("Mediane: " + String.valueOf(((ResultActivity) getActivity()).getTableOriginal().median()));
+*/
+            adapter.notifyDataSetChanged();
+            Log.i(TAG, getTable().toString());
+            counter++;
+
+            if ((counter) < (steps * 2)) {
+                Request req = buildRequest();
+                if (req.method().equalsIgnoreCase("GET")) {
+                    new Getter(0, counter % 2 == 0).execute(buildRequest());
+                } else new Getter(textBody.length(), counter % 2 == 0).execute(buildRequest());
+                //pd.incrementProgressBy(1);
+            } else {
+                pd.dismiss();
+            }
+
+        }
+    }
+
+}

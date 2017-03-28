@@ -51,6 +51,7 @@ public class ParalellyActivity extends AppCompatActivity implements
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private TextView tvMethodMode;
 
     private int steps;
     private long size;
@@ -95,11 +96,11 @@ public class ParalellyActivity extends AppCompatActivity implements
         rlSendMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sData = Table.toTable(getTable(), getTableOriginal(), Const.MODE_PARALELLY);
+                String sData = Table.toTable(ParalellyActivity.this, getTable(), getTableOriginal(), Const.MODE_PARALELLY, url, method);
                 ShareCompat.IntentBuilder.from(ParalellyActivity.this)
                         .setType("message/rfc822")
                         .addEmailTo(RevApp.getInstance().getEMail())
-                        .setSubject("Racer")
+                        .setSubject("Racer: " + url)
                         .setText(sData)
                         //.setHtmlText(body) //If you are using HTML in your body text
                         .setChooserTitle("Select:")
@@ -107,6 +108,8 @@ public class ParalellyActivity extends AppCompatActivity implements
 
             }
         });
+        tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
+        tvMethodMode.setText(method + " , " + getResources().getString(R.string.parallel));
 
     }
 
@@ -140,6 +143,7 @@ public class ParalellyActivity extends AppCompatActivity implements
     }
 
     public void startTask() {
+        Log.i(TAG, "******************* START ********************");
         getTable().clear();
         getTableOriginal().clear();
         for (int st = 0; st < steps * 2; st++) {
@@ -207,8 +211,8 @@ public class ParalellyActivity extends AppCompatActivity implements
             result.append("</main>");
         }
         Log.i(TAG, result.toString());
-
-        return result.toString();
+        textBody = result.toString();
+        return textBody;
     }
 
     @Override
@@ -258,7 +262,6 @@ public class ParalellyActivity extends AppCompatActivity implements
             return null;
         }
     }
-
     public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
         private Context context;
         private Table data;
@@ -290,11 +293,11 @@ public class ParalellyActivity extends AppCompatActivity implements
             holder.tvNumber.setText(String.valueOf(pos + 1));
             holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
             holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
-            holder.tvBody.setText(String.valueOf(data.get(pos).getBody() / 1024));
+            holder.tvBody.setText(String.valueOf(data.get(pos).getBody()));
             holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
             holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
             holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
-            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody() / 1024));
+            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()));
             holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
 
         }
@@ -386,6 +389,7 @@ public class ParalellyActivity extends AppCompatActivity implements
             } while (res.getType() == HTTPCode.Type.REDIRECTION);
             Row row = new Row();
             if (response != null) {
+                row.setCodeResult(response.code());
                 row.setStart(response.sentRequestAtMillis());
                 row.setFinish(response.receivedResponseAtMillis());
                 try {

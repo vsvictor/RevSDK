@@ -51,6 +51,7 @@ public class ResultActivity extends AppCompatActivity implements
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private TextView tvMethodMode;
 
     private int steps;
     private long size;
@@ -95,11 +96,11 @@ public class ResultActivity extends AppCompatActivity implements
         rlSendMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sData = Table.toTable(getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY);
+                String sData = Table.toTable(ResultActivity.this, getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY, url, method);
                 ShareCompat.IntentBuilder.from(ResultActivity.this)
                         .setType("message/rfc822")
                         .addEmailTo(RevApp.getInstance().getEMail())
-                        .setSubject("Racer")
+                        .setSubject("Racer: " + url)
                         .setText(sData)
                         //.setHtmlText(body) //If you are using HTML in your body text
                         .setChooserTitle("Select:")
@@ -107,6 +108,9 @@ public class ResultActivity extends AppCompatActivity implements
 
             }
         });
+        tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
+        tvMethodMode.setText(method + " , " + getResources().getString(R.string.start));
+
 
     }
 
@@ -157,7 +161,7 @@ public class ResultActivity extends AppCompatActivity implements
             Log.i(TAG, stype);
             Log.i(TAG, type.toString());
             textBody = generateBody(ssMime, size);
-            Log.i(TAG, textBody);
+            Log.i(TAG, "!!!!!!!!!!!!!!!!!!" + textBody + "!!!!!!!!!!!!!!!!");
             body = RequestBody.create(type, textBody);
         }
         builder.method(method, body);
@@ -165,11 +169,18 @@ public class ResultActivity extends AppCompatActivity implements
     }
 
     public void startTask() {
+        Log.i(TAG, "******************* START ********************");
         counter = 0;
         getTable().clear();
+        getTableOriginal().clear();
+        Request r = buildRequest();
         if (textBody == null) {
-            new Getter(0, true).execute(buildRequest());
-        } else new Getter(textBody.length(), true).execute(buildRequest());
+            new Getter(0, true).execute(r);
+            Log.i(TAG, "CCCCCCCCCCCCCCCC body is empty CCCCCCCCCCCCC");
+        } else {
+            Log.i(TAG, "+++++++++++++++" + textBody + "++++++++++++++");
+            new Getter(textBody.length(), true).execute(r);
+        }
         pd = new ProgressDialog(this);
         pd.setTitle("");
         pd.setMessage(this.getResources().getString(R.string.please_wait));
@@ -209,8 +220,8 @@ public class ResultActivity extends AppCompatActivity implements
             result.append("</main>");
         }
         Log.i(TAG, result.toString());
-
-        return result.toString();
+        textBody = result.toString();
+        return textBody;
     }
 
     @Override
@@ -292,11 +303,11 @@ public class ResultActivity extends AppCompatActivity implements
             holder.tvNumber.setText(String.valueOf(pos + 1));
             holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
             holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
-            holder.tvBody.setText(String.valueOf(data.get(pos).getBody() / 1024));
+            holder.tvBody.setText(String.valueOf(data.get(pos).getBody()));
             holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
             holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
             holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
-            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody() / 1024));
+            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()));
             holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
 
         }
@@ -393,6 +404,7 @@ public class ResultActivity extends AppCompatActivity implements
                 try {
                     Log.i(TAG, String.valueOf(bodySize));
                     row.setBody(bodySize / 1024);
+                    //row.setBody(response.request().body().contentLength() / 1024);
                 } catch (NullPointerException e) {
                     row.setBody(0);
                 }
@@ -426,7 +438,10 @@ public class ResultActivity extends AppCompatActivity implements
                 Request req = buildRequest();
                 if (req.method().equalsIgnoreCase("GET")) {
                     new Getter(0, counter % 2 == 0).execute(buildRequest());
-                } else new Getter(textBody.length(), counter % 2 == 0).execute(buildRequest());
+                } else {
+                    Request request = buildRequest();
+                    new Getter(textBody.length(), counter % 2 == 0).execute(request);
+                }
             } else {
                 pd.dismiss();
             }

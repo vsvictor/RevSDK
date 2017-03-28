@@ -1,6 +1,9 @@
 package com.rev.racer.model;
 
+import android.content.Context;
+
 import com.rev.racer.Const;
+import com.rev.racer.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,41 +106,48 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         else return -1;
     }
 
-    public static String toTable(Table real, Table original, int mode) {
+    public static String toTable(Context context, Table real, Table original, int mode, String url, String method) {
         StringBuilder builder = new StringBuilder();
         builder.append("Mode: ");
-        builder.append(mode == Const.MODE_CONSISTENTLY ? "Consistently" : "Paralelly");
+        builder.append(mode == Const.MODE_CONSISTENTLY ?
+                context.getResources().getString(R.string.start) :
+                context.getResources().getString(R.string.parallel));
+        builder.append("\n");
+        builder.append(url);
+        builder.append("\n");
+        builder.append("Method: ");
+        builder.append(method);
         builder.append("\n");
         for (int i = 0; i < real.size(); i++) {
             builder.append(i);
             builder.append(": nuu:bit: ");
             builder.append(real.get(i).toTable());
-            builder.append(", original : ");
+            builder.append(", origin : ");
             builder.append(original.get(i).toTable());
             builder.append("\n");
         }
         builder.append("----------------------------------");
         builder.append("\n");
-        builder.append("NUU:Bit\n");
+        builder.append("NUU:BIT\n");
         builder.append("Min: ");
         builder.append(real.min());
         builder.append(" Max: ");
         builder.append(real.max());
         builder.append(" Average: ");
         builder.append(real.average());
-        builder.append(" Mediane: ");
+        builder.append(" Median: ");
         builder.append(real.median());
         builder.append(" Stand. deviation: ");
         builder.append(real.standDeviation());
         builder.append("\n");
-        builder.append("Original\n");
+        builder.append("Origin\n");
         builder.append("Min: ");
         builder.append(original.min());
         builder.append(" Max: ");
         builder.append(original.max());
         builder.append(" Average: ");
         builder.append(original.average());
-        builder.append(" Mediane: ");
+        builder.append(" Median: ");
         builder.append(original.median());
         builder.append(" Stand. deviation: ");
         builder.append(original.standDeviation());

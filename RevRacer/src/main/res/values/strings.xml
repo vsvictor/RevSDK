@@ -6,8 +6,8 @@
 
     <string name="url">Please enter URL...</string>
     <string name="history">History</string>
-    <string name="start">Consistently</string>
-    <string name="parallel">Parallely</string>
+    <string name="start">Sequential</string>
+    <string name="parallel">Parallel</string>
     <string name="steps">3 run</string>
     <string name="steps_one">steps</string>
     <string name="size">1 KB</string>

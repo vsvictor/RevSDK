@@ -4,7 +4,6 @@
     <string name="native_mobile_app">Native mobile App</string>
     <string name="web_app">Web App</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="url">Please enter URL...</string>
     <string name="history">History</string>
     <string name="start">Start</string>
@@ -13,17 +12,20 @@
     <string name="size">1 KB</string>
     <string name="size_one">KB</string>
 
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
-
-    <!-- Example settings for Notifications -->
-
     <string name="email">Enter your email...</string>
     <string name="please_wait">Please wait...</string>
     <string name="title_activity_result">ResultActivity</string>
+    <string name="average">Average:</string>
+    <string name="mediane">Mediane:</string>
+    <string name="stand_deviation">Stand. Deviation:</string>
+    <string name="average_origin">Average original:</string>
+    <string name="mediane_original">Mediane original:</string>
+    <string name="stand_deviation_original">Stand. deviation original:</string>
+    <string name="summary">Summary</string>
+    <string name="more">Expand more...</string>
+    <string name="min">Min:</string>
+    <string name="max">Max:</string>
+    <string name="min_origin">Min original:</string>
+    <string name="max_original">Max original:</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -32,4 +32,6 @@ public class Const {
     public static String URL = "url";
     public static String METHOD = "method";
     public static String TYPE = "type";
+
+    public static String UPDATE_DATA = "com.rev.sdk.UPDATE_DATA";
 }

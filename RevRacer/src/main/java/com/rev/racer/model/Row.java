@@ -98,4 +98,16 @@ public class Row {
         builder.append(this.getPayload());
         return builder.toString();
     }
+
+    public String toTable() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.getTimeInMillis());
+        builder.append(" (");
+        builder.append(this.getCodeResult());
+        builder.append(" , ");
+        builder.append(this.getBody());
+        builder.append(this.getPayload());
+        builder.append(")");
+        return builder.toString();
+    }
 }

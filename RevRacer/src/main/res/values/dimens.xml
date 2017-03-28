@@ -8,5 +8,8 @@
     <dimen name="big">16dp</dimen>
     <dimen name="small">8dp</dimen>
     <dimen name="seekbar_font_size">18sp</dimen>
+    <dimen name="large">24dp</dimen>
+    <dimen name="many_large">64dp</dimen>
+    <dimen name="tiny">4dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
 </resources>

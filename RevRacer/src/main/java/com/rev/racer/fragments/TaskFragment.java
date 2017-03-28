@@ -22,8 +22,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.rev.racer.Const;
-import com.rev.racer.MainActivity;
 import com.rev.racer.R;
+import com.rev.racer.RevApp;
 
 import okhttp3.HttpUrl;
 /*
@@ -78,7 +78,7 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentURL = ((MainActivity) getActivity()).getSettings().getString(Const.CURRENT_URL, "https://google.com");
+        currentURL = RevApp.getInstance().getSettings().getString(Const.CURRENT_URL, "https://google.com");
     }
 
     @Override
@@ -140,7 +140,7 @@ public class TaskFragment extends Fragment {
                         edURL.setSelection(edURL.getText().toString().length());
                     }
                     Log.i(TAG, url.toString());
-                    SharedPreferences.Editor ed = ((MainActivity) getActivity()).getSettings().edit();
+                    SharedPreferences.Editor ed = RevApp.getInstance().getSettings().edit();
                     ed.putString(Const.CURRENT_URL, url.toString());
                     ed.commit();
                 }

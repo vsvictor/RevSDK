@@ -1,22 +1,15 @@
 package com.rev.racer;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.rev.racer.fragments.MainFragment;
 import com.rev.racer.fragments.TaskFragment;
-import com.rev.sdk.Constants;
 /*
  * ************************************************************************
  *
@@ -41,8 +34,9 @@ import com.rev.sdk.Constants;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
     public static Fragment current;
-    private SharedPreferences settings;
-    private String email;
+
+    //private SharedPreferences settings;
+    //private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,12 +49,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
                 .beginTransaction()
                 .replace(R.id.container, current)
                 .commit();
-        settings = getSharedPreferences(Const.DATA, MODE_PRIVATE);
-        email = settings.getString(Const.EMAIL, Constants.UNDEFINED);
-        if (email.equalsIgnoreCase(Constants.UNDEFINED)) {
-            AlertDialog dialog = email("");
-            dialog.show();
-        }
     }
 
     @Override
@@ -85,41 +73,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             //startActivity(new Intent(this, SettingActivity.class));
-            email(email).show();
+            RevApp.getInstance().email(RevApp.getInstance().getEMail()).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public String getEMail() {
-        return email;
-    }
-
-    public AlertDialog email(String aEMail) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(Const.EMAIL);
-        View view = LayoutInflater.from(this).inflate(R.layout.email_layout, null);
-        final AppCompatEditText edInput = (AppCompatEditText) view.findViewById(R.id.edEMail);
-        edInput.setText(aEMail);
-        builder.setView(view);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //email = input.getText().toString();
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(Const.EMAIL, edInput.getText().toString());
-                editor.commit();
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        return builder.create();
-    }
 
     @Override
     public void onNativeMobile() {
@@ -153,8 +112,5 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         startActivity(intent);
     }
 
-    public SharedPreferences getSettings() {
-        return settings;
-    }
 
 }

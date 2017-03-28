@@ -1,32 +1,192 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorGray"
-    android:alpha="0.5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rev.racer.fragments.SummaryFragment">
 
-
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></LinearLayout>
+
+        <LinearLayout
             android:layout_weight="1"
+            android:id="@+id/llMainFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/big"
+            android:layout_marginLeft="@dimen/big"
+            android:layout_marginRight="@dimen/big"
+            android:layout_marginTop="@dimen/big"
+            android:gravity="center_horizontal|center_vertical"
+            android:alpha="0.85"
+            android:background="@drawable/background_data"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvMin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min" />
+
+                <TextView
+                    android:id="@+id/tvMinValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvMax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max" />
+
+                <TextView
+                    android:id="@+id/tvMaxValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvAverage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/average" />
+
+                <TextView
+                    android:id="@+id/tvAverageValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvMediane"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mediane" />
+
+                <TextView
+                    android:id="@+id/tvMedianeValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvStandDeviation"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stand_deviation" />
+
+                <TextView
+                    android:id="@+id/tvStandDeviationValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvMinOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_origin" />
+
+                <TextView
+                    android:id="@+id/tvMinOriginValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvMaxOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/max_original" />
+
+                <TextView
+                    android:id="@+id/tvMaxOriginValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvAverageOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/average_origin" />
+
+                <TextView
+                    android:id="@+id/tvAverageOriginValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvMedianeOrigin"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mediane_original" />
+
+                <TextView
+                    android:id="@+id/tvMedianeOriginValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tvStandDeviationOrigin"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stand_deviation_original" />
+
+                <TextView
+                    android:id="@+id/tvStandDeviationOriginValue"
+                    android:layout_marginTop="@dimen/small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </RelativeLayout>
-
+        </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>

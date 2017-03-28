@@ -67,16 +67,19 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
     }
 
     public long min() {
+        if (this.size() == 0) return 0;
         Row r = Collections.min(this, this);
         return r.getTimeInMillis();
     }
 
     public long max() {
+        if (this.size() == 0) return 0;
         Row r = Collections.max(this, this);
         return r.getTimeInMillis();
     }
 
     public long disperse() {
+        if (this.size() == 0) return 0;
         long rr = max() - average();
         double sum = 0;
         for (int i = 0; i < this.size(); i++) {
@@ -87,6 +90,7 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
     }
 
     public long standDeviation() {
+        if (this.size() == 0) return 0;
         return (new Double(Math.sqrt(disperse()))).longValue();
     }
 
@@ -95,5 +99,18 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         if (o1.getTimeInMillis() == o2.getTimeInMillis()) return 0;
         else if (o1.getTimeInMillis() > o2.getTimeInMillis()) return 1;
         else return -1;
+    }
+
+    public static String toTable(Table real, Table original) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < real.size(); i++) {
+            builder.append(i);
+            builder.append("nuu:bit: ");
+            builder.append(real.get(i).toTable());
+            builder.append("original : ");
+            builder.append(original.get(i).toTable());
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 }

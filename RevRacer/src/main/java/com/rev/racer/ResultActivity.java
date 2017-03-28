@@ -2,12 +2,14 @@ package com.rev.racer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rev.racer.fragments.SeriesFragment;
@@ -65,6 +68,7 @@ public class ResultActivity extends AppCompatActivity implements
     private String textBody = null;
     private String stype;
     private ProgressDialog pd;
+    private RelativeLayout rlSendMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,23 @@ public class ResultActivity extends AppCompatActivity implements
         tableOriginal = new Table();
 
         adapter = new ResultAdapter(this, getTable(), getTableOriginal());
+
+        rlSendMail = (RelativeLayout) findViewById(R.id.bSendMail);
+        rlSendMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String sData = Table.toTable(getTable(), getTableOriginal());
+                ShareCompat.IntentBuilder.from(ResultActivity.this)
+                        .setType("message/rfc822")
+                        .addEmailTo(RevApp.getInstance().getEMail())
+                        .setSubject("Racer")
+                        .setText(sData)
+                        //.setHtmlText(body) //If you are using HTML in your body text
+                        .setChooserTitle("Select:")
+                        .startChooser();
+
+            }
+        });
 
     }
 
@@ -226,7 +247,6 @@ public class ResultActivity extends AppCompatActivity implements
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 2;
         }
 
@@ -269,6 +289,8 @@ public class ResultActivity extends AppCompatActivity implements
                 holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGray));
             else
                 holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
+
+            holder.tvNumber.setText(String.valueOf(pos + 1));
             holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
             holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
             holder.tvBody.setText(String.valueOf(data.get(pos).getBody() / 1024));
@@ -285,9 +307,17 @@ public class ResultActivity extends AppCompatActivity implements
             return this.data.size();
         }
 
+
+        public void dataUpdated() {
+            notifyDataSetChanged();
+            Intent intent = new Intent(Const.UPDATE_DATA);
+            sendBroadcast(intent);
+        }
+
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View view;
             public final CardView cvMain;
+            private final TextView tvNumber;
             public final TextView tvTime;
             public final TextView tvCode;
             public final TextView tvBody;
@@ -303,6 +333,7 @@ public class ResultActivity extends AppCompatActivity implements
                 super(view);
                 this.view = view;
                 this.cvMain = (CardView) view.findViewById(R.id.cvMain);
+                tvNumber = (TextView) view.findViewById(R.id.tvNumber);
                 tvTime = (TextView) view.findViewById(R.id.tvTime);
                 tvCode = (TextView) view.findViewById(R.id.tvCode);
                 tvBody = (TextView) view.findViewById(R.id.tvBody);
@@ -388,14 +419,7 @@ public class ResultActivity extends AppCompatActivity implements
                 row.setSource("O");
                 getTableOriginal().add(row);
             }
-//            all.add(row);
-/*
-            tvAverage.setText("Average: " + String.valueOf(((ResultActivity) getActivity()).getTable().average()));
-            tvMedian.setText("Mediane: " + String.valueOf(((ResultActivity) getActivity()).getTable().median()));
-            tvAverageOrigin.setText("Average: " + String.valueOf(((ResultActivity) getActivity()).getTableOriginal().average()));
-            tvMedianOrigin.setText("Mediane: " + String.valueOf(((ResultActivity) getActivity()).getTableOriginal().median()));
-*/
-            adapter.notifyDataSetChanged();
+            adapter.dataUpdated();
             Log.i(TAG, getTable().toString());
             counter++;
 
@@ -404,7 +428,6 @@ public class ResultActivity extends AppCompatActivity implements
                 if (req.method().equalsIgnoreCase("GET")) {
                     new Getter(0, counter % 2 == 0).execute(buildRequest());
                 } else new Getter(textBody.length(), counter % 2 == 0).execute(buildRequest());
-                //pd.incrementProgressBy(1);
             } else {
                 pd.dismiss();
             }

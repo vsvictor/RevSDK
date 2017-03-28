@@ -32,4 +32,10 @@ public class Const {
     public static String URL = "url";
     public static String METHOD = "method";
     public static String TYPE = "type";
+
+    public static String MODE = "mode";
+    public static int MODE_CONSISTENTLY = 1;
+    public static int MODE_PARALELLY = 2;
+
+    public static String UPDATE_DATA = "com.rev.sdk.UPDATE_DATA";
 }

@@ -43,11 +43,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ResultActivity extends AppCompatActivity implements
+public class ParalellyActivity extends AppCompatActivity implements
         SeriesFragment.OnSeriesListener,
         SummaryFragment.OnSummaryListener {
 
-    private static final String TAG = ResultActivity.class.getSimpleName();
+    private static final String TAG = ParalellyActivity.class.getSimpleName();
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -95,8 +95,8 @@ public class ResultActivity extends AppCompatActivity implements
         rlSendMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sData = Table.toTable(getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY);
-                ShareCompat.IntentBuilder.from(ResultActivity.this)
+                String sData = Table.toTable(getTable(), getTableOriginal(), Const.MODE_PARALELLY);
+                ShareCompat.IntentBuilder.from(ParalellyActivity.this)
                         .setType("message/rfc822")
                         .addEmailTo(RevApp.getInstance().getEMail())
                         .setSubject("Racer")
@@ -139,37 +139,35 @@ public class ResultActivity extends AppCompatActivity implements
         return adapter;
     }
 
-    private Request buildRequest() {
-        Request.Builder builder = new Request.Builder();
-        builder.url(url);
-        RequestBody body = null;
-        Log.i(TAG, "Method N " + method);
-        textBody = null;
-        if (!method.equalsIgnoreCase("GET")) {
-            MediaType type = null;
-            String ssMime = "application/json";
-            if (stype.equalsIgnoreCase("JSON")) {
-                ssMime = "application/json";
-            } else if (stype.equalsIgnoreCase("XML")) {
-                ssMime = "application/xml";
-            }
-            type = MediaType.parse(ssMime);
-            Log.i(TAG, stype);
-            Log.i(TAG, type.toString());
-            textBody = generateBody(ssMime, size);
-            Log.i(TAG, textBody);
-            body = RequestBody.create(type, textBody);
-        }
-        builder.method(method, body);
-        return builder.build();
-    }
-
     public void startTask() {
-        counter = 0;
         getTable().clear();
-        if (textBody == null) {
-            new Getter(0, true).execute(buildRequest());
-        } else new Getter(textBody.length(), true).execute(buildRequest());
+        getTableOriginal().clear();
+        for (int st = 0; st < steps * 2; st++) {
+            Request.Builder builder = new Request.Builder();
+            builder.url(url);
+            RequestBody body = null;
+            Log.i(TAG, "Method N " + method);
+            String textBody = null;
+            if (!method.equalsIgnoreCase("GET")) {
+                MediaType type = null;
+                String ssMime = "application/json";
+                if (stype.equalsIgnoreCase("JSON")) {
+                    ssMime = "application/json";
+                } else if (stype.equalsIgnoreCase("XML")) {
+                    ssMime = "application/xml";
+                }
+                type = MediaType.parse(ssMime);
+                Log.i(TAG, stype);
+                Log.i(TAG, type.toString());
+                textBody = generateBody(ssMime, size);
+                Log.i(TAG, textBody);
+                body = RequestBody.create(type, textBody);
+            }
+            builder.method(method, body);
+            if (textBody == null) {
+                new Getter(0, st % 2 == 0).execute(builder.build());
+            } else new Getter(textBody.length(), st % 2 == 0).execute(builder.build());
+        }
         pd = new ProgressDialog(this);
         pd.setTitle("");
         pd.setMessage(this.getResources().getString(R.string.please_wait));
@@ -234,13 +232,13 @@ public class ResultActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: {
-                    return SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return SummaryFragment.newInstance(Const.MODE_PARALELLY);
                 }
                 case 1: {
-                    return SeriesFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return SeriesFragment.newInstance(Const.MODE_PARALELLY);
                 }
                 default:
-                    return SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return SummaryFragment.newInstance(Const.MODE_PARALELLY);
             }
         }
 
@@ -401,10 +399,8 @@ public class ResultActivity extends AppCompatActivity implements
                 } catch (IOException e) {
                     row.setPayload(0);
                 }
-                row.setCodeResult(response.code());
                 Log.i(TAG, response.toString() + "----------" + String.valueOf(row.getTimeInMillis()) + "-------------");
             }
-
             return row;
         }
 
@@ -414,23 +410,16 @@ public class ResultActivity extends AppCompatActivity implements
                 row.setSource("R");
                 getTable().add(row);
                 pd.incrementProgressBy(1);
+                counter++;
             } else {
                 row.setSource("O");
                 getTableOriginal().add(row);
             }
-            adapter.dataUpdated();
-            Log.i(TAG, getTable().toString());
-            counter++;
-
-            if ((counter) < (steps * 2)) {
-                Request req = buildRequest();
-                if (req.method().equalsIgnoreCase("GET")) {
-                    new Getter(0, counter % 2 == 0).execute(buildRequest());
-                } else new Getter(textBody.length(), counter % 2 == 0).execute(buildRequest());
-            } else {
+            if (counter == steps) {
                 pd.dismiss();
             }
-
+            adapter.dataUpdated();
+            Log.i(TAG, getTable().toString());
         }
     }
 

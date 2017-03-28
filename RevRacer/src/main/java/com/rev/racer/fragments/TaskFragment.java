@@ -22,8 +22,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.rev.racer.Const;
-import com.rev.racer.MainActivity;
 import com.rev.racer.R;
+import com.rev.racer.RevApp;
 
 import okhttp3.HttpUrl;
 /*
@@ -63,6 +63,7 @@ public class TaskFragment extends Fragment {
     private AppCompatSpinner spMime;
     private RelativeLayout rlHistory;
     private RelativeLayout rlStart;
+    private RelativeLayout rlParalelly;
     private HttpUrl url;
     private OnTaskListener listener;
 
@@ -78,7 +79,7 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentURL = ((MainActivity) getActivity()).getSettings().getString(Const.CURRENT_URL, "https://google.com");
+        currentURL = RevApp.getInstance().getSettings().getString(Const.CURRENT_URL, "https://google.com");
     }
 
     @Override
@@ -102,30 +103,12 @@ public class TaskFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-/*
-                if ((s.toString().equalsIgnoreCase("http://")) || (s.toString().equalsIgnoreCase("https://")))
-                    return;
-*/
                 url = HttpUrl.parse(s.toString());
-/*
-                if (url == null) {
-                    url = HttpUrl.parse("http://" + s.toString());
-                    edURL.setText(url.toString().substring(0, url.toString().length() - 1));
-                    edURL.setSelection(edURL.getText().toString().length());
-                }
-*/
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 url = HttpUrl.parse(s.toString());
-/*
-                if (url == null) {
-                    url = HttpUrl.parse("http://" + s.toString());
-                    edURL.setText(url.toString().substring(0, url.toString().length() - 1));
-                    edURL.setSelection(edURL.getText().toString().length());
-                }
-*/
             }
         });
         edURL.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -135,20 +118,17 @@ public class TaskFragment extends Fragment {
                     url = HttpUrl.parse(edURL.getText().toString());
                     if (url == null) {
                         url = HttpUrl.parse("http://" + edURL.getText().toString());
-                        //edURL.setText(url.toString().substring(0, url.toString().length() - 1));
                         edURL.setText(url.toString());
                         edURL.setSelection(edURL.getText().toString().length());
                     }
                     Log.i(TAG, url.toString());
-                    SharedPreferences.Editor ed = ((MainActivity) getActivity()).getSettings().edit();
+                    SharedPreferences.Editor ed = RevApp.getInstance().getSettings().edit();
                     ed.putString(Const.CURRENT_URL, url.toString());
                     ed.commit();
                 }
             }
         });
         edURL.setText(currentURL);
-        //edURL.setText("https://google.com.ua");
-        //edURL.setText("https://www.dell.com");
         sbSteps = (SeekBar) view.findViewById(R.id.sbTests);
         tvSteps = (TextView) view.findViewById(R.id.tvTests);
         sbSteps.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -243,6 +223,16 @@ public class TaskFragment extends Fragment {
                 listener.onStartTaskInSeries(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
             }
         });
+        rlParalelly = (RelativeLayout) view.findViewById(R.id.rlParallel);
+        rlParalelly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edURL.clearFocus();
+                Log.i(TAG, url.toString());
+                listener.onStartTaskParelelly(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
+            }
+        });
+
     }
 
     @Override
@@ -264,5 +254,7 @@ public class TaskFragment extends Fragment {
 
     public interface OnTaskListener {
         void onStartTaskInSeries(int steps, long body, String url, String method, String type);
+
+        void onStartTaskParelelly(int steps, long body, String url, String method, String type);
     }
 }

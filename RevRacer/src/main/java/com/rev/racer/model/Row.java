@@ -106,6 +106,7 @@ public class Row {
         builder.append(this.getCodeResult());
         builder.append(" , ");
         builder.append(this.getBody());
+        builder.append("/");
         builder.append(this.getPayload());
         builder.append(")");
         return builder.toString();

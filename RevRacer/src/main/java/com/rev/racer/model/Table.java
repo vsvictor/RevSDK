@@ -1,5 +1,7 @@
 package com.rev.racer.model;
 
+import com.rev.racer.Const;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -101,16 +103,45 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         else return -1;
     }
 
-    public static String toTable(Table real, Table original) {
+    public static String toTable(Table real, Table original, int mode) {
         StringBuilder builder = new StringBuilder();
+        builder.append("Mode: ");
+        builder.append(mode == Const.MODE_CONSISTENTLY ? "Consistently" : "Paralelly");
+        builder.append("\n");
         for (int i = 0; i < real.size(); i++) {
             builder.append(i);
-            builder.append("nuu:bit: ");
+            builder.append(": nuu:bit: ");
             builder.append(real.get(i).toTable());
-            builder.append("original : ");
+            builder.append(", original : ");
             builder.append(original.get(i).toTable());
             builder.append("\n");
         }
+        builder.append("----------------------------------");
+        builder.append("\n");
+        builder.append("NUU:Bit\n");
+        builder.append("Min: ");
+        builder.append(real.min());
+        builder.append(" Max: ");
+        builder.append(real.max());
+        builder.append(" Average: ");
+        builder.append(real.average());
+        builder.append(" Mediane: ");
+        builder.append(real.median());
+        builder.append(" Stand. deviation: ");
+        builder.append(real.standDeviation());
+        builder.append("\n");
+        builder.append("Original\n");
+        builder.append("Min: ");
+        builder.append(original.min());
+        builder.append(" Max: ");
+        builder.append(original.max());
+        builder.append(" Average: ");
+        builder.append(original.average());
+        builder.append(" Mediane: ");
+        builder.append(original.median());
+        builder.append(" Stand. deviation: ");
+        builder.append(original.standDeviation());
+        builder.append("\n");
         return builder.toString();
     }
 }

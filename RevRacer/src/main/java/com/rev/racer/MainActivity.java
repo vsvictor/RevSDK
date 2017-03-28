@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle("");
         current = MainFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             //startActivity(new Intent(this, SettingActivity.class));
-            RevApp.getInstance().email(RevApp.getInstance().getEMail()).show();
+            RevApp.getInstance().email(RevApp.getInstance().getEMail(), this).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -96,13 +97,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onStartTaskInSeries(int steps, long body, String url, String method, String type) {
-        /*
-        current = ResultFragmentInSeries.newInstance(steps, body, url, method, type);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, current)
-                .commit();
-        */
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra(Const.STEPS, steps);
         intent.putExtra(Const.SIZE, body);
@@ -112,5 +106,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         startActivity(intent);
     }
 
+    @Override
+    public void onStartTaskParelelly(int steps, long body, String url, String method, String type) {
+        Intent intent = new Intent(this, ParalellyActivity.class);
+        intent.putExtra(Const.STEPS, steps);
+        intent.putExtra(Const.SIZE, body);
+        intent.putExtra(Const.URL, url);
+        intent.putExtra(Const.METHOD, method);
+        intent.putExtra(Const.TYPE, type);
+        startActivity(intent);
+    }
 
 }

@@ -6,8 +6,9 @@
 
     <string name="url">Please enter URL...</string>
     <string name="history">History</string>
-    <string name="start">Start</string>
-    <string name="steps">3 steps</string>
+    <string name="start">Consistently</string>
+    <string name="parallel">Parallely</string>
+    <string name="steps">3 run</string>
     <string name="steps_one">steps</string>
     <string name="size">1 KB</string>
     <string name="size_one">KB</string>
@@ -27,5 +28,8 @@
     <string name="max">Max:</string>
     <string name="min_origin">Min original:</string>
     <string name="max_original">Max original:</string>
+    <string name="home">dvictor74@gmail.com</string>
+    <string name="title">nuu:bit Racer</string>
+
 
 </resources>

@@ -3,6 +3,7 @@ package com.rev.racer;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +44,13 @@ public class RevApp extends RevApplication {
         instance = this;
         settings = getSharedPreferences(Const.DATA, MODE_PRIVATE);
         email = settings.getString(Const.EMAIL, Constants.UNDEFINED);
+
         if (email.equalsIgnoreCase(Constants.UNDEFINED)) {
-            AlertDialog dialog = email("");
-            dialog.show();
+            //AlertDialog dialog = email("");
+            //dialog.show();
+            SharedPreferences.Editor ed = settings.edit();
+            ed.putString(Const.EMAIL, getResources().getString(R.string.home));
+            ed.commit();
         }
     }
 
@@ -57,17 +62,17 @@ public class RevApp extends RevApplication {
         return email;
     }
 
-    public AlertDialog email(String aEMail) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public AlertDialog email(String aEMail, AppCompatActivity act) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
         builder.setTitle(Const.EMAIL);
-        View view = LayoutInflater.from(this).inflate(R.layout.email_layout, null);
+        View view = LayoutInflater.from(act).inflate(R.layout.email_layout, null);
         final AppCompatEditText edInput = (AppCompatEditText) view.findViewById(R.id.edEMail);
         edInput.setText(aEMail);
         builder.setView(view);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //email = input.getText().toString();
+                email = edInput.getText().toString();
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(Const.EMAIL, edInput.getText().toString());
                 editor.commit();

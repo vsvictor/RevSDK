@@ -5,6 +5,7 @@
     tools:context="com.rev.weather.MainActivity">
 
     <TextView
+        android:id="@+id/tvToday"
         android:text="Today"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

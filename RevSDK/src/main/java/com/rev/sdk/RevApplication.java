@@ -283,7 +283,7 @@ public class RevApplication extends Application {
         unregisterReceiver(testReceiver);
         unregisterReceiver(statReceiver);
         counter.save(share);
-        Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
+        //Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
 
     private BroadcastReceiver createConfigReceiver() {
@@ -296,11 +296,13 @@ public class RevApplication extends Application {
                     if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                         Log.i(TAG, "HTTP config success");
                         String newConfig = result.getString(Constants.CONFIG);
+                        Log.i(TAG, "New Config: " + newConfig);
                         if (newConfig != null) {
                             Log.i(TAG + " configurator receiver", newConfig);
                             Gson gson = RevSDK.gsonCreate();
+                            Log.i(TAG, "GSON created");
                             config = gson.fromJson(newConfig, Config.class);
-                            ///if(config.ge)
+                            Log.i(TAG, "Deserialized");
                             Log.i(TAG, "Parce to POJO");
                             //config.save(gson, share);
                             config.save(newConfig, share);
@@ -399,11 +401,13 @@ public class RevApplication extends Application {
     private void configuratorRunner(boolean now) {
         final Intent updateIntent = new Intent(RevApplication.this, Configurator.class);
         updateIntent.putExtra(Constants.CONFIG, config == null ?
-                Constants.MAIN_CONFIG_URL : config.getParam().get(0).getConfigurationApiUrl());
+                Constants.DEFAULT_CONFIG_URL : config.getParam().get(0).getConfigurationApiUrl());
         updateIntent.putExtra(Constants.TIMEOUT, config == null ?
                 Constants.DEFAULT_TIMEOUT_SEC : config.getParam().get(0).getConfigurationRequestTimeoutSec());
+        updateIntent.putExtra(Constants.NOW, now);
         if (now) {
             startService(updateIntent);
+            Log.i(TAG, updateIntent.getExtras().toString());
         } else {
             //Timer configTimer = new Timer();
             while (configTimer != null) {

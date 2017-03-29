@@ -33,4 +33,5 @@ dependencies {
     compile 'com.android.support:design:25.3.0'
     testCompile 'junit:junit:4.12'
     compile project(':RevSDK')
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
 }

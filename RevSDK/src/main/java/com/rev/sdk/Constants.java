@@ -23,15 +23,23 @@ package com.rev.sdk;
  */
 
 public class Constants {
+    public static final String SDK_VERSION = "1";
     public static final String KEY_TAG = "com.revsdk.key";
-    public static final String MAIN_CONFIG_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
-    public static final int DEFAULT_STALE_INTERVAL = 360000;
-    public static final int DEFAULT_CONFIG_INTERVAL = 60000;
+    public static final String DEFAULT_CONFIG_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
+    public static final int DEFAULT_STALE_INTERVAL = 36000;
+    public static final int DEFAULT_CONFIG_INTERVAL = 3600;
+    //public static final int DEFAULT_CONFIG_INTERVAL = 60;
+    public static final String DEFAULT_EDGE_HOST = "rev-200.revdn.net";
+    public static final String DEFAULT_TRANSPORT_MONITORING_URL = "https://monitor.revsw.net/test-cache.js";
+    public static final String DEFAULT_STATS_REPORTING_URL = "https://stats-api.revsw.net/v1/stats/apps";
+    public static final int DEFAULT_STATS_REPORTING_INTERVAL = 300;
+    public static final int DEFAULT_MAX_REQUEST_PER_REPORT = 500;
 
     public static final String HTTP_RESULT = "http_result";
     public static final String CONFIG = "config";
     public static final String TIMEOUT = "timeout";
     public static final String TEST_PROTOCOL = "protocol";
+    public static final String NOW = "now";
 
     public static final String STATISTIC = "statistic";
 

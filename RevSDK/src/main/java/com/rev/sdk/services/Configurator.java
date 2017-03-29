@@ -31,6 +31,7 @@ import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
+import com.rev.sdk.config.Config;
 import com.rev.sdk.types.HTTPCode;
 import com.rev.sdk.types.Tag;
 
@@ -44,6 +45,8 @@ import okhttp3.Response;
 public class Configurator extends IntentService {
 
     private static final String TAG = Configurator.class.getSimpleName();
+
+    private boolean isNow = false;
 
     public Configurator() {
         this("Configurator");
@@ -62,7 +65,7 @@ public class Configurator extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         int timeOut = Constants.DEFAULT_TIMEOUT_SEC;
-        String url = Constants.MAIN_CONFIG_URL;
+        String url = Constants.DEFAULT_CONFIG_URL;
         String key =((RevApplication)getApplicationContext()).getSDKKey();
 
         String result = null;
@@ -72,7 +75,8 @@ public class Configurator extends IntentService {
             Bundle params = intent.getExtras();
             if(params != null){
                 timeOut = params.getInt(Constants.TIMEOUT, Constants.DEFAULT_TIMEOUT_SEC);
-                url = params.getString(Constants.CONFIG, Constants.MAIN_CONFIG_URL);
+                url = params.getString(Constants.CONFIG, Constants.DEFAULT_CONFIG_URL);
+                isNow = params.getBoolean(Constants.NOW);
             }
         }
         OkHttpClient client = RevSDK.OkHttpCreate(timeOut);
@@ -105,9 +109,20 @@ public class Configurator extends IntentService {
             configIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
             configIntent.putExtra(Constants.CONFIG, result);
             sendBroadcast(configIntent);
+            Log.i(TAG, result);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
+            Log.i(TAG, "((((((((((((((((((((((((((((( Error )))))))))))))))))))))))))");
             Intent configIntent = new Intent(Actions.CONFIG_UPDATE_ACTION);
+            if (isNow) {
+                configIntent.putExtra(Constants.HTTP_RESULT, 200);
+                Config def = new Config();
+                String defJSON = RevSDK.gsonCreate().toJson(def, Config.class);
+                Log.i(TAG, defJSON);
+                configIntent.putExtra(Constants.CONFIG, defJSON);
+            } else {
+                ex.printStackTrace();
+            }
             sendBroadcast(configIntent);
         }
     }

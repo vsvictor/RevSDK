@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.rev.sdk.Constants;
 import com.rev.sdk.RevSDK;
 import com.rev.sdk.statistic.sections.Data;
 import com.rev.sdk.types.Pair;
@@ -48,6 +49,13 @@ public class Config extends Data implements Parcelable {
 
     private long lastUpdate;
 
+    public Config() {
+        app_name = Constants.UNDEFINED;
+        os = "Android";
+        configs = new ConfigsList();
+        configs.add(new ConfigParamenetrs());
+        lastUpdate = System.currentTimeMillis();
+    }
     public Config(Parcel in) {
         String s = in.readString();
         Config c = RevSDK.gsonCreate().fromJson(s, Config.class);
@@ -151,4 +159,9 @@ public class Config extends Data implements Parcelable {
             return new Config[size];
         }
     };
+
+    public static Config createDefault() {
+        Config result = new Config();
+        return result;
+    }
 }

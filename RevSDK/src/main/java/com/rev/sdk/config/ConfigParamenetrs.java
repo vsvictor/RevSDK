@@ -1,6 +1,8 @@
 package com.rev.sdk.config;
 
+import com.rev.sdk.Constants;
 import com.rev.sdk.protocols.ListProtocol;
+import com.rev.sdk.protocols.Protocol;
 
 /*
  * ************************************************************************
@@ -52,6 +54,37 @@ public class ConfigParamenetrs {
     private int edge_quic_udp_port = 443;
     private int edge_failures_monitoring_interval_sec = 120;
     private int edge_failures_failover_threshold_percent = 80;
+
+    public ConfigParamenetrs() {
+        sdk_release_version = Constants.SDK_VERSION;
+        logging_level = Constants.LEVEL;
+        configuration_api_url = Constants.DEFAULT_CONFIG_URL;
+        configuration_refresh_interval_sec = Constants.DEFAULT_CONFIG_INTERVAL;
+        configuration_request_timeout_sec = Constants.DEFAULT_TIMEOUT_SEC;
+        configuration_stale_timeout_sec = Constants.DEFAULT_STALE_INTERVAL;
+        edge_host = Constants.DEFAULT_EDGE_HOST;
+        operation_mode = OperationMode.off;
+        allowed_transport_protocols = new ListProtocol();
+        allowed_transport_protocols.add(Protocol.STANDART);
+        initial_transport_protocol = Protocol.STANDART.toString();
+        transport_monitoring_url = Constants.DEFAULT_TRANSPORT_MONITORING_URL;
+        stats_reporting_url = Constants.DEFAULT_STATS_REPORTING_URL;
+        stats_reporting_interval_sec = Constants.DEFAULT_STATS_REPORTING_INTERVAL;
+        stats_reporting_level = Constants.LEVEL;
+        stats_reporting_max_requests_per_report = Constants.DEFAULT_MAX_REQUEST_PER_REPORT;
+        domains_provisioned_list = new ListString();
+        domains_white_list = new ListString();
+        domains_black_list = new ListString();
+        internal_domains_black_list = new ListString();
+        a_b_testing_origin_offload_ratio = 0;
+        edge_connect_timeout_sec = 10;
+        edge_data_receive_timeout_sec = 60;
+        edge_first_byte_timeout_sec = 60;
+        edge_sdk_domain = "revsdk.net";
+        edge_quic_udp_port = 443;
+        edge_failures_monitoring_interval_sec = 120;
+        edge_failures_failover_threshold_percent = 80;
+    }
 
     public String getSdkReleaseVersion() {
         return sdk_release_version;

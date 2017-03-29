@@ -33,10 +33,22 @@ public enum OperationMode {
     public String toString(){
         String result = "UNDEFINED";
         switch (this){
-            case transfer_and_report:{result = "Transport and report";break;}
-            case transfer_only:{result = "Transport only";break;}
-            case report_only:{result = "Report only";break;}
-            case off:{result = "Off";break;}
+            case transfer_and_report: {
+                result = "transfer_and_report";
+                break;
+            }
+            case transfer_only: {
+                result = "transfer_only";
+                break;
+            }
+            case report_only: {
+                result = "report_only";
+                break;
+            }
+            case off: {
+                result = "off";
+                break;
+            }
         }
         return result;
     }

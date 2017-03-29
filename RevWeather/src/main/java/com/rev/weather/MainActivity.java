@@ -1,22 +1,26 @@
 package com.rev.weather;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,7 +28,11 @@ import com.google.android.gms.location.LocationServices;
 import com.rev.weather.fragments.FiveDaysFragment;
 import com.rev.weather.fragments.SixteenDaysFragment;
 import com.rev.weather.fragments.TodayFragment;
-import com.rev.weather.model.WeatherMain;
+import com.rev.weather.loader.RootLoader;
+import com.rev.weather.model.Root;
+import com.rev.weather.permission.RequestUserPermission;
+
+import java.util.ArrayList;
 /*
  * ************************************************************************
  *
@@ -50,16 +58,23 @@ import com.rev.weather.model.WeatherMain;
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LoaderManager.LoaderCallbacks<WeatherMain>,
+        LoaderManager.LoaderCallbacks<Root>,
         TodayFragment.OnTodayListener,
         FiveDaysFragment.OnFiveDaysListener,
         SixteenDaysFragment.OnSixteenDaysListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final int REQUEST_STORAGE_INTERNET = 1;
+    private static final int REQUEST_ACCESS_COARSE_LOCATION = 2;
+
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GoogleApiClient googleClient;
     private Location location;
 
+    private ArrayList<Fragment> list = new ArrayList<Fragment>();
+    private ArrayList<String> titles = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,13 +82,20 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.weather);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
+        list.add(TodayFragment.newInstance());
+        list.add(FiveDaysFragment.newInstance());
+        list.add(SixteenDaysFragment.newInstance());
+        titles.add(getResources().getString(R.string.today));
+        titles.add(getResources().getString(R.string.day5));
+        titles.add(getResources().getString(R.string.day16));
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), list, titles);
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
         if (googleClient == null) {
             googleClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -95,10 +117,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onStop();
     }
 
-    /*
         @Override
         public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_compatibility, menu);
+            getMenuInflater().inflate(R.menu.menu_main, menu);
             return true;
         }
 
@@ -111,7 +132,64 @@ public class MainActivity extends AppCompatActivity implements
 
             return super.onOptionsItemSelected(item);
         }
-    */
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_ACCESS_COARSE_LOCATION) {
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+
+                if (permission.equals(android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                        run();
+                    } else {
+                        //requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
+                        RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
+                    }
+                }
+            }
+        }
+    }
+
+    private void run() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i(Const.RESULT_TAG, "Location: deny access");
+            RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
+            return;
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(googleClient);
+        if (location != null) {
+            Log.i(Const.RESULT_TAG, "Location: latitude:" + location.getLatitude() + ", longitude: " + location.getLongitude());
+            Bundle b = new Bundle();
+            b.putDouble(Const.LATITUDE, location.getLatitude());
+            b.putDouble(Const.LONGITUDE, location.getLongitude());
+            getLoaderManager().initLoader(R.id.today_loader, b, this);
+/*
+            RevApp.getAPI().getWeatherByCoordinate(location.getLatitude(), location.getLongitude(), RevApp.getKey()).enqueue(new Callback<Root>() {
+                @Override
+                public void onResponse(Call<Root> call, Response<Root> response) {
+                    try {
+                        Log.i(Const.RESULT_TAG, response.body().toString());
+                        Log.i(Const.RESULT_TAG, response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Root> call, Throwable t) {
+                    Log.i(Const.RESULT_TAG,"Load error");
+                }
+            });
+*/
+        }
+    }
+
     @Override
     public void onTodayWeather(Uri uri) {
     }
@@ -126,22 +204,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Log.i(TAG, "Location: deny");
-            return;
-        }
-        location = LocationServices.FusedLocationApi.getLastLocation(googleClient);
-        if (location != null) {
-            Log.i(TAG, "Location: latitude:" + location.getLatitude() + ", longitude: " + location.getLongitude());
-            //getLoaderManager().initLoader(R.id.today_loader, Bundle.EMPTY, this);
-        }
+        run();
     }
 
     @Override
@@ -153,68 +216,55 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
-        Loader<WeatherMain> loader = null;
-
+    public Loader<Root> onCreateLoader(int id, Bundle args) {
+        double latitude = args.getDouble(Const.LATITUDE, 0);
+        double longitude = args.getDouble(Const.LONGITUDE, 0);
+        Loader<Root> loader = null;
         switch (id) {
             case R.id.today_loader: {
-                break;
-            }
-            default: {
-                loader = null;
+                Log.i(TAG, "Loader create");
+                loader = new RootLoader(this, latitude, longitude);
                 break;
             }
         }
-
+        Log.i(TAG, "Loader is null");
+        //loader.forceLoad();
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<WeatherMain> loader, WeatherMain data) {
-
+    public void onLoadFinished(Loader<Root> loader, Root data) {
+        ((TodayFragment) list.get(0)).updateData(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<WeatherMain> loader) {
+    public void onLoaderReset(Loader<Root> loader) {
         loader.reset();
     }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private ArrayList<Fragment> list;
+        private ArrayList<String> titles;
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public SectionsPagerAdapter(FragmentManager fm, ArrayList<Fragment> list, ArrayList<String> titles) {
             super(fm);
+            this.list = list;
+            this.titles = titles;
         }
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return TodayFragment.newInstance();
-                case 1:
-                    return FiveDaysFragment.newInstance();
-                case 2:
-                    return SixteenDaysFragment.newInstance();
-                default:
-            }
-            return TodayFragment.newInstance();
+            return list.get(position);
         }
         @Override
         public int getCount() {
-            return 3;
+            return list.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getResources().getString(R.string.today);
-                case 1:
-                    return getResources().getString(R.string.day5);
-                case 2:
-                    return getResources().getString(R.string.day16);
-            }
-            return null;
+            return titles.get(position);
         }
     }
 }

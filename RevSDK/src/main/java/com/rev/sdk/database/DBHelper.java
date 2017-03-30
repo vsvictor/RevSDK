@@ -52,6 +52,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 public class DBHelper extends SQLiteOpenHelper{
+    private static final String TAG = DBHelper.class.getSimpleName();
     public static Uri BASE_CONTENT_URI;// = Uri.parse("content://" + RevContentProvider.CONTENT_AUTHORITY);
     public static String DATABASE_NAME = "database.db";
     public static int DATABASE_VERSION = 1;
@@ -84,7 +85,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public long insertRequest(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.update(RequestTable.Requests.TABLE_NAME, values, null, null);
+        return db.insert(RequestTable.Requests.TABLE_NAME, null, values);
     }
 
     public int updateRequest(ContentValues values) {
@@ -102,7 +103,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public Cursor getUnsent() {
         String[] args = {"1", "0"};
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         return db.query(RequestTable.Requests.TABLE_NAME, null, RequestTable.Columns.SENT + "=? AND " + RequestTable.Columns.CONFIRMED + "=?", args, null, null, null);
     }
 }

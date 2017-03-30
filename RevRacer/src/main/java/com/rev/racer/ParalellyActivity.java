@@ -371,7 +371,7 @@ public class ParalellyActivity extends AppCompatActivity implements
                     builder.method(req.method(), req.body());
                     builder.tag(req.tag());
                     builder.headers(req.headers());
-                    if (serv) builder.tag(new Tag(Constants.SYSTEM_REQUEST, true));
+                    if (serv) builder.tag(new Tag(Constants.FREE_REQUEST, true));
                     req = builder.build();
                     //Log.i(TAG, req.toString());
                 }

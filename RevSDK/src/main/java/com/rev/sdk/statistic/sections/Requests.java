@@ -47,18 +47,19 @@ public class Requests extends ArrayList<RequestOne>{
         String[] args = {"1","0"};
         ContentValues update = new ContentValues();
         update.put(RequestTable.Columns.SENT, 1);
-        //context.getContentResolver().update(RequestTable.URI, update,null,null);
         RevApplication.getInstance().getDatabase().updateRequest(update);
 
         //Cursor c = context.getContentResolver().query(RequestTable.URI,null, RequestTable.Columns.SENT +"=? AND "+RequestTable.Columns.CONFIRMED+"=?", args, null);
         Cursor c = RevApplication.getInstance().getDatabase().getUnsent();
         List<RequestOne> rows = RequestTable.listFromCursor(c);
+        Log.i("Statist", "Selected: " + String.valueOf(rows.size()));
         int perReport = RevApplication.getInstance().getConfig().getParam().get(0).getStatsReportingMaxRequestsPerReport();
         Log.i(TAG, "Max per report:"+String.valueOf(perReport));
         List<RequestOne> sub = rows.subList(0, perReport>rows.size()?rows.size():perReport);
+        Log.i("Statist", "Sublist: " + String.valueOf(sub.size()));
         addAll(sub);
         Log.i(TAG, "Size : "+String.valueOf(size()));
-        Collections.sort(this, new Comparator<RequestOne>() {
+        Collections.sort(sub, new Comparator<RequestOne>() {
             @Override
             public int compare(RequestOne o1, RequestOne o2) {
                 if(o1.getID()>o2.getID()) return 1;

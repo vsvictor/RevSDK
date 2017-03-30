@@ -109,7 +109,7 @@ public class ResultActivity extends AppCompatActivity implements
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-        tvMethodMode.setText(method + " , " + getResources().getString(R.string.start));
+        //tvMethodMode.setText(method + " , " + getResources().getString(R.string.start));
 
 
     }
@@ -129,6 +129,10 @@ public class ResultActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getMethodMode() {
+        return method + " , " + getResources().getString(R.string.start);
     }
 
     public Table getTable() {

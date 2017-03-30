@@ -109,7 +109,7 @@ public class ParalellyActivity extends AppCompatActivity implements
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-        tvMethodMode.setText(method + " , " + getResources().getString(R.string.parallel));
+        //tvMethodMode.setText(method + " , " + getResources().getString(R.string.parallel));
 
     }
 
@@ -128,6 +128,10 @@ public class ParalellyActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getMethodMode() {
+        return method + " , " + getResources().getString(R.string.parallel);
     }
 
     public Table getTable() {

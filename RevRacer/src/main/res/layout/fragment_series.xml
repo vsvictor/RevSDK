@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/llContainer"
+    android:alpha="1.0"
+    android:background="@color/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.rev.racer.ResultActivity">
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/content"
         android:background="@drawable/background_data"
         android:layout_marginBottom="@dimen/small"
@@ -20,10 +22,67 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
+        <LinearLayout
+            android:id="@+id/llHeader"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_marginTop="@dimen/big"
+                android:layout_marginBottom="@dimen/big"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvNUU"
+                    android:layout_centerInParent="true"
+                    android:text="@string/summ_title_nuu"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_marginTop="@dimen/big"
+                android:layout_marginBottom="@dimen/big"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvORG"
+                    android:layout_centerInParent="true"
+                    android:text="@string/summ_title_org"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/llDetail"
+            android:layout_below="@id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/detaile_format"
+                android:textSize="@dimen/small_font"
+                android:layout_marginBottom="@dimen/big"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
         <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/rvResult"
+            android:layout_below="@id/llDetail"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +91,7 @@
         </android.support.v7.widget.RecyclerView>
 
 
-    </FrameLayout>
+    </RelativeLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

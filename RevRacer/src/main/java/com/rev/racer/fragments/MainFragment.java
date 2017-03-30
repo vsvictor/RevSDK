@@ -1,7 +1,6 @@
 package com.rev.racer.fragments;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,13 +35,13 @@ import com.rev.racer.R;
  */
 
 public class MainFragment extends Fragment {
-    private Typeface main;
+    //private Typeface main;
     private LinearLayout llBackground;
     private TextView tvNativeMobileApp;
     private TextView tvWebApp;
 
     private Animation racer;
-    private Animation items;
+    //private Animation items;
     private Animation exit;
     private Animation exit_item;
     private OnMainListener listener;
@@ -57,7 +56,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main = Typeface.createFromAsset(getActivity().getAssets(), "fonts/crochet.ttf");
+        //main = Typeface.createFromAsset(getActivity().getAssets(), "fonts/crochet.ttf");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         racer = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_start);
@@ -68,15 +67,15 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                tvNativeMobileApp.startAnimation(items);
-                tvWebApp.startAnimation(items);
+                //tvNativeMobileApp.startAnimation(items);
+                //tvWebApp.startAnimation(items);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        items = AnimationUtils.loadAnimation(getActivity(), R.anim.items);
+        //items = AnimationUtils.loadAnimation(getActivity(), R.anim.items);
         exit = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_change);
         exit_item = AnimationUtils.loadAnimation(getActivity(), R.anim.items_reverse);
         return rootView;
@@ -87,32 +86,16 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, state);
         llBackground = (LinearLayout) view.findViewById(R.id.llMainFragmentContainer);
         tvNativeMobileApp = (TextView) view.findViewById(R.id.tvNativeMobileApp);
-        tvNativeMobileApp.setTypeface(main);
+        //tvNativeMobileApp.setTypeface(main);
         tvNativeMobileApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exit.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        listener.onNativeMobile();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                llBackground.startAnimation(exit);
-                tvNativeMobileApp.startAnimation(exit_item);
-                tvWebApp.startAnimation(exit_item);
+                listener.onNativeMobile();
             }
         });
 
         tvWebApp = (TextView) view.findViewById(R.id.tvWebApp);
-        tvWebApp.setTypeface(main);
+        //tvWebApp.setTypeface(main);
         tvWebApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

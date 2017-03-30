@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rev.racer.Const;
@@ -19,6 +22,8 @@ import com.rev.racer.ResultActivity;
 
 public class SummaryFragment extends Fragment {
 
+    private Animation racer;
+    private LinearLayout llContainer;
     private TextView tvMin;
     private TextView tvMax;
     private TextView tvAverage;
@@ -29,7 +34,7 @@ public class SummaryFragment extends Fragment {
     private TextView tvAverageOrigin;
     private TextView tvMedianeOrigin;
     private TextView tvStandDeviationOrigin;
-
+    private TextView tvMethodMode;
     private int mode;
 
     private OnSummaryListener listener;
@@ -53,11 +58,13 @@ public class SummaryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        racer = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_task);
         return inflater.inflate(R.layout.fragment_summary, container, false);
     }
     @Override
     public void onViewCreated(View view, Bundle state) {
         super.onViewCreated(view, state);
+        llContainer = (LinearLayout) view.findViewById(R.id.llContainer);
         tvMin = (TextView) view.findViewById(R.id.tvMinValue);
         tvMax = (TextView) view.findViewById(R.id.tvMaxValue);
         tvAverage = (TextView) view.findViewById(R.id.tvAverageValue);
@@ -68,6 +75,14 @@ public class SummaryFragment extends Fragment {
         tvAverageOrigin = (TextView) view.findViewById(R.id.tvAverageOriginValue);
         tvMedianeOrigin = (TextView) view.findViewById(R.id.tvMedianeOriginValue);
         tvStandDeviationOrigin = (TextView) view.findViewById(R.id.tvStandDeviationOriginValue);
+        tvMethodMode = (TextView) view.findViewById(R.id.tvRequestsValue);
+        if (mode == Const.MODE_CONSISTENTLY) {
+            tvMethodMode.setText(((ResultActivity) getActivity()).getMethodMode());
+        } else {
+            tvMethodMode.setText(((ParalellyActivity) getActivity()).getMethodMode());
+        }
+        llContainer.startAnimation(racer);
+
     }
 
     @Override

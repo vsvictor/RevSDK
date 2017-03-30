@@ -47,7 +47,6 @@
 
                 <TextView
                     android:id="@+id/tvMethodMode"
-                    android:text="@string/title"
                     android:layout_toLeftOf="@id/ivSendEMail"
                     android:layout_marginRight="@dimen/very_large"
                     android:layout_centerVertical="true"

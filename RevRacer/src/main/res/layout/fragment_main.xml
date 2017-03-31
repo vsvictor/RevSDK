@@ -8,16 +8,22 @@
         android:id="@+id/llMainFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="1.0"
-        android:background="@color/colorBackground"
         android:elevation="1dp"
-        android:orientation="vertical"
-        tools:alpha="1.0">
+        android:orientation="vertical">
+
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="@dimen/big"
+                android:src="@drawable/nuubit_logo_gray"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content" />
 
         </RelativeLayout>
 
@@ -26,15 +32,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/tvNativeMobileApp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/native_mobile_app"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/big_font"
-                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -43,22 +40,58 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/tvWebApp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/web_app"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/big_font"
-                android:textStyle="bold" />
 
         </RelativeLayout>
 
         <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_margin="@dimen/middle"
+                    android:background="@drawable/background_gray"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvNativeMobileApp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/native_mobile_app"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/big_font"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_margin="@dimen/middle"
+                    android:background="@drawable/background_gray"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvWebApp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/web_app"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/big_font"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+            </LinearLayout>
 
         </RelativeLayout>
 

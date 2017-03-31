@@ -31,15 +31,15 @@ import com.rev.weather.R;
  * /
  */
 
-public class SixteenDaysFragment extends Fragment {
+public class VolleyFragment extends Fragment {
 
     private OnSixteenDaysListener listener;
 
-    public SixteenDaysFragment() {
+    public VolleyFragment() {
     }
 
-    public static SixteenDaysFragment newInstance() {
-        SixteenDaysFragment fragment = new SixteenDaysFragment();
+    public static VolleyFragment newInstance() {
+        VolleyFragment fragment = new VolleyFragment();
         return fragment;
     }
 
@@ -50,7 +50,7 @@ public class SixteenDaysFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sixteen_days, container, false);
+        return inflater.inflate(R.layout.fragment_volley, container, false);
     }
 
     @Override

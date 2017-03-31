@@ -145,7 +145,8 @@ public class RevSDK {
         Request result = null;
         Request original = chain.request();
         boolean systemRequest = isSystem(original);
-        if (!systemRequest) {
+        boolean freeRequest = isFree(original);
+        if (!systemRequest && !freeRequest) {
             result = processingRequest(original);
         } else {
             Log.i("System", original.toString());
@@ -158,14 +159,10 @@ public class RevSDK {
         if (!systemRequest && isStatistic()) {
             try {
                 final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
-                //Uri uri = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                //        .insert(RequestTable.URI, RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
                 RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                //Cursor c = RevApplication.getInstance().getApplicationContext().getContentResolver()
-                //        .query(RequestTable.URI, null, null, null, null);
-                //Log.i(TAG, "Row count: " + String.valueOf(c.getCount()) + " Columns count: " + c.getColumnCount());
+                Log.i("database", statRequest.toString());
             } catch (NullPointerException ex) {
-
+                Log.i("database", "Database error!!!");
             }
         }
         Log.i(TAG, "Response:" + response.toString());
@@ -200,6 +197,17 @@ public class RevSDK {
         try {
             Tag tag = (Tag) req.tag();
             result = tag.getName().equals(Constants.SYSTEM_REQUEST) && ((boolean) tag.getValue());
+        } catch (Exception ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    public static boolean isFree(Request req) {
+        boolean result = false;
+        try {
+            Tag tag = (Tag) req.tag();
+            result = tag.getName().equals(Constants.FREE_REQUEST) && ((boolean) tag.getValue());
         } catch (Exception ex) {
             result = false;
         }

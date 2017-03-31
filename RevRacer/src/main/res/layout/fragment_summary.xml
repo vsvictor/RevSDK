@@ -5,28 +5,70 @@
     tools:context="com.rev.racer.fragments.SummaryFragment">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/llContainer"
+        android:alpha="1.0"
+        android:background="@color/colorBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_weight="2"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_weight="2">
 
         <LinearLayout
-            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:background="@drawable/background_data_with_left_top"
+                android:layout_weight="1"
+                android:layout_marginLeft="@dimen/big"
+                android:layout_marginTop="@dimen/many_large"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:text="@string/summ_title_nuu"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:background="@drawable/background_data_with_right_top"
+                android:layout_weight="1"
+                android:layout_marginRight="@dimen/big"
+                android:layout_marginTop="@dimen/many_large"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:text="@string/summ_title_org"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/llMainFragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="@dimen/big"
             android:layout_marginLeft="@dimen/big"
             android:layout_marginRight="@dimen/big"
-            android:layout_marginTop="@dimen/big"
+            android:layout_weight="1"
+            android:background="@drawable/background_data_without_all"
             android:gravity="center_horizontal|center_vertical"
-            android:alpha="0.85"
-            android:background="@drawable/background_data"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -44,9 +86,9 @@
 
                 <TextView
                     android:id="@+id/tvMinValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
@@ -57,9 +99,9 @@
 
                 <TextView
                     android:id="@+id/tvMaxValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
@@ -70,37 +112,37 @@
 
                 <TextView
                     android:id="@+id/tvAverageValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvMediane"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="@string/mediane" />
 
                 <TextView
                     android:id="@+id/tvMedianeValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvStandDeviation"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="@string/stand_deviation" />
 
                 <TextView
                     android:id="@+id/tvStandDeviationValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
             </LinearLayout>
@@ -116,77 +158,106 @@
                     android:id="@+id/tvMinOrigin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/min_origin" />
+                    android:text="@string/min" />
 
                 <TextView
                     android:id="@+id/tvMinOriginValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvMaxOrigin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/max_original" />
+                    android:text="@string/max" />
 
                 <TextView
                     android:id="@+id/tvMaxOriginValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvAverageOrigin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/average_origin" />
+                    android:text="@string/average" />
 
                 <TextView
                     android:id="@+id/tvAverageOriginValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvMedianeOrigin"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/mediane_original" />
+                    android:layout_marginTop="@dimen/small"
+                    android:text="@string/mediane" />
 
                 <TextView
                     android:id="@+id/tvMedianeOriginValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
                 <TextView
                     android:id="@+id/tvStandDeviationOrigin"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/stand_deviation_original" />
+                    android:layout_marginTop="@dimen/small"
+                    android:text="@string/stand_deviation" />
 
                 <TextView
                     android:id="@+id/tvStandDeviationOriginValue"
-                    android:layout_marginTop="@dimen/small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small"
                     android:text="0" />
 
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="2">
 
+            <RelativeLayout
+                android:layout_marginLeft="@dimen/big"
+                android:layout_marginRight="@dimen/big"
+                android:background="@drawable/background_data_without_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvRequests"
+                    android:layout_marginLeft="@dimen/large"
+                    android:layout_marginTop="@dimen/big"
+                    android:layout_marginBottom="@dimen/big"
+                    android:text="@string/requests"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvRequestsValue"
+                    android:layout_marginTop="@dimen/big"
+                    android:layout_marginBottom="@dimen/big"
+                    android:layout_marginLeft="@dimen/small"
+                    android:layout_toRightOf="@id/tvRequests"
+                    android:text="@string/requests"
+                    android:textStyle="italic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

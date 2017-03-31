@@ -30,6 +30,8 @@
     <string name="max_original">Max original:</string>
     <string name="home">dvictor74@gmail.com</string>
     <string name="title">nuu:bit Racer</string>
-
-
+    <string name="summ_title_nuu">NUU:BIT</string>
+    <string name="summ_title_org">Origin</string>
+    <string name="detaile_format">Time, ms\n(Code response, request body size, KB/response body size, KB)</string>
+    <string name="requests">Requests: </string>
 </resources>

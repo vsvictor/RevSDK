@@ -98,6 +98,7 @@ public class Statist extends IntentService {
         if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
             ArrayList<RequestOne> rows = statistic.getRequests();
             ContentValues values = new ContentValues();
+            values.put(RequestTable.Columns.SENT, 1);
             values.put(RequestTable.Columns.CONFIRMED, 1);
             int count = 0;
             if (!statistic.getRequests().isEmpty()) {

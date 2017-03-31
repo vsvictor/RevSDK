@@ -46,6 +46,7 @@ public class Constants {
     public static final int DEFAULT_TIMEOUT_SEC = 10;
 
     public static final String SYSTEM_REQUEST = "system";
+    public static final String FREE_REQUEST = "free";
 
     public static final String USER_AGENT = "User-Agent";
     public static final String USER_AGENT_VALUE = "Mozilla/5.0 (Linux; Android 7.1.1; Nexus 6P Build/N4F26T; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/56.0.2924.87 Mobile Safari/537.36";

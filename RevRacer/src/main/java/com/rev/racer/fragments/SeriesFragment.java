@@ -1,10 +1,8 @@
 package com.rev.racer.fragments;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,11 +20,9 @@ import com.rev.racer.ResultActivity;
 
 public class SeriesFragment extends Fragment {
     private static final String TAG = SeriesFragment.class.getSimpleName();
-    private Typeface main;
-    private LinearLayout llBackground;
+    private LinearLayout llContainer;
     private Animation racer;
     private RecyclerView rvResult;
-    private FloatingActionButton fbEMail;
 
     private int mode;
 
@@ -51,16 +47,15 @@ public class SeriesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        main = Typeface.createFromAsset(getActivity().getAssets(), "fonts/crochet.ttf");
         View rootView = inflater.inflate(R.layout.fragment_series, container, false);
-        racer = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_result);
+        racer = AnimationUtils.loadAnimation(getActivity(), R.anim.racer_task);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle state) {
         super.onViewCreated(view, state);
-        llBackground = (LinearLayout) view.findViewById(R.id.llMainFragmentContainer);
+        llContainer = (LinearLayout) view.findViewById(R.id.llContainer);
         rvResult = (RecyclerView) view.findViewById(R.id.rvResult);
         rvResult.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (mode == Const.MODE_CONSISTENTLY) {
@@ -74,6 +69,7 @@ public class SeriesFragment extends Fragment {
         } else {
             ((ParalellyActivity) getActivity()).startTask();
         }
+        llContainer.startAnimation(racer);
     }
 
     @Override

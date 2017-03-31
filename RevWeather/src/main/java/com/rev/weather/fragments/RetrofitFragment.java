@@ -33,18 +33,22 @@ import com.rev.weather.model.Root;
  * /
  */
 
-public class TodayFragment extends Fragment {
+public class RetrofitFragment extends Fragment {
     private Root root;
 
-    private TextView tvToday;
+    private TextView tvWeather;
+    private TextView tvCurrTemp;
+    private TextView tvHumidity;
+    private TextView tvPressure;
+    private TextView tvWind;
 
     private OnTodayListener listener;
 
-    public TodayFragment() {
+    public RetrofitFragment() {
     }
 
-    public static TodayFragment newInstance() {
-        TodayFragment fragment = new TodayFragment();
+    public static RetrofitFragment newInstance() {
+        RetrofitFragment fragment = new RetrofitFragment();
         //Bundle data = new Bundle();
         //data.putString("data", sData);
         //fragment.setArguments(data);
@@ -61,12 +65,16 @@ public class TodayFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_today, container, false);
+        return inflater.inflate(R.layout.fragment_retrofit, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle data) {
-        tvToday = (TextView) view.findViewById(R.id.tvToday);
+        tvWeather = (TextView) view.findViewById(R.id.tvWeather);
+        tvCurrTemp = (TextView) view.findViewById(R.id.tvCurTempValue);
+        tvHumidity = (TextView) view.findViewById(R.id.tvHumidityValue);
+        tvPressure = (TextView) view.findViewById(R.id.tvPressureValue);
+        tvWind = (TextView) view.findViewById(R.id.tvWindValue);
     }
     @Override
     public void onAttach(Context context) throws RuntimeException {
@@ -86,7 +94,15 @@ public class TodayFragment extends Fragment {
 
     public void updateData(Root r) {
         root = r;
-        tvToday.setText(root.toString());
+        String header = getActivity().getResources().getString(R.string.weather) + " in " + root.getNameCity();
+        tvWeather.setText(header);
+        double celsium = Double.parseDouble(root.getMain().getTemp()) - 273.15d;
+        tvCurrTemp.setText(String.valueOf(celsium) + " " + (char) 0x00B0 + "C");
+        tvHumidity.setText(root.getMain().getHumidity() + " %");
+        Double mm = Double.parseDouble(root.getMain().getPressure()) / 1.3332239;
+        tvPressure.setText(String.format("%(.2f", mm) + " mm Hg");
+        String sWind = root.getWind().getDegree() + (char) 0x00B0 + ", " + root.getWind().getSpeed() + " m/s";
+        tvWind.setText(sWind);
     }
 
     public interface OnTodayListener {

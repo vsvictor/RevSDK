@@ -25,9 +25,9 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.rev.weather.fragments.FiveDaysFragment;
-import com.rev.weather.fragments.SixteenDaysFragment;
-import com.rev.weather.fragments.TodayFragment;
+import com.rev.weather.fragments.PicassoFragment;
+import com.rev.weather.fragments.RetrofitFragment;
+import com.rev.weather.fragments.VolleyFragment;
 import com.rev.weather.loader.RootLoader;
 import com.rev.weather.model.Root;
 import com.rev.weather.permission.RequestUserPermission;
@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LoaderManager.LoaderCallbacks<Root>,
-        TodayFragment.OnTodayListener,
-        FiveDaysFragment.OnFiveDaysListener,
-        SixteenDaysFragment.OnSixteenDaysListener {
+        RetrofitFragment.OnTodayListener,
+        PicassoFragment.OnFiveDaysListener,
+        VolleyFragment.OnSixteenDaysListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int REQUEST_STORAGE_INTERNET = 1;
@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         setTitle(R.string.weather);
         //RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
-        list.add(TodayFragment.newInstance());
-        list.add(FiveDaysFragment.newInstance());
-        list.add(SixteenDaysFragment.newInstance());
+        list.add(RetrofitFragment.newInstance());
+        list.add(PicassoFragment.newInstance());
+        list.add(VolleyFragment.newInstance());
         titles.add(getResources().getString(R.string.today));
         titles.add(getResources().getString(R.string.day5));
         titles.add(getResources().getString(R.string.day16));
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Root> loader, Root data) {
-        ((TodayFragment) list.get(0)).updateData(data);
+        ((RetrofitFragment) list.get(0)).updateData(data);
     }
 
     @Override

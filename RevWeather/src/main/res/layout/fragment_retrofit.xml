@@ -1,0 +1,129 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rev.weather.MainActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--
+                <TextView
+                    android:id="@+id/tvWeather"
+                    android:text="Today"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+        -->
+        <TextView
+            android:id="@+id/tvWeather"
+            android:text="@string/weather"
+            android:textSize="@dimen/big_font"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/big"
+            android:layout_marginBottom="@dimen/big"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvCurTemp"
+            android:layout_below="@id/tvWeather"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="@string/current_temperature"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvCurTempValue"
+            android:layout_below="@id/tvWeather"
+            android:layout_toRightOf="@+id/tvCurTemp"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="0"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="italic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvHumidity"
+            android:layout_below="@id/tvCurTemp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="@string/humidity"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvHumidityValue"
+            android:layout_below="@id/tvCurTemp"
+            android:layout_toRightOf="@+id/tvHumidity"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="0"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="italic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvPressure"
+            android:layout_below="@id/tvHumidity"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="@string/atmospheric_pressure"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvPressureValue"
+            android:layout_below="@id/tvHumidityValue"
+            android:layout_toRightOf="@+id/tvPressure"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="0"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="italic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvWind"
+            android:layout_below="@id/tvPressure"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="@string/wind"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvWindValue"
+            android:layout_below="@id/tvPressureValue"
+            android:layout_toRightOf="@+id/tvWind"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginBottom="@dimen/big"
+            android:text="0"
+            android:textSize="@dimen/middle_font"
+            android:textStyle="italic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</FrameLayout>
+
+

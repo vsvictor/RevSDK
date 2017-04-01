@@ -9,25 +9,30 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.rev.sdk.RevSDK;
 import com.rev.weather.R;
+import com.rev.weather.fragments.PicassoFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 
+//import com.jakewharton.picasso.OkHttp3Downloader;
+
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     private ArrayList<AndroidVersion> android_versions;
     private Context context;
+    private PicassoFragment.OnPicassoListener listener;
     private Picasso picasso;
 
-    public DataAdapter(Context context, ArrayList<AndroidVersion> android_versions) {
+    public DataAdapter(Context context, ArrayList<AndroidVersion> android_versions, PicassoFragment.OnPicassoListener listener) {
         this.context = context;
         this.android_versions = android_versions;
-        OkHttpClient client = RevSDK.OkHttpCreate(10, true, true);
-        picasso = new Picasso.Builder(context).downloader(new OkHttp3Downloader(client)).build();
+        OkHttpClient client = RevSDK.OkHttpCreate(10, false, false);
+        //picasso = new Picasso.Builder(context).downloader(new RevOkHttpDownloader(RevApp.getInstance().getHTTPClient())).build();
+        picasso = new Picasso.Builder(context).downloader(new RevOkHttpDownloader(client)).build();
+        this.listener = listener;
     }
 
     @Override
@@ -40,11 +45,10 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
 
         viewHolder.tv_android.setText(android_versions.get(i).getAndroid_version_name());
-        //Picasso.with(context).load(android_versions.get(i).getAndroid_image_url()).resize(120, 60).into(viewHolder.img_android);
         String sLoad = android_versions.get(i).getAndroid_image_url();
-        //Picasso.with(this.context).load(sLoad).resize(120, 60).into(viewHolder.img_android);
         picasso.load(sLoad).resize(120, 60).into(viewHolder.img_android);
-
+        //picasso.load(sLoad).into(viewHolder.img_android);
+        if (listener != null) listener.onPicassoLoad(sLoad);
     }
 
     @Override

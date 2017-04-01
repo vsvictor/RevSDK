@@ -4,10 +4,13 @@
     android:layout_height="match_parent"
     tools:context="com.rev.weather.MainActivity">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ivImageView"
+        android:src="@drawable/bumblebee"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="16 days" />
+        android:scaleType="centerCrop"
+        tools:background="@drawable/grand_canyon_south_rim" />
 
 </FrameLayout>

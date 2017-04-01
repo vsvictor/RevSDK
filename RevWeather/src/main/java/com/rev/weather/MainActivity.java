@@ -3,8 +3,8 @@ package com.rev.weather;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.rev.weather.fragments.IUpdater;
 import com.rev.weather.fragments.PicassoFragment;
 import com.rev.weather.fragments.RetrofitFragment;
 import com.rev.weather.fragments.VolleyFragment;
@@ -59,9 +61,9 @@ public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LoaderManager.LoaderCallbacks<Root>,
-        RetrofitFragment.OnTodayListener,
-        PicassoFragment.OnFiveDaysListener,
-        VolleyFragment.OnSixteenDaysListener {
+        RetrofitFragment.OnRetrofitListener,
+        PicassoFragment.OnPicassoListener,
+        VolleyFragment.OnVolleyListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int REQUEST_STORAGE_INTERNET = 1;
@@ -72,9 +74,13 @@ public class MainActivity extends AppCompatActivity implements
     private ViewPager mViewPager;
     private GoogleApiClient googleClient;
     private Location location;
+    private IUpdater updater;
 
     private ArrayList<Fragment> list = new ArrayList<Fragment>();
     private ArrayList<String> titles = new ArrayList<String>();
+
+    private Root saved;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,16 +88,31 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.weather);
-        //RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
+
         list.add(RetrofitFragment.newInstance());
         list.add(PicassoFragment.newInstance());
         list.add(VolleyFragment.newInstance());
+        updater = (IUpdater) list.get(0);
         titles.add(getResources().getString(R.string.today));
         titles.add(getResources().getString(R.string.day5));
         titles.add(getResources().getString(R.string.day16));
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), list, titles);
         mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                updater.updateData(saved);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -112,26 +133,48 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Gson gson = new Gson();
+        //Log.i("Tempos",saved.toString());
+        String s = gson.toJson(saved, Root.class);
+        savedInstanceState.putString("data", s);
+        //Log.i("Tempos", s);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Gson gson = new Gson();
+        String s = savedInstanceState.getString("data");
+        saved = gson.fromJson(s, Root.class);
+    }
+    @Override
     protected void onStop() {
         googleClient.disconnect();
         super.onStop();
     }
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
             return true;
         }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == R.id.action_settings) {
-                return true;
-            }
+        return super.onOptionsItemSelected(item);
+    }
 
-            return super.onOptionsItemSelected(item);
-        }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        run();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -146,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements
                     if (grantResult == PackageManager.PERMISSION_GRANTED) {
                         run();
                     } else {
-                        //requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
                         RequestUserPermission.verifyPermissionsAccessCoarseLocation(this, REQUEST_ACCESS_COARSE_LOCATION);
                     }
                 }
@@ -166,40 +208,24 @@ public class MainActivity extends AppCompatActivity implements
             Bundle b = new Bundle();
             b.putDouble(Const.LATITUDE, location.getLatitude());
             b.putDouble(Const.LONGITUDE, location.getLongitude());
-            getLoaderManager().initLoader(R.id.today_loader, b, this);
-/*
-            RevApp.getAPI().getWeatherByCoordinate(location.getLatitude(), location.getLongitude(), RevApp.getKey()).enqueue(new Callback<Root>() {
-                @Override
-                public void onResponse(Call<Root> call, Response<Root> response) {
-                    try {
-                        Log.i(Const.RESULT_TAG, response.body().toString());
-                        Log.i(Const.RESULT_TAG, response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }catch (NullPointerException e){
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Root> call, Throwable t) {
-                    Log.i(Const.RESULT_TAG,"Load error");
-                }
-            });
-*/
+            getLoaderManager().restartLoader(R.id.today_loader, b, this);
+            Log.i("Temp", "Restart");
         }
     }
 
     @Override
-    public void onTodayWeather(Uri uri) {
+    public void onRetrofitLoad() {
+        Log.i(TAG, "-----------------Retrofir LOADED!!!!!!!!!!!!!!!-----------------");
     }
 
     @Override
-    public void onFiveDaysWeather(Uri uri) {
+    public void onPicassoLoad(String url) {
+        Log.i(TAG, "-----------------Picasso LOADED!!!!!!!!!!!!!!!-----------------\n" + url);
     }
 
     @Override
-    public void onSixteenDaysWeather(Uri uri) {
+    public void onVolleyLoad() {
+        Log.i(TAG, "-----------------Volley LOADED!!!!!!!!!!!!!!!-----------------");
     }
 
     @Override
@@ -227,19 +253,23 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             }
         }
-        Log.i(TAG, "Loader is null");
-        //loader.forceLoad();
+        Log.i("Temp", "Loader " + loader == null ? "is null" : "not null");
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<Root> loader, Root data) {
-        ((RetrofitFragment) list.get(0)).updateData(data);
+    public void onLoadFinished(Loader<Root> loader, Root root) {
+        //((RetrofitFragment) list.get(0)).updateData(root);
+        //RevApp.getInstance().setRoot(root);
+        updater.updateData(root);
+        saved = root;
+        Log.i("Temp", "Loader finished");
     }
 
     @Override
     public void onLoaderReset(Loader<Root> loader) {
         loader.reset();
+        Log.i("Temp", "Loader reset");
     }
 
 
@@ -255,8 +285,13 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public Fragment getItem(int position) {
+            if (position == 0) {
+                updater = (IUpdater) list.get(0);
+                if (saved != null) updater.updateData(saved);
+            }
             return list.get(position);
         }
+
         @Override
         public int getCount() {
             return list.size();

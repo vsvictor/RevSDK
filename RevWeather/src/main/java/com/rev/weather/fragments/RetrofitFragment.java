@@ -1,9 +1,9 @@
 package com.rev.weather.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +33,8 @@ import com.rev.weather.model.Root;
  * /
  */
 
-public class RetrofitFragment extends Fragment {
-    private Root root;
+public class RetrofitFragment extends Fragment implements IUpdater {
+    private Context context;
 
     private TextView tvWeather;
     private TextView tvCurrTemp;
@@ -42,25 +42,20 @@ public class RetrofitFragment extends Fragment {
     private TextView tvPressure;
     private TextView tvWind;
 
-    private OnTodayListener listener;
+    private OnRetrofitListener listener;
+    private Root root;
 
     public RetrofitFragment() {
     }
 
     public static RetrofitFragment newInstance() {
         RetrofitFragment fragment = new RetrofitFragment();
-        //Bundle data = new Bundle();
-        //data.putString("data", sData);
-        //fragment.setArguments(data);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //String s = getArguments().getString("data");
-        //Gson g = new Gson();
-        //root = g.fromJson(s, Root.class);
     }
 
     @Override
@@ -76,11 +71,13 @@ public class RetrofitFragment extends Fragment {
         tvPressure = (TextView) view.findViewById(R.id.tvPressureValue);
         tvWind = (TextView) view.findViewById(R.id.tvWindValue);
     }
+
     @Override
     public void onAttach(Context context) throws RuntimeException {
         super.onAttach(context);
-        if (context instanceof OnTodayListener) {
-            listener = (OnTodayListener) context;
+        this.context = context;
+        if (context instanceof OnRetrofitListener) {
+            listener = (OnRetrofitListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
@@ -92,7 +89,9 @@ public class RetrofitFragment extends Fragment {
         listener = null;
     }
 
+    @Override
     public void updateData(Root r) {
+        Log.i("Tempos", r.toString());
         root = r;
         String header = getActivity().getResources().getString(R.string.weather) + " in " + root.getNameCity();
         tvWeather.setText(header);
@@ -103,9 +102,11 @@ public class RetrofitFragment extends Fragment {
         tvPressure.setText(String.format("%(.2f", mm) + " mm Hg");
         String sWind = root.getWind().getDegree() + (char) 0x00B0 + ", " + root.getWind().getSpeed() + " m/s";
         tvWind.setText(sWind);
+        listener.onRetrofitLoad();
     }
 
-    public interface OnTodayListener {
-        void onTodayWeather(Uri uri);
+    public interface OnRetrofitListener {
+        void onRetrofitLoad();
     }
+
 }

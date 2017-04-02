@@ -1,5 +1,7 @@
 package com.rev.sdk.interseptor;
 
+import android.util.Log;
+
 import com.rev.sdk.config.Config;
 import com.rev.sdk.config.ConfigParamenetrs;
 import com.rev.sdk.config.ListString;
@@ -31,17 +33,22 @@ import okhttp3.Request;
 
 public class DomainsChecker {
 
+    private static final String TAG = DomainsChecker.class.getSimpleName();
     private ListString internBlack;
     private ListString black;
     private ListString white;
     private ListString provision;
 
     public DomainsChecker(Config config) {
-        ConfigParamenetrs params = config.getParam().get(0);
-        this.internBlack = params.getInternalDomainsBlackList();
-        this.black = params.getDomainsBlackList();
-        this.white = params.getDomainsWhiteList();
-        this.provision = params.getDomainsProvisionedList();
+        try {
+            ConfigParamenetrs params = config.getParam().get(0);
+            this.internBlack = params.getInternalDomainsBlackList();
+            this.black = params.getDomainsBlackList();
+            this.white = params.getDomainsWhiteList();
+            this.provision = params.getDomainsProvisionedList();
+        } catch (NullPointerException ex) {
+            Log.i(TAG, "ConfigParameters is null!!!");
+        }
     }
 
     public boolean isInternalBlack(Request req) {

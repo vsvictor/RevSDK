@@ -42,13 +42,13 @@ public class RootLoader extends Loader<Root> {
 
     @Override
     protected void onForceLoad() {
-        super.onForceLoad();
         Call<Root> call = api.getWeatherByCoordinate(latitude, longitude, RevApp.getKey());
         call.enqueue(new Callback<Root>() {
             @Override
             public void onResponse(Call<Root> call, Response<Root> response) {
                 if (response.isSuccessful()) {
                     root = response.body();
+                    Log.i(TAG, root.toString());
                     deliverResult(root);
                 } else {
                     deliverResult(null);
@@ -63,6 +63,22 @@ public class RootLoader extends Loader<Root> {
         });
     }
 
+    @Override
+    public void deliverResult(Root r) {
+        if (isReset()) {
+            r = null;
+            return;
+        }
+        if (isStarted()) {
+            super.deliverResult(root);
+        }
+        root = r;
+    }
+
+    @Override
+    protected void onStopLoading() {
+        root = null;
+    }
     @Override
     protected void onReset() {
         root = null;

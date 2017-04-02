@@ -120,10 +120,9 @@ public class Configurator extends IntentService {
                 String defJSON = RevSDK.gsonCreate().toJson(def, Config.class);
                 Log.i(TAG, defJSON);
                 configIntent.putExtra(Constants.CONFIG, defJSON);
-            } else {
-                ex.printStackTrace();
+                sendBroadcast(configIntent);
             }
-            sendBroadcast(configIntent);
+            ex.printStackTrace();
         }
     }
 }

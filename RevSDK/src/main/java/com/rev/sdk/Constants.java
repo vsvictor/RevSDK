@@ -75,4 +75,9 @@ public class Constants {
     public static final String LEVEL = "debug";
     public static final String RSSI = "-10000";
 
+    public static final String CHARGING = "Charging";
+    public static final String DISCHARGING = "Discharging";
+    public static final String NOT_CHARGING = "Not charging";
+    public static final String FULL = "Full";
+
 }

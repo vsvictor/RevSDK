@@ -205,7 +205,7 @@ public class Carrier extends Data implements Parcelable {
         return Constants.RSSI;
     }
 
-    public String getRSSI() {
+    public static String getRSSI() {
         return rssi;
     }
 
@@ -221,7 +221,7 @@ public class Carrier extends Data implements Parcelable {
         return Constants.RSSI;
     }
 
-    public String getRSSIBest() {
+    public static String getRSSIBest() {
         return rssiBest;
     }
 

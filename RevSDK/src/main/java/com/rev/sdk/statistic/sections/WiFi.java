@@ -22,7 +22,11 @@ package com.rev.sdk.statistic.sections;
  * /
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -30,6 +34,7 @@ import com.rev.sdk.Constants;
 import com.rev.sdk.types.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WiFi extends Data implements Parcelable {
     private Context context;
@@ -95,35 +100,102 @@ public class WiFi extends Data implements Parcelable {
     };
 
     private String mac() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInf = wifiMan.getConnectionInfo();
+            return wifiInf.getMacAddress();
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String ssid() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInf = wifiMan.getConnectionInfo();
+            return wifiInf.getSSID();
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String wifi_enc() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            List<ScanResult> networkList = wifi.getScanResults();
+            WifiInfo wi = wifi.getConnectionInfo();
+            String currentSSID = wi.getSSID();
+            String result = Constants.UNDEFINED;
+            if (networkList != null) {
+                for (ScanResult network : networkList) {
+                    if (currentSSID.equals(network.SSID)) {
+                        result = network.capabilities;
+                        break;
+                    }
+                }
+            }
+            return result;
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
+    @SuppressLint("NewApi")
     private String wifi_freq() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInf = wifiMan.getConnectionInfo();
+            return String.valueOf(wifiInf.getFrequency());
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String wifi_rssi() {
-        return Constants.UNDEFINED;
+        try {
+            return Carrier.getRSSI();
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String wifi_rssibest() {
-        return Constants.UNDEFINED;
+        try {
+            return Carrier.getRSSIBest();
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String wifi_sig() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            List<ScanResult> networkList = wifi.getScanResults();
+            WifiInfo wi = wifi.getConnectionInfo();
+            String currentSSID = wi.getSSID();
+            String result = Constants.UNDEFINED;
+            if (networkList != null) {
+                for (ScanResult network : networkList) {
+                    if (currentSSID.equals(network.SSID)) {
+                        result = Constants.UNDEFINED;
+                        break;
+                    }
+                }
+            }
+            return result;
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String wifi_speed() {
-        return Constants.UNDEFINED;
+        try {
+            WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInf = wifiMan.getConnectionInfo();
+            return String.valueOf(wifiInf.getLinkSpeed());
+        } catch (Exception ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     public String getMac() {

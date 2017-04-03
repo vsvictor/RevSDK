@@ -1,5 +1,6 @@
 package com.rev.sdk;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -9,9 +10,16 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.rev.sdk.config.Config;
 import com.rev.sdk.config.OperationMode;
@@ -51,10 +59,12 @@ import java.util.TimerTask;
  * /
  */
 
-public class RevApplication extends Application {
+public class RevApplication extends Application implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = RevApplication.class.getSimpleName();
     private static RevApplication instance;
-    private RequestUserPermission permission;
+    private GoogleApiClient googleClient;
     private String sdkKey;
     private String version;
     private Config config;
@@ -89,12 +99,21 @@ public class RevApplication extends Application {
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         dbHelper = new DBHelper(this);
         counter = new RequestCounter();
+        if (googleClient == null) {
+            googleClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
         init();
     }
 
     public static String getMainPackage() {
         return instance.getPackage();
     }
+
     private String getKeyFromManifest() {
         String result = "key";
         try {
@@ -114,23 +133,23 @@ public class RevApplication extends Application {
     }
 
 
-        private String getNameFromManifest() {
-            String result = "name";
-            try {
-                ApplicationInfo app = this.getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
-                Bundle bundle = app.metaData;
-                for (String key : bundle.keySet()) {
-                    if (key.equals("com.revsdk.name")) {
-                        result = bundle.getString(Constants.KEY_TAG);
-                    }
+    private String getNameFromManifest() {
+        String result = "name";
+        try {
+            ApplicationInfo app = this.getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = app.metaData;
+            for (String key : bundle.keySet()) {
+                if (key.equals("com.revsdk.name")) {
+                    result = bundle.getString(Constants.KEY_TAG);
                 }
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
             }
-            return result.toLowerCase();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
+        return result.toLowerCase();
+    }
 
     private void init() {
         try {
@@ -148,12 +167,15 @@ public class RevApplication extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+                RequestUserPermission.verifyPermissionsInternet(activity);
+                RequestUserPermission.verifyPermissionsReadPhoneState(activity);
+                RequestUserPermission.verifyPermissionsAccessNetworkState(activity);
+                RequestUserPermission.verifyPermissionsAccessCoarseLocation(activity);
             }
 
             @Override
             public void onActivityStarted(Activity activity) {
-
+                googleClient.connect();
             }
 
             @Override
@@ -237,6 +259,35 @@ public class RevApplication extends Application {
     public DBHelper getDatabase() {
         return dbHelper;
     }
+
+    public Location getLocation() {
+        Location location;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(googleClient);
+        if (location != null) {
+            Log.i(TAG, "Location: latitude:" + location.getLatitude() + ", longitude: " + location.getLongitude());
+        }
+        return location;
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 
     private void registration() {
         configReceiver = createConfigReceiver();

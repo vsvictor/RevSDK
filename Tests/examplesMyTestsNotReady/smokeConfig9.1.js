@@ -1,21 +1,3 @@
-/*************************************************************************
- *
- * REV SOFTWARE CONFIDENTIAL
- *
- * [2013] - [2017] Rev Software, Inc.
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Rev Software, Inc. and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Rev Software, Inc.
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Rev Software, Inc.
- */
-
 "use strict";
 
 require("./helpers/setup");
@@ -24,7 +6,7 @@ var wd = require("wd"),
     _ = require('underscore'),
     actions = require("./helpers/actions"),
     serverConfigs = require('./helpers/appium-servers'),
-    configDefaultValues = require("./../../../config/default").values,
+    values = require("./helpers/values").values,
     logging = require("./helpers/logging"),
     apps = require("./helpers/apps"),
     caps = require("./helpers/caps"),
@@ -32,13 +14,13 @@ var wd = require("wd"),
 wd.addPromiseChainMethod('swipe', actions.swipe);
 
 describe("android simple", function () {
-    this.timeout(configDefaultValues.describeTimeout);
+    this.timeout(300000);
     var driver = undefined;
-    var portalAPIKey = configDefaultValues.portalAPIKey;
-    var appId = configDefaultValues.appId;
-    var accountId = configDefaultValues.accountId;
-    var statsReportingIntervalSeconds60 = configDefaultValues.statsReportingIntervalSeconds60;
-    var statsReportingIntervalSeconds85 = configDefaultValues.statsReportingIntervalSeconds85;
+    var portalAPIKey = values.portalAPIKey;
+    var appId = values.appId;
+    var accountId = values.accountId;
+    var statsReportingIntervalSeconds60 = values.statsReportingIntervalSeconds60;
+    var statsReportingIntervalSeconds85 = values.statsReportingIntervalSeconds85;
     var configurationRefreshIntervalMiliSec = 60000;
 
     before(function () {

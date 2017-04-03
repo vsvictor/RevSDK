@@ -41,3 +41,5 @@ captures/
 
 /revsdk
 /.idea
+
+Tests/npm-debug.log*

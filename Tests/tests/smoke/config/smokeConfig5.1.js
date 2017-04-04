@@ -1,28 +1,45 @@
+/*************************************************************************
+ *
+ * REV SOFTWARE CONFIDENTIAL
+ *
+ * [2013] - [2017] Rev Software, Inc.
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Rev Software, Inc. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Rev Software, Inc.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Rev Software, Inc.
+ */
+
 "use strict";
 
-require("./helpers/setup");
+require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    actions = require("./helpers/actions"),
-    serverConfigs = require('./helpers/appium-servers'),
-    values = require("./helpers/values").values,
-    logging = require("./helpers/logging"),
-    apps = require("./helpers/apps"),
-    caps = require("./helpers/caps"),
-    Page = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
-    request = require("./helpers/requests");
-wd.addPromiseChainMethod('swipe', actions.swipe);
+    actions = require("./../../../helpers/actions"),
+    serverConfigs = require('./../../../helpers/appium-servers'),
+    configDefaultValues = require("./../../../config/default").values,
+    logging = require("./../../../helpers/logging"),
+    apps = require("./../../../helpers/apps"),
+    caps = require("./../../../helpers/caps"),
+    Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
+    Configuration = require("./../../../page_objects/RevDemo/configurationPage"),
+    request = require("./../../../helpers/requests");
 
-describe("android simple", function () {
-    this.timeout(300000);
+describe("Smoke Configuration", function () {
+    this.timeout(configDefaultValues.describeTimeout);
     var driver = undefined;
-    var portalAPIKey = values.portalAPIKey;
-    var appId = values.appId;
-    var accountId = values.accountId;
-    var statsReportingIntervalSeconds83 = values.statsReportingIntervalSeconds83;
-    var statsReportingIntervalSeconds60 = values.statsReportingIntervalSeconds60;
+    var portalAPIKey = configDefaultValues.portalAPIKey;
+    var appId = configDefaultValues.appId;
+    var accountId = configDefaultValues.accountId;
+    var statsReportingIntervalSeconds83 = configDefaultValues.statsReportingIntervalSeconds83;
+    var statsReportingIntervalSeconds60 = configDefaultValues.statsReportingIntervalSeconds60;
 
     before(function () {
         var serverConfig = serverConfigs.local;
@@ -41,15 +58,16 @@ describe("android simple", function () {
             .quit();
     });
 
-    it("should find an element", function () {
+    it("should load config from API after configuration_refresh_interval (60 secs)", function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds83);
         return driver
             .sleep(30000)
-            .Page.clickMenuBtn()
-            .sleep(30000)
-            .Page.clickConfigViewBtn()
-            .sleep(3000)
-            .ConfigurationPage.getConfigList()
+            .elementByClassName(Menu.menuBtn.button.className)
+            .click()
+            .sleep(33000)
+            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .click()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[2].text().should.become(statsReportingIntervalSeconds83.toString());
             });

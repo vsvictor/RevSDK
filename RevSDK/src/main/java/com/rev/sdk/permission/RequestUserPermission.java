@@ -41,49 +41,37 @@ import android.support.v4.app.ActivityCompat;
 public class RequestUserPermission {
 
     private Activity activity;
-    private static final int REQUEST_STORAGE_INTERNET = 1;
-    private static final int REQUEST_STORAGE_READ_PHONE_STATE = 2;
+    private static final int REQUEST_INTERNET = 1;
+    private static final int REQUEST_READ_PHONE_STATE = 2;
     private static final int REQUEST_STORAGE_ACCESS_NETWORK_STATE = 3;
+    private static final int REQUEST_ACCESS_COARSE_LOCATION = 4;
 
     public RequestUserPermission(Activity activity) {
         this.activity = activity;
     }
 
-    public boolean verifyPermissionsInternet(PostPermissionGranted runner) {
+    public static void verifyPermissionsInternet(Activity activity) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.INTERNET},
-                    REQUEST_STORAGE_INTERNET);
-
-            return false;
-        } else {
-            runner.onPermissionGranted();
-            return true;
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.INTERNET}, REQUEST_INTERNET);
         }
     }
 
-    public boolean verifyPermissionsReadPhoneState() {
+    public static void verifyPermissionsReadPhoneState(Activity activity) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
-                    REQUEST_STORAGE_READ_PHONE_STATE);
-            return false;
-        } else {
-            return true;
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
         }
-
     }
 
-    public boolean verifyPermissionsAccessNetworkState() {
+    public static void verifyPermissionsAccessNetworkState(Activity activity) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
-                    REQUEST_STORAGE_ACCESS_NETWORK_STATE);
-            return false;
-        } else {
-            return true;
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, REQUEST_STORAGE_ACCESS_NETWORK_STATE);
         }
+    }
 
+    public static void verifyPermissionsAccessCoarseLocation(Activity activity) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
+        }
     }
 
 }

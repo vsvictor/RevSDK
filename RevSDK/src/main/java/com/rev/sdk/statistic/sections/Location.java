@@ -26,6 +26,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.rev.sdk.RevApplication;
 import com.rev.sdk.types.Pair;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 public class Location extends Data implements Parcelable {
     private Context context;
 
+    private android.location.Location location;
     private float direction;
     private double latitude;
     private double longitude;
@@ -40,6 +42,7 @@ public class Location extends Data implements Parcelable {
 
     public Location(Context context){
         this.context = context;
+        this.location = RevApplication.getInstance().getLocation();
         this.direction = direction();
         this.latitude = latitude();
         this.longitude = longitude();
@@ -77,9 +80,30 @@ public class Location extends Data implements Parcelable {
     };
 
     private float direction(){return 0;}
-    private double latitude(){return  0;}
-    private double longitude(){return 0;}
-    private float speed(){return 0;}
+
+    private double latitude() {
+        try {
+            return location.getLatitude();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    private double longitude() {
+        try {
+            return location.getLongitude();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    private float speed() {
+        try {
+            return location.getSpeed();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
 
     public float getDirection() {
         return direction;

@@ -39,5 +39,8 @@ exports.values = {
         a_b_testing_origin_offload_ratio: "0",
         sdk_release_version: '"1"',
         transport_monitoring_url: '"https://monitor.revsw.net/test-cache.js"'
-    }
+    },
+    urlAppsAPI: "https://api.nuubit.net:443/v1/apps/",
+    appsOptionPublish: "?options=publish",
+    describeTimeout: 300000
 };

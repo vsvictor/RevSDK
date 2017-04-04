@@ -1,19 +1,37 @@
+/*************************************************************************
+ *
+ * REV SOFTWARE CONFIDENTIAL
+ *
+ * [2013] - [2017] Rev Software, Inc.
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Rev Software, Inc. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Rev Software, Inc.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Rev Software, Inc.
+ */
+
 "use strict";
 
-require("./helpers/setup");
+require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    actions = require("./helpers/actions"),
-    serverConfigs = require('./helpers/appium-servers'),
-    logging = require("./helpers/logging"),
-    apps = require("./helpers/apps"),
-    Page = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
-    caps = require("./helpers/caps");
+    actions = require("./../../../helpers/actions"),
+    serverConfigs = require('./../../../helpers/appium-servers'),
+    logging = require("./../../../helpers/logging"),
+    apps = require("./../../../helpers/apps"),
+    caps = require("./../../../helpers/caps"),
+    Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
+    Configuration = require("./../../../page_objects/RevDemo/configurationPage");
 
-describe("android simple", function () {
-    this.timeout(300000);
+describe("Smoke Configuration", function () {
+    this.timeout(configDefaultValues.describeTimeout);
     var driver;
 
     before(function () {
@@ -32,50 +50,52 @@ describe("android simple", function () {
             .quit();
     });
 
-    it("should find an element", function () {
+    it("should load valid config parameters", function () {
         return driver
             .sleep(1000)
-            .Page.clickMenuBtn()
+            .elementByClassName(Menu.menuBtn.button.className)
+            .click()
             .sleep(1000)
-            .Page.clickConfigViewBtn()
+            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .click()
             .sleep(1000)
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[1].text().should.become("stats_reporting_interval_sec");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[3].text().should.become("stats_reporting_level");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[5].text().should.become("edge_failures_failover_threshold_percent");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[7].text().should.become("edge_quic_udp_port");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[9].text().should.become("edge_data_receive_timeout_sec");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[11].text().should.become("app_name");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[13].text().should.become("internal_domains_black_list");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[15].text().should.become("a_b_testing_origin_offload_ratio");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[17].text().should.become("sdk_release_version");
             })
-            .ConfigurationPage.getConfigList()
+            .elementsByXPath(Configuration.lists.config.xpath)
             .then(function (els) {
                 return els[19].text().should.become("transport_monitoring_url");
             });

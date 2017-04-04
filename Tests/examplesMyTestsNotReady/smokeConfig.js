@@ -13,7 +13,7 @@ wd.addPromiseChainMethod('swipe', actions.swipe);
 var request = require("request");
 
 describe("android simple", function () {
-    this.timeout(configDefaultValues.describeTimeout);
+  this.timeout(300000);
   var driver;
   var allPassed = true;
    var nameOfTheNewApp = "QAAndroid" + new Date();

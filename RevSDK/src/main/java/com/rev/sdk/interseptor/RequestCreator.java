@@ -5,6 +5,7 @@ import android.util.Log;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.config.Config;
+import com.rev.sdk.config.OperationMode;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
@@ -100,22 +101,24 @@ public class RequestCreator {
             builder.add(sName, sValue);
         }
 
-        if (checker.isProvosion(original)) {
-            if ("http".equalsIgnoreCase(original.url().scheme())) {
+        if (RevApplication.getInstance().getConfig().getParam().get(0).getOperationMode() != OperationMode.off) {
+            if (checker.isProvosion(original)) {
+                if ("http".equalsIgnoreCase(original.url().scheme())) {
+                    valueBuilder.append(RevApplication.getInstance().getSDKKey());
+                    valueBuilder.append(".");
+                    valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
+                    builder.add(Constants.HOST_HEADER_NAME, valueBuilder.toString());
+                }
+                builder.add(Constants.HOST_REV_HEADER_NAME, original.url().host());
+                builder.add(Constants.PROTOCOL_REV_HEADER_NAME, original.url().scheme());
+            } else if (checker.isWhite(original)) {
                 valueBuilder.append(RevApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");
                 valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
-                builder.add(Constants.HOST_HEADER_NAME,valueBuilder.toString());
+                builder.add(Constants.HOST_HEADER_NAME, valueBuilder.toString());
+                builder.add(Constants.HOST_REV_HEADER_NAME, original.url().host());
+                builder.add(Constants.PROTOCOL_REV_HEADER_NAME, original.url().scheme());
             }
-            builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
-            builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());
-        } else if (checker.isWhite(original)) {
-            valueBuilder.append(RevApplication.getInstance().getSDKKey());
-            valueBuilder.append(".");
-            valueBuilder.append(RevApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
-            builder.add(Constants.HOST_HEADER_NAME,valueBuilder.toString());
-            builder.add(Constants.HOST_REV_HEADER_NAME,original.url().host());
-            builder.add(Constants.PROTOCOL_REV_HEADER_NAME,original.url().scheme());
         }
         return builder.build();
     }

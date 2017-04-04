@@ -22,19 +22,34 @@ package com.rev.sdk.statistic.sections;
  * /
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 
 import com.rev.sdk.Constants;
 import com.rev.sdk.types.Pair;
+import com.rev.sdk.utils.DeviceUuidFactory;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Device extends Data implements Parcelable {
     private Context context;
 
-    private float batt_cap;
+    private double batt_cap;
     private String batt_status;
     private String batt_tech;
     private String batt_temp;
@@ -169,44 +184,100 @@ public class Device extends Data implements Parcelable {
         }
     };
 
-    private float battCap() {
-        return 0;
+    private double battCap() {
+        IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, iFilter);
+        int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
+        int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
+        float batteryPct = level / (float) scale;
+        return (int) (batteryPct * 100);
     }
 
     private String battStatus() {
-        return Constants.UNDEFINED;
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        switch (status) {
+            case BatteryManager.BATTERY_STATUS_UNKNOWN:
+                return Constants.UNDEFINED;
+            case BatteryManager.BATTERY_STATUS_CHARGING:
+                return Constants.CHARGING;
+            case BatteryManager.BATTERY_STATUS_DISCHARGING:
+                return Constants.DISCHARGING;
+            case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
+                return Constants.NOT_CHARGING;
+            case BatteryManager.BATTERY_STATUS_FULL:
+                return Constants.FULL;
+            default:
+                return Constants.UNDEFINED;
+        }
     }
 
     private String battTech() {
-        return Constants.UNDEFINED;
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent intent = context.registerReceiver(null, ifilter);
+        return intent.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
     }
 
     private String battTemp() {
-        return Constants.UNDEFINED;
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent intent = context.registerReceiver(null, ifilter);
+        return String.valueOf(intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0));
     }
 
     private String battVolt() {
-        return Constants.UNDEFINED;
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent intent = context.registerReceiver(null, ifilter);
+        return String.valueOf(intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0));
     }
 
     private String brand() {
-        return Constants.UNDEFINED;
+        return Build.BRAND;
     }
 
     private String cpu() {
-        return Constants.UNDEFINED;
+        return Build.CPU_ABI;
     }
 
     private String cpuCores() {
-        return Constants.S_ZERO;
+        class CpuFilter implements FileFilter {
+            @Override
+            public boolean accept(File pathname) {
+                //Check if filename is "cpu", followed by a single digit number
+                if (Pattern.matches("cpu[0-9]+", pathname.getName())) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        try {
+            File dir = new File("/sys/devices/system/cpu/");
+            File[] files = dir.listFiles((FileFilter) new CpuFilter());
+            return String.valueOf(files.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "1";
+        }
     }
 
     private String cpuFreq() {
-        return Constants.UNDEFINED;
+        String cpuMaxFreq = "";
+        RandomAccessFile reader = null;
+        try {
+            reader = new RandomAccessFile("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
+            cpuMaxFreq = reader.readLine();
+            reader.close();
+            return cpuMaxFreq;
+        } catch (FileNotFoundException e) {
+            return Constants.UNDEFINED;
+        } catch (IOException e) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String cpuNumber() {
-        return Constants.S_ZERO;
+        return String.valueOf(Runtime.getRuntime().availableProcessors());
     }
 
     private String cpuSub() {
@@ -214,53 +285,106 @@ public class Device extends Data implements Parcelable {
     }
 
     private String device() {
-        return "Nexus 6P";
+        return Build.MODEL;
     }
 
     private String hight() {
-        return Constants.S_ZERO;
+        DisplayMetrics metrics = context.getApplicationContext().getResources().getDisplayMetrics();
+        return String.valueOf(metrics.heightPixels);
     }
 
     private String width() {
-        return Constants.UNDEFINED;
+        DisplayMetrics metrics = context.getApplicationContext().getResources().getDisplayMetrics();
+        return String.valueOf(metrics.widthPixels);
     }
 
     private String ICCID() {
-        return Constants.UNDEFINED;
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            return telephonyManager.getSimSerialNumber();
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String IMEI() {
-        return Constants.UNDEFINED;
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            return telephonyManager.getDeviceId();
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String IMSI() {
-        return Constants.UNDEFINED;
+        try {
+            TelephonyManager mTelephonyMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            return mTelephonyMgr.getSubscriberId();
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String manufacture() {
-        return Constants.UNDEFINED;
+        return Build.MANUFACTURER;
     }
 
     private String MEIS() {
-        return Constants.UNDEFINED;
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            return telephonyManager.getDeviceId();
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
-    private String OS() {return "Android";}
+    private String OS() {
+        return "Android " + Build.VERSION.RELEASE;
+    }
 
     private String phoneNumber() {
-        return Constants.UNDEFINED;
+        try {
+            TelephonyManager mTelephonyMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            String phnNo = mTelephonyMgr.getLine1Number();
+            if (phnNo == null) {
+                phnNo = getNoFromWatsApp();
+            }
+            return phnNo;
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
+    }
+
+    private String getNoFromWatsApp() {
+        try {
+            AccountManager am = AccountManager.get(context);
+            Account[] accounts = am.getAccounts();
+            String phoneNumber = "";
+            for (Account ac : accounts) {
+                String acname = ac.name;
+                String actype = ac.type;
+                // Take your time to look at all available accounts
+                if (actype.equals("com.whatsapp")) {
+                    phoneNumber = ac.name;
+                }
+            }
+            return phoneNumber;
+        } catch (SecurityException ex) {
+            return Constants.UNDEFINED;
+        }
     }
 
     private String radioSerial() {
-        return Constants.UNDEFINED;
+        return Build.getRadioVersion();
     }
 
     private String serialNumber() {
-        return Constants.UNDEFINED;
+        return Build.SERIAL;
     }
 
     private String UUID() {
-        return Constants.UNDEFINED;
+        DeviceUuidFactory getter = new DeviceUuidFactory(context);
+        return getter.getDeviceUuid().toString();
     }
 
     private String nameOS() {
@@ -268,14 +392,14 @@ public class Device extends Data implements Parcelable {
     }
 
     private String versionOS() {
-        return "7.1.1";
+        return Build.VERSION.RELEASE;
     }
 
     private String model() {
-        return "Nexus 6P";
+        return Build.MODEL;
     }
 
-    public float getBattCap() {
+    public double getBattCap() {
         return batt_cap;
     }
 
@@ -390,7 +514,7 @@ public class Device extends Data implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeFloat(batt_cap);
+        dest.writeDouble(batt_cap);
         dest.writeString(batt_status);
         dest.writeString(batt_tech);
         dest.writeString(batt_temp);

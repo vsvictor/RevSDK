@@ -27,8 +27,8 @@ import com.rev.sdk.statistic.Statistic;
 import com.rev.sdk.statistic.sections.AppInfo;
 import com.rev.sdk.statistic.sections.Carrier;
 import com.rev.sdk.statistic.sections.Device;
-import com.rev.sdk.statistic.sections.Event;
 import com.rev.sdk.statistic.sections.Location;
+import com.rev.sdk.statistic.sections.LogEvent;
 import com.rev.sdk.statistic.sections.LogEvents;
 import com.rev.sdk.statistic.sections.Network;
 import com.rev.sdk.statistic.sections.RequestOne;
@@ -182,7 +182,7 @@ public class RevSDK {
                 .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
                 .registerTypeAdapter(AppInfo.class, new AppInfoSerialize()).registerTypeAdapter(AppInfo.class, new AppInfoDeserializer())
                 .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
-                .registerTypeAdapter(Event.class, new EventSerialize())
+                .registerTypeAdapter(LogEvent.class, new EventSerialize())
                 .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
                 .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
                 .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())

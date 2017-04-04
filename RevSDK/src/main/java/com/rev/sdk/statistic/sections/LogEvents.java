@@ -30,7 +30,7 @@ import com.rev.sdk.RevSDK;
 
 import java.util.ArrayList;
 
-public class LogEvents extends ArrayList<Event> implements Parcelable {
+public class LogEvents extends ArrayList<LogEvent> implements Parcelable {
     private Context context;
     public LogEvents(Context context){
         this.context = context;
@@ -38,8 +38,8 @@ public class LogEvents extends ArrayList<Event> implements Parcelable {
 
     protected LogEvents(Parcel in) {
         LogEvents reqs = RevSDK.gsonCreate().fromJson(in.readString(), LogEvents.class);
-        for (Event event : reqs) {
-            this.add(event);
+        for (LogEvent logEvent : reqs) {
+            this.add(logEvent);
         }
     }
 

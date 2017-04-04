@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="undefined">Undefined</string>
+
+    <string name="start_finish_url_fetch">Starting/Finishing URL fetch</string>
+    <string name="star_finish_sdk_stats_upload_process">Starting/Filishing SDK stats upload process</string>
+    <string name="details_of_loaded_sdk_configuration">Details of loaded SDK configuration</string>
+    <string name="timing_performance_for_loaded_objects">Timing/performance for loaded objects</string>
+    <string name="tcp_quic_connection_reestablishing">TCP/QUIC connection reestablishing</string>
+
+    <string name="sdk_initialization_ready_stage">SDK initialization/ready stage</string>
+    <string name="starting_ending_sdk_configuration_refresh">Starting/ending SDK configuration refresh</string>
+    <string name="starting_ending_lm_selection_logic">Starting/ending LM selection logic</string>
+    <string name="switching_operation_mode">Switching to a new operation mode</string>
+
+    <string name="failed_refresh_configuration">Failed to refresh SDK configuration</string>
+    <string name="failed_upload_stats">Failed to upload SDK stats</string>
+    <string name="failure_monitoring_logic">Failure in LM monitoring logic/process</string>
+    <string name="failed_fetch_object">Failed to fetch an object</string>
+    <string name="received_object_with_5xx">Received object with 5xx HTTP status response</string>
+
+    <string name="switching_configuration_stale_mode">Failed to load SDK configuration (switching to configuration stale mode)</string>
+    <string name="failure_all_lm">Failure for all Rev LM protocols (switching to direct origin communication)</string>
+    <string name="recovable_oom">Recoverable OOM (Out Of Memory) events</string>
+
+    <string name="fail_init_sdk">Failed to initialize the SDK</string>
+    <string name="os_access_permissions">OS access permissions errors</string>
+    <string name="unrecoverable_oom">Unrecoverable out of memory errors</string>
+
+    <string name="debug">Debug</string>
+    <string name="info">Info</string>
+    <string name="warning">Warning</string>
+    <string name="error">Error</string>
+    <string name="critical">Critical</string>
+
+</resources>

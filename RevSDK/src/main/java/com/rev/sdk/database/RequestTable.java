@@ -28,7 +28,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.rev.sdk.RevApplication;
-import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.statistic.sections.RequestOne;
 
 import java.util.ArrayList;
@@ -73,17 +73,17 @@ public class RequestTable {
         value.setLocalCacheStatus(cursor.getString(cursor.getColumnIndex(Columns.LOCAL_CACHE_STATUS)));
         value.setMethod(cursor.getString(cursor.getColumnIndex(Columns.METHOD)));
         value.setNetwork(cursor.getString(cursor.getColumnIndex(Columns.NETWORK)));
-        value.setProtocol(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.PROTOCOL))));
+        value.setEnumProtocol(EnumProtocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.PROTOCOL))));
         value.setReceivedBytes(cursor.getLong(cursor.getColumnIndex(Columns.RECEIVED_BYTES)));
         value.setSentBytes(cursor.getLong(cursor.getColumnIndex(Columns.SENT_BYTES)));
         value.setStatusCode(cursor.getInt(cursor.getColumnIndex(Columns.STATUS_CODE)));
         value.setSuccessStatus(cursor.getInt(cursor.getColumnIndex(Columns.SUCCESS_CODE)));
-        value.setTransportProtocol(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.TRANSPORT_PROTOCOL))));
+        value.setTransportEnumProtocol(EnumProtocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.TRANSPORT_PROTOCOL))));
         value.setURL(cursor.getString(cursor.getColumnIndex(Columns.URL)));
         value.setDestination(cursor.getString(cursor.getColumnIndex(Columns.DESTINATION)));
         value.setXRevCache(cursor.getString(cursor.getColumnIndex(Columns.X_REV_CACHE)));
         value.setDomain(cursor.getString(cursor.getColumnIndex(Columns.DOMAIN)));
-        value.setEdgeTransport(Protocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.EDGE_TRANSPORT))));
+        value.setEdgeTransport(EnumProtocol.fromString(cursor.getString(cursor.getColumnIndex(Columns.EDGE_TRANSPORT))));
         return value;
     }
 
@@ -130,12 +130,12 @@ public class RequestTable {
         values.put(Columns.LOCAL_CACHE_STATUS, req.getLocalCacheStatus());
         values.put(Columns.METHOD, req.getMethod());
         values.put(Columns.NETWORK, req.getNetwork());
-        values.put(Columns.PROTOCOL, req.getProtocol().toString());
+        values.put(Columns.PROTOCOL, req.getEnumProtocol().toString());
         values.put(Columns.RECEIVED_BYTES, req.getReceivedBytes());
         values.put(Columns.SENT_BYTES, req.getSentBytes());
         values.put(Columns.STATUS_CODE, req.getStatusCode());
         values.put(Columns.SUCCESS_CODE, req.getSuccessStatus());
-        values.put(Columns.TRANSPORT_PROTOCOL, req.getTransportProtocol().toString());
+        values.put(Columns.TRANSPORT_PROTOCOL, req.getTransportEnumProtocol().toString());
         values.put(Columns.URL, req.getURL());
         values.put(Columns.DESTINATION, req.getDestination());
         values.put(Columns.X_REV_CACHE, req.getXRevCach());

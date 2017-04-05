@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="undefined">Undefined</string>
-
     <string name="start_finish_url_fetch">Starting/Finishing URL fetch</string>
     <string name="star_finish_sdk_stats_upload_process">Starting/Filishing SDK stats upload process</string>
     <string name="details_of_loaded_sdk_configuration">Details of loaded SDK configuration</string>

@@ -35,7 +35,7 @@ public class ProtocolTester extends Thread {
 
     public void test() {
         result.clear();
-        for (Protocol name : list) {
+        for (EnumProtocol name : list) {
             testOne(name);
         }
     }
@@ -44,11 +44,11 @@ public class ProtocolTester extends Thread {
         return result;
     }
 
-    private void testOne(Protocol name) {
+    private void testOne(EnumProtocol name) {
         result.put(name, 1000L);
     }
 
-    public Protocol getBest() {
-        return Protocol.STANDART;
+    public EnumProtocol getBest() {
+        return EnumProtocol.STANDART;
     }
 }

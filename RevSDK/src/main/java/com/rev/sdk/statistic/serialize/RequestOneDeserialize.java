@@ -28,7 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.rev.sdk.database.RequestTable;
-import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.statistic.sections.RequestOne;
 
 import java.lang.reflect.Type;
@@ -48,12 +48,12 @@ public class RequestOneDeserialize implements JsonDeserializer<RequestOne> {
         result.setLocalCacheStatus(obj.get(RequestTable.Columns.LOCAL_CACHE_STATUS).getAsString());
         result.setMethod(obj.get(RequestTable.Columns.METHOD).getAsString());
         result.setNetwork(obj.get(RequestTable.Columns.NETWORK).getAsString());
-        result.setProtocol(Protocol.fromString(obj.get(RequestTable.Columns.PROTOCOL).getAsString()));
+        result.setEnumProtocol(EnumProtocol.fromString(obj.get(RequestTable.Columns.PROTOCOL).getAsString()));
         result.setReceivedBytes(obj.get(RequestTable.Columns.RECEIVED_BYTES).getAsLong());
         result.setSentBytes(obj.get(RequestTable.Columns.SENT_BYTES).getAsLong());
         result.setStatusCode(obj.get(RequestTable.Columns.STATUS_CODE).getAsInt());
         result.setSuccessStatus(obj.get(RequestTable.Columns.SUCCESS_CODE).getAsInt());
-        result.setTransportProtocol(Protocol.fromString(obj.get(RequestTable.Columns.TRANSPORT_PROTOCOL).getAsString()));
+        result.setTransportEnumProtocol(EnumProtocol.fromString(obj.get(RequestTable.Columns.TRANSPORT_PROTOCOL).getAsString()));
         result.setURL(obj.get(RequestTable.Columns.URL).getAsString());
         return result;
     }

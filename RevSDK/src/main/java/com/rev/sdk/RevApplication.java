@@ -26,6 +26,7 @@ import com.rev.sdk.config.OperationMode;
 import com.rev.sdk.database.DBHelper;
 import com.rev.sdk.permission.RequestUserPermission;
 import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.protocols.StandardProtocol;
 import com.rev.sdk.services.Configurator;
 import com.rev.sdk.services.Statist;
 import com.rev.sdk.services.Tester;
@@ -70,7 +71,7 @@ public class RevApplication extends Application implements
     private Config config;
 
     private SharedPreferences share;
-    private Protocol best = Protocol.STANDART;
+    private Protocol best = new StandardProtocol();
 
     //private boolean configuratorRunning = false;
     private boolean isInternet = false;

@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
-import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.protocols.TypeRequest;
 import com.rev.sdk.types.Pair;
 
@@ -43,13 +43,13 @@ public class RequestCounter {
     private long quicProtocol;
     private long revProtocol;
 
-    public void addRequest(Request req, Protocol protocol) {
+    public void addRequest(Request req, EnumProtocol enumProtocol) {
         String key = RevApplication.getInstance().getSDKKey();
         String host = req.url().host();
         if (RevSDK.isSystem(req)) systemRequests++;
         if (!RevSDK.isSystem(req) && host.contains(key)) revRequests++;
         else if (!RevSDK.isSystem(req)) originRequests++;
-        switch (protocol) {
+        switch (enumProtocol) {
             case STANDART: {
                 standartProtocol++;
                 break;
@@ -70,9 +70,9 @@ public class RequestCounter {
         editor.putLong(Constants.REV, getRevRequestsCount());
         editor.putLong(Constants.ORIGIN, getOriginRequestsCount());
         editor.putLong(Constants.SYSTEM, getSystemRequestsCount());
-        editor.putLong(Protocol.STANDART.toString(), standartProtocol);
-        editor.putLong(Protocol.QUIC.toString(), quicProtocol);
-        editor.putLong(Protocol.REV.toString(), revProtocol);
+        editor.putLong(EnumProtocol.STANDART.toString(), standartProtocol);
+        editor.putLong(EnumProtocol.QUIC.toString(), quicProtocol);
+        editor.putLong(EnumProtocol.REV.toString(), revProtocol);
         editor.commit();
     }
 
@@ -80,9 +80,9 @@ public class RequestCounter {
         revRequests = share.getLong(Constants.REV, 0);
         originRequests = share.getLong(Constants.ORIGIN, 0);
         systemRequests = share.getLong(Constants.SYSTEM, 0);
-        standartProtocol = share.getLong(Protocol.STANDART.toString(), 0);
-        quicProtocol = share.getLong(Protocol.QUIC.toString(), 0);
-        revProtocol = share.getLong(Protocol.REV.toString(), 0);
+        standartProtocol = share.getLong(EnumProtocol.STANDART.toString(), 0);
+        quicProtocol = share.getLong(EnumProtocol.QUIC.toString(), 0);
+        revProtocol = share.getLong(EnumProtocol.REV.toString(), 0);
     }
 
     public long getRequestCount(TypeRequest type) {
@@ -125,9 +125,9 @@ public class RequestCounter {
         return systemRequests;
     }
 
-    public long getRequestsOver(Protocol protocol) {
+    public long getRequestsOver(EnumProtocol enumProtocol) {
         long result = 0;
-        switch (protocol) {
+        switch (enumProtocol) {
             case STANDART: {
                 result = getRequestsOverStandart();
                 break;

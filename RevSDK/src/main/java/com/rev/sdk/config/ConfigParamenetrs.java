@@ -1,8 +1,8 @@
 package com.rev.sdk.config;
 
 import com.rev.sdk.Constants;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.protocols.ListProtocol;
-import com.rev.sdk.protocols.Protocol;
 
 /*
  * ************************************************************************
@@ -65,8 +65,8 @@ public class ConfigParamenetrs {
         edge_host = Constants.DEFAULT_EDGE_HOST;
         operation_mode = OperationMode.off;
         allowed_transport_protocols = new ListProtocol();
-        allowed_transport_protocols.add(Protocol.STANDART);
-        initial_transport_protocol = Protocol.STANDART.toString();
+        allowed_transport_protocols.add(EnumProtocol.STANDART);
+        initial_transport_protocol = EnumProtocol.STANDART.toString();
         transport_monitoring_url = Constants.DEFAULT_TRANSPORT_MONITORING_URL;
         stats_reporting_url = Constants.DEFAULT_STATS_REPORTING_URL;
         stats_reporting_interval_sec = Constants.DEFAULT_STATS_REPORTING_INTERVAL;

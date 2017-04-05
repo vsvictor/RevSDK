@@ -27,7 +27,7 @@ import android.content.Intent;
 
 import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
-import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.protocols.ProtocolTester;
 
 public class Tester extends IntentService {
@@ -43,7 +43,7 @@ public class Tester extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String result = Protocol.STANDART.toString();
+        String result = EnumProtocol.STANDART.toString();
         Intent protocolIntent = new Intent(Actions.TEST_PROTOCOL_ACTION);
         protocolIntent.putExtra(Constants.TEST_PROTOCOL, result);
         sendBroadcast(protocolIntent);

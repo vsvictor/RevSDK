@@ -57,6 +57,7 @@ import com.rev.sdk.web.RevWebChromeClient;
 import com.rev.sdk.web.RevWebViewClient;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -116,8 +117,14 @@ public class RevSDK {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
-            public Response intercept(Interceptor.Chain chain) throws IOException {
-                return RevApplication.getInstance().getBest().send(chain);
+            public Response intercept(Chain chain) throws IOException {
+                Response response;
+                try {
+                    response = RevApplication.getInstance().getBest().send(chain);
+                } catch (UnknownHostException ex) {
+                    response = null;
+                }
+                return response;
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS)
         .followRedirects(followRedirect)
@@ -125,39 +132,6 @@ public class RevSDK {
         OkHttpClient result = httpClient.build();
         return result;
     }
-
-    /*
-        private static Response standartInterceptor(Interceptor.Chain chain) throws IOException {
-
-            Protocol protocol = RevApplication.getInstance().getBest();
-
-            Request result = null;
-            Request original = chain.request();
-            boolean systemRequest = isSystem(original);
-            boolean freeRequest = isFree(original);
-            if (!systemRequest && !freeRequest) {
-                result = processingRequest(original);
-            } else {
-                Log.i("System", original.toString());
-                result = original;
-            }
-
-            RevApplication.getInstance().getCounter().addRequest(result, EnumProtocol.STANDART);
-            Response response = chain.proceed(result);
-
-            if (!systemRequest && isStatistic()) {
-                try {
-                    final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest().getDescription());
-                    RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                    Log.i("database", statRequest.toString());
-                } catch (NullPointerException ex) {
-                    Log.i("database", "Database error!!!");
-                }
-            }
-            Log.i(TAG, "Response:" + response.toString());
-            return response;
-        }
-    */
     public static Gson gsonCreate() {
         GsonBuilder gsonBuilder;
 

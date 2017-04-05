@@ -108,6 +108,7 @@ public class Configurator extends IntentService {
             Intent configIntent = new Intent(Actions.CONFIG_UPDATE_ACTION);
             configIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
             configIntent.putExtra(Constants.CONFIG, result);
+            Log.i(TAG, result);
             sendBroadcast(configIntent);
             Log.i(TAG, result);
         } catch (IOException ex) {
@@ -120,8 +121,10 @@ public class Configurator extends IntentService {
                 String defJSON = RevSDK.gsonCreate().toJson(def, Config.class);
                 Log.i(TAG, defJSON);
                 configIntent.putExtra(Constants.CONFIG, defJSON);
-                sendBroadcast(configIntent);
+            } else {
+                configIntent.putExtra(Constants.HTTP_RESULT, 400);
             }
+            sendBroadcast(configIntent);
             ex.printStackTrace();
         }
     }

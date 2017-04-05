@@ -167,6 +167,8 @@ public class MainFragment extends Fragment {
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
                 }
             }
             return body;

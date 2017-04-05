@@ -93,7 +93,7 @@ public class Statist extends IntentService {
             e.printStackTrace();
             response = null;
         }
-        HTTPCode resCode = HTTPCode.create(response.code());
+        HTTPCode resCode = HTTPCode.create(response == null ? 401 : response.code());
         String textMessage;
         if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
             ArrayList<RequestOne> rows = statistic.getRequests();
@@ -120,6 +120,6 @@ public class Statist extends IntentService {
         statIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
         statIntent.putExtra(Constants.STATISTIC, textMessage);
         sendBroadcast(statIntent);
-        Log.i(TAG, response.toString());
+        //Log.i(TAG, response.toString());
     }
 }

@@ -3,7 +3,6 @@ package com.rev.sdk.statistic.sections;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.telephony.PhoneStateListener;
@@ -400,11 +399,13 @@ public class Carrier extends Data implements Parcelable {
 
     public static void runRSSIListener() {
         try {
-            Looper.prepare();
+            //Looper.prepare();
             TelephonyManager manager = (TelephonyManager) RevApplication.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
             manager.listen(new RSSIPhoneStateListener(manager.getNetworkType()), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+            //manager.listen(new RSSIPhoneStateListener(manager.getNetworkType()), PhoneStateListener.LISTEN_CELL_LOCATION);
+            //manager.listen(new RSSIPhoneStateListener(manager.getNetworkType()), PhoneStateListener.LISTEN_CELL_INFO);
             isListened = true;
-            Looper.loop();
+            //Looper.loop();
         } catch (NullPointerException ex) {
             isListened = false;
         }
@@ -481,5 +482,18 @@ public class Carrier extends Data implements Parcelable {
             else rssiAverage = rssi;
             rssiBest = String.valueOf(Math.max(Float.parseFloat(rssi), Float.parseFloat(rssiBest)));
         }
+/*
+        @Override
+        public void onCellLocationChanged(CellLocation location){
+            Toast.makeText(RevApplication.getInstance(),"Cell change: "+ location.toString(), Toast.LENGTH_LONG).show();
+        }
+        @Override
+        public void onCellInfoChanged (List<CellInfo> cellInfo){
+            for(CellInfo cell : cellInfo) {
+                Toast.makeText(RevApplication.getInstance(), "Cell info: " + cell.toString(), Toast.LENGTH_LONG).show();
+                //Log.i(TAG, cell.toString());
+            }
+        }
+*/
     }
 }

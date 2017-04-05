@@ -8,13 +8,17 @@ import okhttp3.Response;
  */
 
 public class RevProtocol extends Protocol {
+
+    public RevProtocol() {
+        this.descroption = EnumProtocol.REV;
+    }
     @Override
     public Response send(Interceptor.Chain chain) {
         return null;
     }
 
     @Override
-    public long test() {
-        return 0;
+    public long test(String url) {
+        return -1;
     }
 }

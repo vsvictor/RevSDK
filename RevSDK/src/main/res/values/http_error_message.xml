@@ -37,4 +37,6 @@
     <string name="http_version_not_supported">HTTP Version Not Supported</string>
     <string name="undefined">Undefined</string>
 
+    <string name="network_error">Network error</string>
+
 </resources>

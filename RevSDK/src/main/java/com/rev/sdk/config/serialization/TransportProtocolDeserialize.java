@@ -5,8 +5,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.protocols.ListProtocol;
-import com.rev.sdk.protocols.Protocol;
 
 import java.lang.reflect.Type;
 
@@ -38,9 +38,9 @@ public class TransportProtocolDeserialize implements JsonDeserializer<ListProtoc
         ListProtocol result = new ListProtocol();
         JsonArray arr = json.getAsJsonArray();
         for(JsonElement el : arr){
-            if (el.getAsString().equalsIgnoreCase("standard")) result.add(Protocol.STANDART);
-            else if (el.getAsString().equalsIgnoreCase("quic")) result.add(Protocol.QUIC);
-            else if (el.getAsString().equalsIgnoreCase("rmp")) result.add(Protocol.REV);
+            if (el.getAsString().equalsIgnoreCase("standard")) result.add(EnumProtocol.STANDART);
+            else if (el.getAsString().equalsIgnoreCase("quic")) result.add(EnumProtocol.QUIC);
+            else if (el.getAsString().equalsIgnoreCase("rmp")) result.add(EnumProtocol.REV);
         }
         return result;
     }

@@ -24,5 +24,5 @@ import java.util.ArrayList;
  * /
  */
 
-public class ListProtocol extends ArrayList<Protocol> {
+public class ListProtocol extends ArrayList<EnumProtocol> {
 }

@@ -25,10 +25,17 @@ package com.rev.sdk.statistic.sections;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.rev.sdk.protocols.Protocol;
+import com.rev.sdk.Constants;
+import com.rev.sdk.RevSDK;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.types.Pair;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RequestOne extends Data implements Parcelable {
     private long id;
@@ -42,17 +49,17 @@ public class RequestOne extends Data implements Parcelable {
     private String localCacheStatus;
     private String method;
     private String network;
-    private Protocol protocol;
+    private EnumProtocol enumProtocol;
     private long receivedBytes;
     private long sentBytes;
     private int statusCode;
     private int successStatus;
-    private Protocol transportProtocol;
+    private EnumProtocol transportEnumProtocol;
     private String url;
     private String destination;
     private String xRevCach;
     private String domain;
-    private Protocol edge_transport;
+    private EnumProtocol edge_transport;
 
     public RequestOne() {
 
@@ -116,6 +123,47 @@ public class RequestOne extends Data implements Parcelable {
             return new RequestOne[size];
         }
     };
+
+    public static RequestOne toRequestOne(Request original, Request processed, Response response, EnumProtocol edge_transport) {
+        RequestOne result = new RequestOne();
+
+        result.setID(-1);
+        result.setConnectionID(-1);
+        result.setContentEncode(RevSDK.getEncode(original));
+        result.setContentType(RevSDK.getContentType(original));
+        result.setStartTS(response.sentRequestAtMillis());
+        result.setEndTS(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
+        result.setFirstByteTime(-1);
+        result.setKeepAliveStatus(1);
+        result.setLocalCacheStatus(response.cacheControl().toString());
+        result.setMethod(original.method());
+        result.setEdgeTransport(edge_transport);
+
+        //result.setNetwork(NetworkUtil.getNetworkName(RevApplication.getInstance()));
+        result.setNetwork("NETWORK");
+
+        result.setEnumProtocol(EnumProtocol.fromString(original.isHttps() ? "https" : "http"));
+        result.setReceivedBytes(response.body().contentLength());
+        RequestBody body = original.body();
+        if (body != null) {
+            try {
+                result.setSentBytes(body.contentLength());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else result.setSentBytes(0);
+        result.setStatusCode(response.code());
+        result.setSuccessStatus(response.code());
+        result.setTransportEnumProtocol(EnumProtocol.STANDART);
+        result.setURL(original.url().toString());
+        result.setDestination(original == processed ? "origin" : "rev_edge");
+        String cache = response.header("x-rev-cache");
+        result.setXRevCache(cache == null ? Constants.UNDEFINED : cache);
+        result.setDomain(original.url().host());
+
+        return result;
+    }
+
 
     public long getID() {
         return id;
@@ -203,12 +251,12 @@ public class RequestOne extends Data implements Parcelable {
         this.network = network;
     }
 
-    public Protocol getProtocol() {
-        return protocol;
+    public EnumProtocol getEnumProtocol() {
+        return enumProtocol;
     }
 
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
+    public void setEnumProtocol(EnumProtocol enumProtocol) {
+        this.enumProtocol = enumProtocol;
     }
 
     public long getReceivedBytes() {
@@ -243,12 +291,12 @@ public class RequestOne extends Data implements Parcelable {
         this.successStatus = successStatus;
     }
 
-    public Protocol getTransportProtocol() {
-        return transportProtocol;
+    public EnumProtocol getTransportEnumProtocol() {
+        return transportEnumProtocol;
     }
 
-    public void setTransportProtocol(Protocol transportProtocol) {
-        this.transportProtocol = transportProtocol;
+    public void setTransportEnumProtocol(EnumProtocol transportEnumProtocol) {
+        this.transportEnumProtocol = transportEnumProtocol;
     }
 
     public String getURL() {
@@ -283,11 +331,11 @@ public class RequestOne extends Data implements Parcelable {
         this.domain = domain;
     }
 
-    public Protocol getEdgeTransport() {
+    public EnumProtocol getEdgeTransport() {
         return edge_transport;
     }
 
-    public void setEdgeTransport(Protocol edge_transport) {
+    public void setEdgeTransport(EnumProtocol edge_transport) {
         this.edge_transport = edge_transport;
     }
 

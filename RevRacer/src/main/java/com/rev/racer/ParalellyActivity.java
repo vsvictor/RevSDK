@@ -375,11 +375,15 @@ public class ParalellyActivity extends AppCompatActivity implements
                     builder.method(req.method(), req.body());
                     builder.tag(req.tag());
                     builder.headers(req.headers());
-                    if (serv) builder.tag(new Tag(Constants.FREE_REQUEST, true));
+                    //if (serv) builder.tag(new Tag(Constants.FREE_REQUEST, true));
                     req = builder.build();
                     //Log.i(TAG, req.toString());
                 }
-
+                if (serv) {
+                    Request.Builder builder = req.newBuilder();
+                    builder.tag(new Tag(Constants.FREE_REQUEST, true));
+                    req = builder.build();
+                }
                 Call callback = client.newCall(req);
                 try {
                     response = callback.execute();
@@ -428,6 +432,7 @@ public class ParalellyActivity extends AppCompatActivity implements
             }
             adapter.dataUpdated();
             Log.i(TAG, getTable().toString());
+            //this.serv = ! this.serv;
         }
     }
 

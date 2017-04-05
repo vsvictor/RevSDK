@@ -29,6 +29,7 @@ public class Row {
     private int codeResult;
     private long body;
     private long payload;
+    private String url;
 
     public String getSource() {
         return source;
@@ -110,5 +111,13 @@ public class Row {
         builder.append(this.getPayload());
         builder.append(")");
         return builder.toString();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

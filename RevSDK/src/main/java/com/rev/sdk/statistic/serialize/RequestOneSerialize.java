@@ -47,12 +47,12 @@ public class RequestOneSerialize implements JsonSerializer<RequestOne>{
         result.addProperty(RequestTable.Columns.LOCAL_CACHE_STATUS, src.getLocalCacheStatus());
         result.addProperty(RequestTable.Columns.METHOD, src.getMethod());
         result.addProperty(RequestTable.Columns.NETWORK, src.getNetwork());
-        result.addProperty(RequestTable.Columns.PROTOCOL, src.getProtocol().toString());
+        result.addProperty(RequestTable.Columns.PROTOCOL, src.getEnumProtocol().toString());
         result.addProperty(RequestTable.Columns.RECEIVED_BYTES, src.getReceivedBytes());
         result.addProperty(RequestTable.Columns.SENT_BYTES, src.getSentBytes());
         result.addProperty(RequestTable.Columns.STATUS_CODE, src.getStatusCode());
         result.addProperty(RequestTable.Columns.SUCCESS_CODE, src.getSuccessStatus());
-        result.addProperty(RequestTable.Columns.TRANSPORT_PROTOCOL, src.getTransportProtocol().toString());
+        result.addProperty(RequestTable.Columns.TRANSPORT_PROTOCOL, src.getTransportEnumProtocol().toString());
         result.addProperty(RequestTable.Columns.URL, src.getURL());
         result.addProperty(RequestTable.Columns.DESTINATION, src.getDestination());
         result.addProperty(RequestTable.Columns.X_REV_CACHE, src.getXRevCach());

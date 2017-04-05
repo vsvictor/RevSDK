@@ -24,5 +24,5 @@ import java.util.HashMap;
  * /
  */
 
-public class TestResult extends HashMap<Protocol, Long> {
+public class TestResult extends HashMap<EnumProtocol, Long> {
 }

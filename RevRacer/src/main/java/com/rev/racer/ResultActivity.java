@@ -385,11 +385,14 @@ public class ResultActivity extends AppCompatActivity implements
                     builder.method(req.method(), req.body());
                     builder.tag(req.tag());
                     builder.headers(req.headers());
-                    if (serv) builder.tag(new Tag(Constants.FREE_REQUEST, true));
                     req = builder.build();
                     //Log.i(TAG, req.toString());
                 }
-
+                if (serv) {
+                    Request.Builder builder = req.newBuilder();
+                    builder.tag(new Tag(Constants.FREE_REQUEST, true));
+                    req = builder.build();
+                }
                 Call callback = client.newCall(req);
                 try {
                     response = callback.execute();
@@ -403,6 +406,7 @@ public class ResultActivity extends AppCompatActivity implements
             } while (res.getType() == HTTPCode.Type.REDIRECTION);
             Row row = new Row();
             if (response != null) {
+                row.setUrl(response.request().url().toString());
                 row.setStart(response.sentRequestAtMillis());
                 row.setFinish(response.receivedResponseAtMillis());
                 try {
@@ -418,6 +422,7 @@ public class ResultActivity extends AppCompatActivity implements
                     row.setPayload(0);
                 }
                 row.setCodeResult(response.code());
+                Log.i(TAG, req.toString() + "---------- -------------\n");
                 Log.i(TAG, response.toString() + "----------" + String.valueOf(row.getTimeInMillis()) + "-------------");
             }
 
@@ -426,6 +431,7 @@ public class ResultActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(Row row) {
+            long rr = row.getFinish() - row.getStart();
             if (!this.serv) {
                 row.setSource("R");
                 getTable().add(row);
@@ -449,7 +455,7 @@ public class ResultActivity extends AppCompatActivity implements
             } else {
                 pd.dismiss();
             }
-
+            //this.serv = !this.serv;
         }
     }
 

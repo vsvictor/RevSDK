@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.rev.sdk.protocols.EnumProtocol;
 import com.rev.sdk.protocols.ListProtocol;
-import com.rev.sdk.protocols.Protocol;
 
 import java.lang.reflect.Type;
 
@@ -35,9 +35,9 @@ public class TransportProtocolSerialize implements JsonSerializer<ListProtocol> 
     @Override
     public JsonElement serialize(ListProtocol src, Type typeOfSrc, JsonSerializationContext context) {
         JsonArray result = new JsonArray();
-        for(Protocol protocol : src){
+        for (EnumProtocol enumProtocol : src) {
             String s = null;
-            switch (protocol){
+            switch (enumProtocol) {
                 case  STANDART: {s="standard";break;}
                 case  QUIC: {s="quic";break;}
                 case  REV: {s="rmp";break;}

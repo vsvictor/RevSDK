@@ -26,13 +26,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.rev.sdk.statistic.sections.Event;
+import com.rev.sdk.statistic.sections.LogEvent;
 
 import java.lang.reflect.Type;
 
-public class EventSerialize implements JsonSerializer<Event> {
+public class EventSerialize implements JsonSerializer<LogEvent> {
     @Override
-    public JsonElement serialize(Event src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(LogEvent src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
         result.addProperty("log_severity", src.getLogSeverity());
         result.addProperty("log_event_code", src.getLogEventCode());

@@ -19,16 +19,14 @@ import com.rev.sdk.config.serialization.OperationModeDeserialize;
 import com.rev.sdk.config.serialization.OperationModeSerialize;
 import com.rev.sdk.config.serialization.TransportProtocolDeserialize;
 import com.rev.sdk.config.serialization.TransportProtocolSerialize;
-import com.rev.sdk.database.RequestTable;
 import com.rev.sdk.interseptor.RequestCreator;
 import com.rev.sdk.protocols.ListProtocol;
-import com.rev.sdk.protocols.Protocol;
 import com.rev.sdk.statistic.Statistic;
 import com.rev.sdk.statistic.sections.AppInfo;
 import com.rev.sdk.statistic.sections.Carrier;
 import com.rev.sdk.statistic.sections.Device;
-import com.rev.sdk.statistic.sections.Event;
 import com.rev.sdk.statistic.sections.Location;
+import com.rev.sdk.statistic.sections.LogEvent;
 import com.rev.sdk.statistic.sections.LogEvents;
 import com.rev.sdk.statistic.sections.Network;
 import com.rev.sdk.statistic.sections.RequestOne;
@@ -64,7 +62,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /*
@@ -120,19 +117,7 @@ public class RevSDK {
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
-                Protocol protocol = RevApplication.getInstance().getBest();
-                Response response = null;
-                switch (protocol) {
-                    case QUIC: {
-                    }
-                    case REV: {
-                    }
-                    default: {
-                        response = standartInterceptor(chain);
-                        break;
-                    }
-                }
-                return response;
+                return RevApplication.getInstance().getBest().send(chain);
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS)
         .followRedirects(followRedirect)
@@ -141,34 +126,38 @@ public class RevSDK {
         return result;
     }
 
-    private static Response standartInterceptor(Interceptor.Chain chain) throws IOException {
-        Request result = null;
-        Request original = chain.request();
-        boolean systemRequest = isSystem(original);
-        boolean freeRequest = isFree(original);
-        if (!systemRequest && !freeRequest) {
-            result = processingRequest(original);
-        } else {
-            Log.i("System", original.toString());
-            result = original;
-        }
+    /*
+        private static Response standartInterceptor(Interceptor.Chain chain) throws IOException {
 
-        RevApplication.getInstance().getCounter().addRequest(result, Protocol.STANDART);
-        Response response = chain.proceed(result);
+            Protocol protocol = RevApplication.getInstance().getBest();
 
-        if (!systemRequest && isStatistic()) {
-            try {
-                final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest());
-                RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                Log.i("database", statRequest.toString());
-            } catch (NullPointerException ex) {
-                Log.i("database", "Database error!!!");
+            Request result = null;
+            Request original = chain.request();
+            boolean systemRequest = isSystem(original);
+            boolean freeRequest = isFree(original);
+            if (!systemRequest && !freeRequest) {
+                result = processingRequest(original);
+            } else {
+                Log.i("System", original.toString());
+                result = original;
             }
-        }
-        Log.i(TAG, "Response:" + response.toString());
-        return response;
-    }
 
+            RevApplication.getInstance().getCounter().addRequest(result, EnumProtocol.STANDART);
+            Response response = chain.proceed(result);
+
+            if (!systemRequest && isStatistic()) {
+                try {
+                    final RequestOne statRequest = toRequestOne(original, result, response, RevApplication.getInstance().getBest().getDescription());
+                    RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                    Log.i("database", statRequest.toString());
+                } catch (NullPointerException ex) {
+                    Log.i("database", "Database error!!!");
+                }
+            }
+            Log.i(TAG, "Response:" + response.toString());
+            return response;
+        }
+    */
     public static Gson gsonCreate() {
         GsonBuilder gsonBuilder;
 
@@ -182,7 +171,7 @@ public class RevSDK {
                 .registerTypeAdapter(Carrier.class, new CarrierSerialize()).registerTypeAdapter(Carrier.class, new CarrierDeserialize())
                 .registerTypeAdapter(AppInfo.class, new AppInfoSerialize()).registerTypeAdapter(AppInfo.class, new AppInfoDeserializer())
                 .registerTypeAdapter(Device.class, new DeviceSerialize()).registerTypeAdapter(Device.class, new DeviceDeserialize())
-                .registerTypeAdapter(Event.class, new EventSerialize())
+                .registerTypeAdapter(LogEvent.class, new EventSerialize())
                 .registerTypeAdapter(LogEvents.class, new LogEventsSerialize()).registerTypeAdapter(LogEvents.class, new LocationDeserialize())
                 .registerTypeAdapter(Location.class, new LocationSerialize()).registerTypeAdapter(Location.class, new LocationDeserialize())
                 .registerTypeAdapter(Network.class, new NetworkSerialize()).registerTypeAdapter(Network.class, new NetworkDeserialize())
@@ -218,7 +207,8 @@ public class RevSDK {
         String statURL = RevApplication.getInstance().getConfig().getParam().get(0).getStatsReportingUrl();
         return req.url().toString().equals(statURL);
     }
-    private static Request processingRequest(Request original) {
+
+    public static Request processingRequest(Request original) {
         StringBuilder sHeaders = new StringBuilder();
         for(String name : original.headers().names()){
             sHeaders.append("\n"+name);
@@ -241,47 +231,8 @@ public class RevSDK {
         return result; //creator.create(original);
     }
 
-    private static RequestOne toRequestOne(Request original, Request processed, Response response, Protocol edge_transport) {
-        RequestOne result = new RequestOne();
 
-        result.setID(-1);
-        result.setConnectionID(-1);
-        result.setContentEncode(getEncode(original));
-        result.setContentType(getContentType(original));
-        result.setStartTS(response.sentRequestAtMillis());
-        result.setEndTS(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
-        result.setFirstByteTime(-1);
-        result.setKeepAliveStatus(1);
-        result.setLocalCacheStatus(response.cacheControl().toString());
-        result.setMethod(original.method());
-        result.setEdgeTransport(edge_transport);
-
-        //result.setNetwork(NetworkUtil.getNetworkName(RevApplication.getInstance()));
-        result.setNetwork("NETWORK");
-
-        result.setProtocol(Protocol.fromString(original.isHttps() ? "https" : "http"));
-        result.setReceivedBytes(response.body().contentLength());
-        RequestBody body = original.body();
-        if (body != null) {
-            try {
-                result.setSentBytes(body.contentLength());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else result.setSentBytes(0);
-        result.setStatusCode(response.code());
-        result.setSuccessStatus(response.code());
-        result.setTransportProtocol(Protocol.STANDART);
-        result.setURL(original.url().toString());
-        result.setDestination(original == processed ? "origin" : "rev_edge");
-        String cache = response.header("x-rev-cache");
-        result.setXRevCache(cache == null ? Constants.UNDEFINED : cache);
-        result.setDomain(original.url().host());
-
-        return result;
-    }
-
-    private static String getEncode(Request req) {
+    public static String getEncode(Request req) {
         String result = "ISO-8859-1";
         String header = req.header("Content-Type");
         if (header == null || header.isEmpty()) return result;
@@ -290,7 +241,7 @@ public class RevSDK {
         return result;
     }
 
-    private static String getContentType(Request req) {
+    public static String getContentType(Request req) {
         String result = "text/html";
         String header = req.header("Content-Type");
         if (header == null || header.isEmpty()) return result;

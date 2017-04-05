@@ -30,14 +30,14 @@ import com.rev.sdk.types.Pair;
 
 import java.util.ArrayList;
 
-public class Event extends Data implements Parcelable {
+public class LogEvent extends Data implements Parcelable {
     private String logSeverity;
     private String logEventCode;
     private String logMessage;
     private float logInterval;
     private long timestamp;
 
-    public Event(){
+    public LogEvent() {
         this.logSeverity = logSeverity();
         this.logEventCode = logEventCode();
         this.logMessage = logMessage();
@@ -56,7 +56,7 @@ public class Event extends Data implements Parcelable {
         return result;
     }
 
-    protected Event(Parcel in) {
+    protected LogEvent(Parcel in) {
         logSeverity = in.readString();
         logEventCode = in.readString();
         logMessage = in.readString();
@@ -64,15 +64,15 @@ public class Event extends Data implements Parcelable {
         timestamp = in.readLong();
     }
 
-    public static final Creator<Event> CREATOR = new Creator<Event>() {
+    public static final Creator<LogEvent> CREATOR = new Creator<LogEvent>() {
         @Override
-        public Event createFromParcel(Parcel in) {
-            return new Event(in);
+        public LogEvent createFromParcel(Parcel in) {
+            return new LogEvent(in);
         }
 
         @Override
-        public Event[] newArray(int size) {
-            return new Event[size];
+        public LogEvent[] newArray(int size) {
+            return new LogEvent[size];
         }
     };
 
@@ -131,7 +131,7 @@ public class Event extends Data implements Parcelable {
         StringBuilder builder = new StringBuilder();
         builder.append("Severity: " + logSeverity);
         builder.append("\n");
-        builder.append("Event code: " + logEventCode);
+        builder.append("LogEvent code: " + logEventCode);
         builder.append("\n");
         builder.append("Message: " + logMessage);
         builder.append("\n");

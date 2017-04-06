@@ -56,15 +56,14 @@ public class Tester extends IntentService {
         String url = intent.getExtras().getString(Constants.URL);
         ArrayList<String> arr = intent.getStringArrayListExtra(Constants.PROTOCOLS);
         if (url == null || arr == null) return;
-        ArrayList<Protocol> list = new ArrayList<Protocol>();
         List<PairLong> results = new ArrayList<PairLong>();
         for (String sProto : arr) {
             Protocol pp = EnumProtocol.createInstance(EnumProtocol.fromString(sProto));
-            list.add(pp);
-        }
-        for (Protocol p : list) {
-            PairLong pair = new PairLong(p.getDescription().toString(), p.test(url));
-            results.add(pair);
+            long pTime = pp.test(url);
+            if (pTime > 0) {
+                PairLong pair = new PairLong(pp.getDescription().toString(), pTime);
+                results.add(pair);
+            }
         }
 
         Collections.sort(results, new Comparator<PairLong>() {

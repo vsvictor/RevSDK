@@ -104,10 +104,6 @@ public class Statist extends IntentService {
             if (!statistic.getRequests().isEmpty()) {
                 long mixIndex = statistic.getRequests().get(0).getID();
                 long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
-                //count = getApplicationContext().getContentResolver().update(RequestTable.URI,
-                //        values,
-                //        RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
-                //        new String[]{String.valueOf(mixIndex), String.valueOf(maxIndex)});
                 count = RevApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
             }
             textMessage = "Success";
@@ -120,6 +116,5 @@ public class Statist extends IntentService {
         statIntent.putExtra(Constants.HTTP_RESULT, resCode.getCode());
         statIntent.putExtra(Constants.STATISTIC, textMessage);
         sendBroadcast(statIntent);
-        //Log.i(TAG, response.toString());
     }
 }

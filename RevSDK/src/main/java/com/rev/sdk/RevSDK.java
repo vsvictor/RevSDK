@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -182,7 +183,7 @@ public class RevSDK {
         return req.url().toString().equals(statURL);
     }
 
-    public static Request processingRequest(Request original) {
+    public static Request processingRequest(Request original, boolean bad) {
         StringBuilder sHeaders = new StringBuilder();
         for(String name : original.headers().names()){
             sHeaders.append("\n"+name);
@@ -193,6 +194,15 @@ public class RevSDK {
 
         RequestCreator creator = new RequestCreator(RevApplication.getInstance().getConfig());
         Request result = creator.create(original);
+
+        if (bad) {
+            HttpUrl badURL = result.url();
+            String sHost = badURL.host();
+            String sHostNew = sHost.substring(0, sHost.length() - 4);
+            badURL = badURL.newBuilder().host(sHost).build();
+            result = result.newBuilder().url(badURL).build();
+        }
+
 
         sHeaders = new StringBuilder();
         for(String name : result.headers().names()){

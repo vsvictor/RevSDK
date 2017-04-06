@@ -169,6 +169,7 @@ public class RevApplication extends Application implements
         sdkKey = getKeyFromManifest();
         counter.load(share);
         config = Config.load(RevSDK.gsonCreate(), share);
+        if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();
         best = EnumProtocol.createInstance(EnumProtocol.fromString(transport));
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
@@ -435,7 +436,7 @@ public class RevApplication extends Application implements
                             best = EnumProtocol.createInstance(EnumProtocol.fromString(sProtocol));
                             Log.i("TEST", "Best protocol: " + best.toString());
                         } else {
-                            getConfig().getParam().get(0).setOperationMode(OperationMode.off);
+                            getConfig().getParam().get(0).setOperationMode(OperationMode.report_only);
                         }
                     }
                 }
@@ -459,7 +460,6 @@ public class RevApplication extends Application implements
                     Log.i(TAG + " statistic receiver", "Response: " + sResponce);
                 }
                 if (RevSDK.isStatistic()) {
-                    //Timer statTimer = new Timer();
                     while (statTimer != null) {
                         statTimer.cancel();
                         statTimer.purge();

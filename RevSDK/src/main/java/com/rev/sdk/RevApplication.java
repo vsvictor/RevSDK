@@ -28,7 +28,6 @@ import com.rev.sdk.config.OperationMode;
 import com.rev.sdk.database.DBHelper;
 import com.rev.sdk.permission.RequestUserPermission;
 import com.rev.sdk.protocols.EnumProtocol;
-import com.rev.sdk.protocols.ListProtocol;
 import com.rev.sdk.protocols.Protocol;
 import com.rev.sdk.protocols.StandardProtocol;
 import com.rev.sdk.services.Configurator;
@@ -39,8 +38,10 @@ import com.rev.sdk.statistic.sections.Carrier;
 import com.rev.sdk.types.HTTPCode;
 import com.rev.sdk.utils.DateTimeUtil;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /*
  * ************************************************************************
@@ -90,16 +91,20 @@ public class RevApplication extends Application implements
     private Timer configTimer = new Timer();
     private Timer staleTimer = new Timer();
     private Timer statTimer = new Timer();
-    private Object monitor = new Object();
+    private Timer retestTimer = new Timer();
 
     protected String MAIN_PACKAGE;
 
     private DBHelper dbHelper;
 
+    //private ArrayList<Protocol> allowed_protocols;
+    private ArrayBlockingQueue<Protocol> allowed_protocols;
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        //allowed_protocols = new ArrayList<Protocol>();
         MAIN_PACKAGE = instance.getPackage();
         share = getSharedPreferences("RevSDK", MODE_PRIVATE);
         dbHelper = new DBHelper(this);
@@ -268,6 +273,33 @@ public class RevApplication extends Application implements
         return dbHelper;
     }
 
+    public synchronized void removeProtocol(Protocol protocol) {
+
+        for (Protocol p : allowed_protocols) {
+            if (p.getDescription() == protocol.getDescription()) {
+                allowed_protocols.remove(p);
+            }
+        }
+
+        while (retestTimer != null) {
+            retestTimer.cancel();
+            retestTimer.purge();
+            retestTimer = null;
+        }
+
+        retestTimer = new Timer();
+        retestTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                allowed_protocols.clear();
+                for (EnumProtocol proto : getConfig().getParam().get(0).getAllowedTransportProtocols()) {
+                    allowed_protocols.add(EnumProtocol.createInstance(proto));
+                }
+                sendBroadcast(new Intent(Actions.RETEST));
+            }
+        }, Constants.PENALTY_TIME_SEC * 1000);
+    }
+
     public Location getLocation() {
         Location location;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -279,7 +311,6 @@ public class RevApplication extends Application implements
         }
         return location;
     }
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -295,7 +326,6 @@ public class RevApplication extends Application implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
 
     private void registration() {
         configReceiver = createConfigReceiver();
@@ -363,7 +393,6 @@ public class RevApplication extends Application implements
                 Bundle result = intent.getExtras();
                 if (result != null) {
                     HTTPCode httpCode = HTTPCode.create(result.getInt(Constants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
-
                     if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                         Log.i(TAG, "HTTP config success");
                         String newConfig = result.getString(Constants.CONFIG);
@@ -377,6 +406,11 @@ public class RevApplication extends Application implements
                             Log.i(TAG, "Parce to POJO");
                             //config.save(gson, share);
                             config.save(newConfig, share);
+                            //allowed_protocols.clear();
+                            allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
+                            for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {
+                                allowed_protocols.add(EnumProtocol.createInstance(sProto));
+                            }
                             Log.i(TAG, "Save config");
                             sendBroadcast(new Intent(Actions.CONFIG_LOADED));
                             Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
@@ -432,12 +466,13 @@ public class RevApplication extends Application implements
                 if (intent != null) {
                     Bundle bundle = intent.getExtras();
                     if (bundle != null) {
-                        String sProtocol = bundle.getString(Constants.TEST_PROTOCOL, getBest().toString());
+                        String sProtocol = bundle.getString(Constants.TEST_PROTOCOL);
                         if (!sProtocol.equalsIgnoreCase(Constants.NO_PROTOCOL)) {
                             best = EnumProtocol.createInstance(EnumProtocol.fromString(sProtocol));
                             Log.i("TEST", "Best protocol: " + best.toString());
                         } else {
                             getConfig().getParam().get(0).setOperationMode(OperationMode.report_only);
+                            Log.i("TEST", "No allowed ptotocol");
                         }
                     }
                 }
@@ -525,15 +560,31 @@ public class RevApplication extends Application implements
 
     private void testerRunner() {
         Intent testIntent = new Intent(RevApplication.this, Tester.class);
-        ListProtocol list = RevApplication.getInstance().getConfig().getParam().get(0).getAllowedTransportProtocols();
-        testIntent.putStringArrayListExtra(Constants.PROTOCOLS, list.getNames());
-        testIntent.putExtra(Constants.URL, getConfig().getParam().get(0).getTransportMonitoringUrl());
-        startService(testIntent);
+        //ListProtocol list = RevApplication.getInstance().getConfig().getParam().get(0).getAllowedTransportProtocols();
+        ArrayList<String> list = new ArrayList<String>();
+        if (allowed_protocols != null) {
+            for (Protocol proto : allowed_protocols) {
+                list.add(proto.getDescription().toString());
+            }
+            testIntent.putStringArrayListExtra(Constants.PROTOCOLS, list);
+            testIntent.putExtra(Constants.URL, getConfig().getParam().get(0).getTransportMonitoringUrl());
+            startService(testIntent);
+        }
     }
 
     private BroadcastReceiver netListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+/*
+            if(intent.getAction().equalsIgnoreCase(ConnectivityManager.CONNECTIVITY_ACTION)){
+                if (allowed_protocols != null) {
+                    allowed_protocols.clear();
+                    for (EnumProtocol protocol : RevApplication.getInstance().getConfig().getParam().get(0).getAllowedTransportProtocols()) {
+                        allowed_protocols.add(EnumProtocol.createInstance(protocol));
+                    }
+                }
+            }
+*/
             Log.i("TEST", "Best protocol: " + best.toString());
             Toast.makeText(RevApplication.getInstance(), "Best protocol: " + best.toString(), Toast.LENGTH_LONG);
             testerRunner();

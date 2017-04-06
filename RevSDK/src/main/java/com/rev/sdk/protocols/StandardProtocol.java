@@ -7,6 +7,8 @@ import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
+import com.rev.sdk.database.RequestTable;
+import com.rev.sdk.statistic.sections.RequestOne;
 import com.rev.sdk.types.HTTPCode;
 import com.rev.sdk.types.Tag;
 
@@ -18,6 +20,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static com.rev.sdk.RevSDK.isFree;
+import static com.rev.sdk.RevSDK.isStatistic;
 import static com.rev.sdk.RevSDK.isSystem;
 
 /**
@@ -32,7 +35,7 @@ public class StandardProtocol extends Protocol {
     }
 
     @Override
-    public Response send(Interceptor.Chain chain) throws IOException {
+    public synchronized Response send(Interceptor.Chain chain) throws IOException {
         Request result = null;
         Request original = chain.request();
         boolean systemRequest = isSystem(original);
@@ -53,11 +56,24 @@ public class StandardProtocol extends Protocol {
             if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
                 throw new HTTPException(original, result, response, this);
             }
-            this.zeroing();
+
+            if (!isSystem(original) && isStatistic()) {
+                try {
+                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, RevApplication.getInstance().getBest().getDescription());
+                    RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                    Log.i("database", statRequest.toString());
+                } catch (NullPointerException ex) {
+                    Log.i("database", "Database error!!!");
+                }
+            }
+            if (!isSystem(original)) {
+                this.zeroing();
+            }
         } catch (HTTPException ex) {
             response = chain.proceed(original);
             this.errorIncrement();
             if (this.isOverflow()) {
+                RevApplication.getInstance().removeProtocol(EnumProtocol.createInstance(this.getDescription()));
                 RevApplication.getInstance().sendBroadcast(new Intent(Actions.RETEST));
                 this.zeroing();
             }

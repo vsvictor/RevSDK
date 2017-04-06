@@ -1,7 +1,9 @@
 package com.rev.sdk.protocols;
 
+import android.content.Intent;
 import android.util.Log;
 
+import com.rev.sdk.Actions;
 import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
@@ -27,13 +29,13 @@ import static com.rev.sdk.RevSDK.isSystem;
 
 public class StandardProtocol extends Protocol {
     private static final String TAG = StandardProtocol.class.getSimpleName();
-
+    private HTTPException prevException;
     public StandardProtocol() {
         this.descroption = EnumProtocol.STANDART;
     }
 
     @Override
-    public Response send(Interceptor.Chain chain) throws IOException {
+    public synchronized Response send(Interceptor.Chain chain) throws IOException {
         Request result = null;
         Request original = chain.request();
         boolean systemRequest = isSystem(original);
@@ -48,25 +50,34 @@ public class StandardProtocol extends Protocol {
         try {
             response = chain.proceed(result);
             if (response == null) {
-                throw new Exception();
+                throw new HTTPException(original, result, response, this);
             }
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
-                throw new Exception();
+                throw new HTTPException(original, result, response, this);
             }
-        } catch (Exception ex) {
-            response = chain.proceed(original);
-            ex.printStackTrace();
-        }
 
-        if (!systemRequest && isStatistic()) {
-            try {
-                final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, RevApplication.getInstance().getBest().getDescription());
-                RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
-                Log.i("database", statRequest.toString());
-            } catch (NullPointerException ex) {
-                Log.i("database", "Database error!!!");
+            if (!isSystem(original) && isStatistic()) {
+                try {
+                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, RevApplication.getInstance().getBest().getDescription());
+                    RevApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(RevApplication.getInstance().getConfig().getAppName(), statRequest));
+                    Log.i("database", statRequest.toString());
+                } catch (NullPointerException ex) {
+                    Log.i("database", "Database error!!!");
+                }
             }
+            if (!isSystem(original)) {
+                this.zeroing();
+            }
+        } catch (HTTPException ex) {
+            response = chain.proceed(original);
+            this.errorIncrement();
+            if (this.isOverflow()) {
+                RevApplication.getInstance().removeProtocol(EnumProtocol.createInstance(this.getDescription()));
+                RevApplication.getInstance().sendBroadcast(new Intent(Actions.RETEST));
+                this.zeroing();
+            }
+            ex.printStackTrace();
         }
         Log.i(TAG, "Response:" + response.toString());
         return response;

@@ -179,6 +179,7 @@ public class MainFragment extends Fragment {
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
             //edQuery.setText(currURL);
+            edQuery.setText("http://httpbin.org/status/500");
         }
     }
 }

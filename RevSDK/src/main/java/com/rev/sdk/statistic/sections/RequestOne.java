@@ -131,11 +131,11 @@ public class RequestOne extends Data implements Parcelable {
         result.setConnectionID(-1);
         result.setContentEncode(RevSDK.getEncode(original));
         result.setContentType(RevSDK.getContentType(original));
-        result.setStartTS(response.sentRequestAtMillis());
-        result.setEndTS(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
+        result.setStartTS(response == null ? -1 : response.sentRequestAtMillis());
+        result.setEndTS(response == null ? -1 : response.receivedResponseAtMillis() - response.sentRequestAtMillis());
         result.setFirstByteTime(-1);
         result.setKeepAliveStatus(1);
-        result.setLocalCacheStatus(response.cacheControl().toString());
+        result.setLocalCacheStatus(response == null ? Constants.UNDEFINED : response.cacheControl().toString());
         result.setMethod(original.method());
         result.setEdgeTransport(edge_transport);
 
@@ -143,7 +143,7 @@ public class RequestOne extends Data implements Parcelable {
         result.setNetwork("NETWORK");
 
         result.setEnumProtocol(EnumProtocol.fromString(original.isHttps() ? "https" : "http"));
-        result.setReceivedBytes(response.body().contentLength());
+        result.setReceivedBytes(response == null ? 0 : response.body().contentLength());
         RequestBody body = original.body();
         if (body != null) {
             try {
@@ -152,12 +152,12 @@ public class RequestOne extends Data implements Parcelable {
                 e.printStackTrace();
             }
         } else result.setSentBytes(0);
-        result.setStatusCode(response.code());
-        result.setSuccessStatus(response.code());
+        result.setStatusCode(response == null ? -1 : response.code());
+        result.setSuccessStatus(response == null ? -1 : response.code());
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
-        result.setDestination(original == processed ? "origin" : "rev_edge");
-        String cache = response.header("x-rev-cache");
+        result.setDestination(original.equals(processed) ? "origin" : "rev_edge");
+        String cache = response == null ? Constants.UNDEFINED : response.header("x-rev-cache");
         result.setXRevCache(cache == null ? Constants.UNDEFINED : cache);
         result.setDomain(original.url().host());
 

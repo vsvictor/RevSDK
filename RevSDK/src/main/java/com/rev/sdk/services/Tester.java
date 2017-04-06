@@ -74,9 +74,11 @@ public class Tester extends IntentService {
         });
 
         String result = Constants.NO_PROTOCOL;
-        long time = results.get(0).getValue();
-        if (time > 0) {
-            result = results.get(0).getName();
+        if (results.size() > 0) {
+            long time = results.get(0).getValue();
+            if (time > 0) {
+                result = results.get(0).getName();
+            }
         }
         Intent protocolIntent = new Intent(Actions.TEST_PROTOCOL_ACTION);
         protocolIntent.putExtra(Constants.TEST_PROTOCOL, result);

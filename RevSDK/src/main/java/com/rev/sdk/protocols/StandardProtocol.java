@@ -2,13 +2,17 @@ package com.rev.sdk.protocols;
 
 import android.util.Log;
 
+import com.rev.sdk.Constants;
 import com.rev.sdk.RevApplication;
 import com.rev.sdk.RevSDK;
 import com.rev.sdk.database.RequestTable;
 import com.rev.sdk.statistic.sections.RequestOne;
+import com.rev.sdk.types.HTTPCode;
+import com.rev.sdk.types.Tag;
 
 import java.io.IOException;
 
+import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,13 +39,25 @@ public class StandardProtocol extends Protocol {
         boolean systemRequest = isSystem(original);
         boolean freeRequest = isFree(original);
         if (!systemRequest && !freeRequest) {
-            result = RevSDK.processingRequest(original);
+            result = RevSDK.processingRequest(original, true);
         } else {
             Log.i("System", original.toString());
             result = original;
         }
-
-        Response response = chain.proceed(result);
+        Response response = null;
+        try {
+            response = chain.proceed(result);
+            if (response == null) {
+                throw new Exception();
+            }
+            HTTPCode code = HTTPCode.create(response.code());
+            if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
+                throw new Exception();
+            }
+        } catch (Exception ex) {
+            response = chain.proceed(original);
+            ex.printStackTrace();
+        }
 
         if (!systemRequest && isStatistic()) {
             try {
@@ -57,7 +73,23 @@ public class StandardProtocol extends Protocol {
     }
 
     @Override
-    public long test() {
-        return 0;
+    public long test(String url) {
+        long res = -1;
+        Request.Builder builder = new Request.Builder();
+        builder.url(url).tag(new Tag(Constants.SYSTEM_REQUEST, true));
+        Call callback = RevSDK.OkHttpCreate(Constants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
+        try {
+            Response response = callback.execute();
+            HTTPCode code = HTTPCode.create(response.code());
+            if (code.getType() != HTTPCode.Type.SUCCESSFULL) {
+                return -1;
+            } else {
+                res = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            res = -1;
+        }
+        return res;
     }
 }

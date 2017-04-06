@@ -64,5 +64,17 @@ public enum EnumProtocol {
                 return UNDEFINED;
         }
     }
+
+    public static Protocol createInstance(EnumProtocol inst) {
+        switch (inst) {
+            case STANDART:
+                return new StandardProtocol();
+            case QUIC:
+                return new QUICProtocol();
+            case REV:
+                return new RevProtocol();
+        }
+        return null;
+    }
 }
 

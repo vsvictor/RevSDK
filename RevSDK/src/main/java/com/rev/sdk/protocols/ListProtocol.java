@@ -25,4 +25,11 @@ import java.util.ArrayList;
  */
 
 public class ListProtocol extends ArrayList<EnumProtocol> {
+    public ArrayList<String> getNames() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (EnumProtocol p : this) {
+            result.add(p.toString());
+        }
+        return result;
+    }
 }

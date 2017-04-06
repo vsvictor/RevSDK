@@ -11,11 +11,13 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,6 +27,8 @@ import com.rev.sdk.config.Config;
 import com.rev.sdk.config.OperationMode;
 import com.rev.sdk.database.DBHelper;
 import com.rev.sdk.permission.RequestUserPermission;
+import com.rev.sdk.protocols.EnumProtocol;
+import com.rev.sdk.protocols.ListProtocol;
 import com.rev.sdk.protocols.Protocol;
 import com.rev.sdk.protocols.StandardProtocol;
 import com.rev.sdk.services.Configurator;
@@ -165,6 +169,9 @@ public class RevApplication extends Application implements
         sdkKey = getKeyFromManifest();
         counter.load(share);
         config = Config.load(RevSDK.gsonCreate(), share);
+        if (config == null) config = new Config();
+        String transport = config.getParam().get(0).getInitialTransportProtocol();
+        best = EnumProtocol.createInstance(EnumProtocol.fromString(transport));
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -197,7 +204,7 @@ public class RevApplication extends Application implements
 
                     }
                 }, 10 * 1000);
-
+                testerRunner();
             }
 
             @Override
@@ -300,6 +307,10 @@ public class RevApplication extends Application implements
         intentFilterConfig.addAction(Actions.CONFIG_UPDATE_ACTION);
         registerReceiver(configReceiver, intentFilterConfig);
 
+        IntentFilter intentFilterNoConfig = new IntentFilter();
+        intentFilterNoConfig.addAction(Actions.CONFIG_NO_UPDATE_ACTION);
+        registerReceiver(noUpdate, intentFilterNoConfig);
+
         IntentFilter intentFilterStaleConfig = new IntentFilter();
         intentFilterStaleConfig.addAction(Actions.CONFIG_LOADED);
         registerReceiver(configStaleReceiver, intentFilterStaleConfig);
@@ -312,6 +323,10 @@ public class RevApplication extends Application implements
         intentFilterStat.addAction(Actions.STAT_ACTION);
         registerReceiver(statReceiver, intentFilterStat);
         //Log.i("PROMO", config.getAppName() + ": Start all receivers");
+
+        IntentFilter ifn = new IntentFilter();
+        ifn.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netListener, ifn);
     }
 
     public void shutdown() {
@@ -331,9 +346,11 @@ public class RevApplication extends Application implements
             statTimer = null;
         }
         unregisterReceiver(configReceiver);
+        unregisterReceiver(noUpdate);
         unregisterReceiver(configStaleReceiver);
         unregisterReceiver(testReceiver);
         unregisterReceiver(statReceiver);
+        unregisterReceiver(netListener);
         counter.save(share);
         //Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
@@ -345,6 +362,7 @@ public class RevApplication extends Application implements
                 Bundle result = intent.getExtras();
                 if (result != null) {
                     HTTPCode httpCode = HTTPCode.create(result.getInt(Constants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
+
                     if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                         Log.i(TAG, "HTTP config success");
                         String newConfig = result.getString(Constants.CONFIG);
@@ -364,7 +382,6 @@ public class RevApplication extends Application implements
                             if (RevSDK.isStatistic()) {
                                 statRunner();
                             }
-                            //configuratorRunning = true;
                         }
                     }
                 }
@@ -372,6 +389,13 @@ public class RevApplication extends Application implements
             }
         };
     }
+
+    private BroadcastReceiver noUpdate = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            configuratorRunner(false);
+        }
+    };
 
     private BroadcastReceiver createStaleConfig() {
         return new BroadcastReceiver() {
@@ -408,8 +432,12 @@ public class RevApplication extends Application implements
                     Bundle bundle = intent.getExtras();
                     if (bundle != null) {
                         String sProtocol = bundle.getString(Constants.TEST_PROTOCOL, getBest().toString());
-                        best = Protocol.fromString(sProtocol);
-                        Log.i(TAG + " test receiver", "Best protocol: " + best.toString());
+                        if (!sProtocol.equalsIgnoreCase(Constants.NO_PROTOCOL)) {
+                            best = EnumProtocol.createInstance(EnumProtocol.fromString(sProtocol));
+                            Log.i("TEST", "Best protocol: " + best.toString());
+                        } else {
+                            getConfig().getParam().get(0).setOperationMode(OperationMode.report_only);
+                        }
                     }
                 }
             }
@@ -432,7 +460,6 @@ public class RevApplication extends Application implements
                     Log.i(TAG + " statistic receiver", "Response: " + sResponce);
                 }
                 if (RevSDK.isStatistic()) {
-                    //Timer statTimer = new Timer();
                     while (statTimer != null) {
                         statTimer.cancel();
                         statTimer.purge();
@@ -496,7 +523,19 @@ public class RevApplication extends Application implements
     }
 
     private void testerRunner() {
-        Intent statIntent = new Intent(RevApplication.this, Tester.class);
-        startService(statIntent);
+        Intent testIntent = new Intent(RevApplication.this, Tester.class);
+        ListProtocol list = RevApplication.getInstance().getConfig().getParam().get(0).getAllowedTransportProtocols();
+        testIntent.putStringArrayListExtra(Constants.PROTOCOLS, list.getNames());
+        testIntent.putExtra(Constants.URL, getConfig().getParam().get(0).getTransportMonitoringUrl());
+        startService(testIntent);
     }
+
+    private BroadcastReceiver netListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("TEST", "Best protocol: " + best.toString());
+            Toast.makeText(RevApplication.getInstance(), "Best protocol: " + best.toString(), Toast.LENGTH_LONG);
+            testerRunner();
+        }
+    };
 }

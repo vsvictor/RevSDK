@@ -27,8 +27,8 @@ public class Constants {
     public static final String KEY_TAG = "com.revsdk.key";
     public static final String DEFAULT_CONFIG_URL = "https://sdk-config-api.revapm.net/v1/sdk/config/";
     public static final int DEFAULT_STALE_INTERVAL = 36000;
-    public static final int DEFAULT_CONFIG_INTERVAL = 3600;
-    //public static final int DEFAULT_CONFIG_INTERVAL = 60;
+    //public static final int DEFAULT_CONFIG_INTERVAL = 3600;
+    public static final int DEFAULT_CONFIG_INTERVAL = 60;
     public static final String DEFAULT_EDGE_HOST = "rev-200.revdn.net";
     public static final String DEFAULT_TRANSPORT_MONITORING_URL = "https://monitor.revsw.net/test-cache.js";
     public static final String DEFAULT_STATS_REPORTING_URL = "https://stats-api.revsw.net/v1/stats/apps";
@@ -40,6 +40,8 @@ public class Constants {
     public static final String TIMEOUT = "timeout";
     public static final String TEST_PROTOCOL = "protocol";
     public static final String NOW = "now";
+    public static final String URL = "url";
+    public static final String PROTOCOLS = "protocols";
 
     public static final String STATISTIC = "statistic";
 
@@ -79,5 +81,7 @@ public class Constants {
     public static final String DISCHARGING = "Discharging";
     public static final String NOT_CHARGING = "Not charging";
     public static final String FULL = "Full";
+
+    public static final String NO_PROTOCOL = "NoProtocol";
 
 }

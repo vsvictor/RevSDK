@@ -58,6 +58,7 @@ public enum HTTPCode {
     UNSUPPORTED_MEDIA_TYPE(415, R.string.unsupported_media_type),
     EXPECTION_FAILED(417, R.string.expectation_failed),
     UPGRADE_REQUIRED(426, R.string.upgrade_required),
+    NETWORK_ERROR(499, R.string.network_error),
 
     INTERNAL_SERVER_ERROR(500, R.string.internal_server_error),
     NOT_IMPLEMENTED(501, R.string.not_implemented),

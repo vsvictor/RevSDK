@@ -84,4 +84,5 @@ public class Constants {
 
     public static final String NO_PROTOCOL = "NoProtocol";
 
+    public static final int ERRORS_IN_ROW = 3;
 }

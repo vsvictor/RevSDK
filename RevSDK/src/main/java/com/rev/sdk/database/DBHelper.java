@@ -85,7 +85,8 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public long insertRequest(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.insert(RequestTable.Requests.TABLE_NAME, null, values);
+        long id = db.insert(RequestTable.Requests.TABLE_NAME, null, values);
+        return id;
     }
 
     public int updateRequest(ContentValues values) {

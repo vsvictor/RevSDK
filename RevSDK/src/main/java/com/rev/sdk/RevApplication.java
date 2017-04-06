@@ -326,6 +326,7 @@ public class RevApplication extends Application implements
 
         IntentFilter ifn = new IntentFilter();
         ifn.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        ifn.addAction(Actions.RETEST);
         registerReceiver(netListener, ifn);
     }
 

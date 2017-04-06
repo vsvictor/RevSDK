@@ -29,4 +29,6 @@ public class Actions {
     public static final String STAT_ACTION = "com.rev.sdk.STAT_ACTION";
     public static final String CONFIG_LOADED = "com.rev.sdk.CONFIG_LOADED";
     public static final String CONFIG_NO_LOADED = "com.rev.sdk.CONFIG_NO_LOADED";
+
+    public static final String RETEST = "com.rev.sdk.RETEST";
 }

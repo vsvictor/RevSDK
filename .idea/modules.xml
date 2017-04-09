@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RevBanshee/RevBanshee.iml" filepath="$PROJECT_DIR$/RevBanshee/RevBanshee.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RevDemo/RevDemo.iml" filepath="$PROJECT_DIR$/RevDemo/RevDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RevRacer/RevRacer.iml" filepath="$PROJECT_DIR$/RevRacer/RevRacer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RevSDK/RevSDK.iml" filepath="$PROJECT_DIR$/RevSDK/RevSDK.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RevTester/RevTester.iml" filepath="$PROJECT_DIR$/RevTester/RevTester.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RevWeather/RevWeather.iml" filepath="$PROJECT_DIR$/RevWeather/RevWeather.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" filepath="$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" filepath="$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" filepath="$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" filepath="$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NuubitTester/NuubitTester.iml" filepath="$PROJECT_DIR$/NuubitTester/NuubitTester.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
     </modules>
   </component>

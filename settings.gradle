@@ -1,1 +1,1 @@
-include ':RevDemo', ':RevSDK', ':RevBanshee', ':RevRacer', ':RevTester', ':RevWeather'
+include ':NuubitDemo', ':NuubitSDK', ':NuubitRacer', ':NuubitTester', ':NuubitCompatible'

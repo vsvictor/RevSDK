@@ -66,6 +66,7 @@ sonarqube {
 //        property "sonar.exclusions", "src/main/java/com/foo/Foo.java"
     }
 }
+/*
 subprojects {
     sonarqube {
         properties {
@@ -99,6 +100,7 @@ subprojects {
         }
     }
 }
+*/
 /*
 subprojects {
     sonarqube {

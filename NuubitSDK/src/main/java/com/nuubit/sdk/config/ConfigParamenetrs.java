@@ -149,7 +149,6 @@ public class ConfigParamenetrs {
     public void setOperationMode(OperationMode operationMode) {
         this.operation_mode = operationMode;
     }
-
     public ListProtocol getAllowedTransportProtocols() {
         return allowed_transport_protocols;
     }

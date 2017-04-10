@@ -36,6 +36,7 @@ import com.nuubit.sdk.services.Tester;
 import com.nuubit.sdk.statistic.RequestCounter;
 import com.nuubit.sdk.statistic.sections.Carrier;
 import com.nuubit.sdk.types.HTTPCode;
+import com.nuubit.sdk.utils.ABTester;
 import com.nuubit.sdk.utils.DateTimeUtil;
 
 import java.util.ArrayList;
@@ -97,7 +98,8 @@ public class NuubitApplication extends Application implements
 
     private DBHelper dbHelper;
 
-    //private ArrayList<Protocol> allowed_protocols;
+    private ABTester tester;
+
     private ArrayBlockingQueue<Protocol> allowed_protocols;
 
     @Override
@@ -105,6 +107,7 @@ public class NuubitApplication extends Application implements
         super.onCreate();
         instance = this;
         //allowed_protocols = new ArrayList<Protocol>();
+        tester = new ABTester();
         MAIN_PACKAGE = instance.getPackage();
         share = getSharedPreferences("NuubitSDK", MODE_PRIVATE);
         dbHelper = new DBHelper(this);
@@ -269,6 +272,10 @@ public class NuubitApplication extends Application implements
         return counter;
     }
 
+    public ABTester getABTester() {
+        return tester;
+    }
+
     public DBHelper getDatabase() {
         return dbHelper;
     }
@@ -406,6 +413,14 @@ public class NuubitApplication extends Application implements
                             Log.i(TAG, "Parce to POJO");
                             //config.save(gson, share);
                             config.save(newConfig, share);
+                            if (tester.getPercent() != config.getParam().get(0).getABTestingOriginOffloadRatio()) {
+                                Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
+                                tester.setPercent(config.getParam().get(0).getABTestingOriginOffloadRatio());
+                                tester.init();
+                                tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
+                                config.getParam().get(0).setOperationMode(tester.isAMode() ? config.getParam().get(0).getOperationMode() : OperationMode.report_only);
+                                Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
+                            }
                             //allowed_protocols.clear();
                             allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
                             for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {

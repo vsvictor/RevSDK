@@ -11,7 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nuubit.demo.R;
+import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.config.Config;
+import com.nuubit.sdk.types.Pair;
+
+import java.util.ArrayList;
 /*
  * ************************************************************************
  *
@@ -74,7 +78,14 @@ public class ConfigFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PairAdapter(getActivity(), config.toArray(), PairAdapter.listener));
+            ArrayList<Pair> data = config.toArray();
+            for (Pair p : data) {
+                if (p.getName().equalsIgnoreCase("operation_mode")) {
+                    p.setValue(NuubitApplication.getInstance().getABTester().getRealOperatiomMode());
+                    break;
+                }
+            }
+            recyclerView.setAdapter(new PairAdapter(getActivity(), data, PairAdapter.listener));
         }
         return view;
     }

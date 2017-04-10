@@ -413,11 +413,11 @@ public class NuubitApplication extends Application implements
                             Log.i(TAG, "Parce to POJO");
                             //config.save(gson, share);
                             config.save(newConfig, share);
+                            tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
                             if (tester.getPercent() != config.getParam().get(0).getABTestingOriginOffloadRatio()) {
                                 Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
                                 tester.setPercent(config.getParam().get(0).getABTestingOriginOffloadRatio());
                                 tester.init();
-                                tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
                                 config.getParam().get(0).setOperationMode(tester.isAMode() ? config.getParam().get(0).getOperationMode() : OperationMode.report_only);
                                 Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
                             }

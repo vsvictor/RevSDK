@@ -8,6 +8,9 @@ buildscript {
             url "http://homedevelopment.bintray.com/revsdk"
         }
         maven {
+            url "http://homedevelopment.bintray.com/nuubit"
+        }
+        maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
@@ -43,13 +46,16 @@ allprojects {
         maven {
             url "http://homedevelopment.bintray.com/revsdk"
         }
+        maven {
+            url "http://homedevelopment.bintray.com/nuubit"
+        }
     }
 }
 
 sonarqube {
     properties {
         property "sonar.host.url", "https://sonar.x2link.co"
-        property "sonar.projectName", "RevSDK"
+        property "sonar.projectName", "NuubitSDK"
         property "sonar.projectKey", "vestern"
         property "sonar.sources", "src/main/java"
         property "sonar.language", "java"
@@ -60,10 +66,11 @@ sonarqube {
 //        property "sonar.exclusions", "src/main/java/com/foo/Foo.java"
     }
 }
+/*
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "RevSDK/src/main/java"
+            property "sonar.sources", "NuubitSDK/src/main/java"
             property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
         }
     }
@@ -71,7 +78,7 @@ subprojects {
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "RevDemo/src/main/java"
+            property "sonar.sources", "NuubitDemo/src/main/java"
             property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
         }
     }
@@ -79,16 +86,7 @@ subprojects {
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "RevBanshee/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "RevRacer/src/main/java"
+            property "sonar.sources", "NuubitRacer/src/main/java"
             property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
         }
     }
@@ -97,12 +95,22 @@ subprojects {
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "RevWeather/src/main/java"
+            property "sonar.sources", "NuubitCompatible/src/main/java"
             property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
         }
     }
 }
-
+*/
+/*
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "NuubitTester/src/main/java"
+            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
+        }
+    }
+}
+*/
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

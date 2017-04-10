@@ -22,6 +22,7 @@ android {
 }
 
 dependencies {
+    //compile 'com.nuubit.sdk:NuubitSDK:1.0.0@aar'
     //compile 'com.rev.sdk:RevSDK:1.0.0@aar'
     compile project(':NuubitSDK')
     compile 'com.android.support:appcompat-v7:25.3.1'

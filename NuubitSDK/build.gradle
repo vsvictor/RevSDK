@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 ext {
-    bintrayRepo = 'revsdk'
-    bintrayName = 'revsdk'
+    bintrayRepo = 'nuubit'
+    bintrayName = 'nuubit'
 
     publishedGroupId = 'com.nuubit.sdk'
-    libraryName = 'revsdk'
-    artifact = 'revsdk'
+    libraryName = 'NuubitSDK'
+    artifact = 'nuubitsdk'
 
     libraryDescription = 'NuubitSDK framework'
 
@@ -61,7 +61,7 @@ dependencies {
 
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.nuubit.sdk'                               // Maven Group ID for the artifact
+group = 'com.nuubit.sdk'                              // Maven Group ID for the artifact
 
 install {
     repositories.mavenInstaller {
@@ -70,10 +70,10 @@ install {
             project {
                 packaging 'aar'
                 groupId 'com.nuubit.sdk'
-                artifactId 'revsdk'
+                artifactId 'nuubitsdk'
 
                 // Add your description here
-                name 'revsdk'
+                name 'nuubitsdk'
                 description 'Nuubit SDK framework'
                 url 'https://github.com/vsvictor/revsw-sdk-android'
 
@@ -137,7 +137,7 @@ artifacts {
 */
 // Bintray
 Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+properties.load(project.rootProject.file('gradle.properties').newDataInputStream())
 
 bintray {
     user = properties.getProperty("bintray.user")

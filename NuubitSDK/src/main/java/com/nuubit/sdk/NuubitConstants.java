@@ -86,4 +86,14 @@ public class NuubitConstants {
 
     public static final int ERRORS_IN_ROW = 3;
     public static final int PENALTY_TIME_SEC = 60;
+
+    public static final String PULL_SIZE = "pullsize";
+    public static final String PULL_SUCCESS = "pullsuccess";
+    public static final String PULL_FAIL = "pullfail";
+    public static final String LAST_TIME_SUCCESS = "lasttimesuccess";
+    public static final String LAST_TIME_FAIL = "lasttimefail";
+    public static final String LAST_FAIL_REASON = "lastfailreason";
+    public static final String REAL_MODE = "realmode";
+    public static final String AB_ON = "abon";
+    public static final String AB_MODE = "abmode";
 }

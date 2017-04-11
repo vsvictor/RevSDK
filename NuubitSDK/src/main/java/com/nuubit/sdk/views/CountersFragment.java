@@ -34,14 +34,14 @@ import com.nuubit.sdk.statistic.Statistic;
  * /
  */
 
-public class StatFragment extends Fragment {
+public class CountersFragment extends Fragment {
     private Statistic stat;
 
-    public StatFragment() {
+    public CountersFragment() {
     }
 
-    public static StatFragment newInstance() {
-        StatFragment fragment = new StatFragment();
+    public static CountersFragment newInstance() {
+        CountersFragment fragment = new CountersFragment();
         return fragment;
     }
 
@@ -54,36 +54,20 @@ public class StatFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_stat, container, false);
+        View view = inflater.inflate(R.layout.fragment_counters, container, false);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle bundle) {
-        RecyclerView rvMain = (RecyclerView) view.findViewById(R.id.rvMain);
+        RecyclerView rvMain = (RecyclerView) view.findViewById(R.id.rvConfig);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMain.setAdapter(new PairAdapter(getActivity(), stat.toArray(), PairAdapter.listener));
-        RecyclerView rvCarrier = (RecyclerView) view.findViewById(R.id.rvCarrier);
-        rvCarrier.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvCarrier.setAdapter(new PairAdapter(getActivity(), stat.getCarrier().toArray(), PairAdapter.listener));
-        RecyclerView rvDevice = (RecyclerView) view.findViewById(R.id.rvDevice);
-        rvDevice.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvDevice.setAdapter(new PairAdapter(getActivity(), stat.getDevice().toArray(), PairAdapter.listener));
-        RecyclerView rvEvents = (RecyclerView) view.findViewById(R.id.rvEvents);
-        rvEvents.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //rvEvents.setAdapter(new PairAdapter(getActivity(),stat.getEvents().toArray(), PairAdapter.listener));
-        RecyclerView rvLocation = (RecyclerView) view.findViewById(R.id.rvLocation);
-        rvLocation.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvLocation.setAdapter(new PairAdapter(getActivity(), stat.getLocation().toArray(), PairAdapter.listener));
-        RecyclerView rvNetwork = (RecyclerView) view.findViewById(R.id.rvNetwork);
-        rvNetwork.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvNetwork.setAdapter(new PairAdapter(getActivity(), stat.getNetwork().toArray(), PairAdapter.listener));
+        rvMain.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getConfigCounters().toArray(), PairAdapter.listener));
+/*
         RecyclerView rvRequests = (RecyclerView) view.findViewById(R.id.rvRequests);
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvRequests.setAdapter(new PairAdapter(NuubitApplication.getInstance(), NuubitApplication.getInstance().getRequestCounter().toArray(), PairAdapter.listener));
-        RecyclerView rvWiFi = (RecyclerView) view.findViewById(R.id.rvWiFi);
-        rvWiFi.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvWiFi.setAdapter(new PairAdapter(getActivity(), stat.getWifi().toArray(), PairAdapter.listener));
+*/
     }
 
 

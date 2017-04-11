@@ -15,8 +15,8 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.nuubit.demo.fragments.MainFragment;
-import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.views.ConfigFragment;
+import com.nuubit.sdk.views.CountersFragment;
 import com.nuubit.sdk.views.StatFragment;
 
 /*
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 invalidateOptionsMenu();
-                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, ConfigFragment.newInstance(1, NuubitApplication.getInstance().getConfig())).commit();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, CountersFragment.newInstance()).commit();
             }
 
         };

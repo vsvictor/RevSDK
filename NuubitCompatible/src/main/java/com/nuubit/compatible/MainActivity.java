@@ -36,8 +36,7 @@ import com.nuubit.compatible.fragments.VolleyFragment;
 import com.nuubit.compatible.loader.RootLoader;
 import com.nuubit.compatible.model.Root;
 import com.nuubit.compatible.permission.RequestUserPermission;
-import com.nuubit.sdk.NuubitApplication;
-import com.nuubit.sdk.views.ConfigFragment;
+import com.nuubit.sdk.views.CountersFragment;
 
 import java.util.ArrayList;
 /*
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 invalidateOptionsMenu();
-                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, ConfigFragment.newInstance(1, NuubitApplication.getInstance().getConfig())).commit();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, CountersFragment.newInstance()).commit();
             }
 
         };

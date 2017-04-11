@@ -30,12 +30,11 @@ import com.nuubit.racer.fragments.SeriesFragment;
 import com.nuubit.racer.fragments.SummaryFragment;
 import com.nuubit.racer.model.Row;
 import com.nuubit.racer.model.Table;
-import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
-import com.nuubit.sdk.views.ConfigFragment;
+import com.nuubit.sdk.views.CountersFragment;
 
 import java.io.IOException;
 import java.util.Random;
@@ -114,7 +113,7 @@ public class ParalellyActivity extends AppCompatActivity implements
             @Override
             public void onDrawerOpened(View drawerView) {
                 invalidateOptionsMenu();
-                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, ConfigFragment.newInstance(1, NuubitApplication.getInstance().getConfig())).commit();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, CountersFragment.newInstance()).commit();
             }
 
         };

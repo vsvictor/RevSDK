@@ -11,8 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.nuubit.sdk.NuubitApplication;
-import com.nuubit.sdk.views.ConfigFragment;
+import com.nuubit.sdk.views.CountersFragment;
 import com.nuubit.tester.fragments.MainFragment;
 /*
  * ************************************************************************
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             @Override
             public void onDrawerOpened(View drawerView) {
                 invalidateOptionsMenu();
-                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, ConfigFragment.newInstance(1, NuubitApplication.getInstance().getConfig())).commit();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, CountersFragment.newInstance()).commit();
             }
 
         };

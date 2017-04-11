@@ -21,5 +21,6 @@
     <string name="stat_network">Network:</string>
     <string name="stat_Requests">Requests:</string>
     <string name="stat_wifi">WiFi:</string>
+    <string name="counter_config">Config counter:</string>
 
 </resources>

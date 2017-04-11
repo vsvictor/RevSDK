@@ -11,11 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 
-import com.nuubit.demo.fragments.ConfigFragment;
 import com.nuubit.demo.fragments.MainFragment;
-import com.nuubit.demo.fragments.StatFragment;
+import com.nuubit.sdk.NuubitApplication;
+import com.nuubit.sdk.views.ConfigFragment;
+import com.nuubit.sdk.views.StatFragment;
+
 /*
  * ************************************************************************
  *
@@ -38,14 +41,14 @@ import com.nuubit.demo.fragments.StatFragment;
  * /
  */
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnMainListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private Fragment current;
     private Fragment old;
-
+    private ConfigFragment configFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,20 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu();
+                //setActionBarMode(ActionBar.NAVIGATION_MODE_TABS);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, ConfigFragment.newInstance(1, NuubitApplication.getInstance().getConfig())).commit();
+            }
+
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 

@@ -1,4 +1,4 @@
-package com.nuubit.demo.fragments;
+package com.nuubit.sdk.views;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nuubit.demo.NuubitApp;
-import com.nuubit.demo.R;
+import com.nuubit.sdk.NuubitApplication;
+import com.nuubit.sdk.R;
 import com.nuubit.sdk.statistic.Statistic;
 /*
  * ************************************************************************
@@ -48,7 +48,7 @@ public class StatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.stat = new Statistic(NuubitApp.getInstance());
+        this.stat = new Statistic(NuubitApplication.getInstance());
         int i = 0;
     }
 
@@ -80,7 +80,7 @@ public class StatFragment extends Fragment {
         rvNetwork.setAdapter(new PairAdapter(getActivity(), stat.getNetwork().toArray(), PairAdapter.listener));
         RecyclerView rvRequests = (RecyclerView) view.findViewById(R.id.rvRequests);
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvRequests.setAdapter(new PairAdapter(NuubitApp.getInstance(), NuubitApp.getInstance().getCounter().toArray(), PairAdapter.listener));
+        rvRequests.setAdapter(new PairAdapter(NuubitApplication.getInstance(), NuubitApplication.getInstance().getCounter().toArray(), PairAdapter.listener));
         RecyclerView rvWiFi = (RecyclerView) view.findViewById(R.id.rvWiFi);
         rvWiFi.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWiFi.setAdapter(new PairAdapter(getActivity(), stat.getWifi().toArray(), PairAdapter.listener));

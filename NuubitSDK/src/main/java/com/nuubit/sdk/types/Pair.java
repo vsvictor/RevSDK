@@ -29,6 +29,6 @@ public class Pair extends Tag {
 
     @Override
     public String getValue() {
-        return super.getValue().toString();
+        return super.getValue() == null ? " " : super.getValue().toString();
     }
 }

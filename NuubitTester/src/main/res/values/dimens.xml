@@ -6,4 +6,5 @@
     <dimen name="big">32dp</dimen>
     <dimen name="small">8dp</dimen>
     <dimen name="editbox_height">139dp</dimen>
+    <dimen name="title_font">24sp</dimen>
 </resources>

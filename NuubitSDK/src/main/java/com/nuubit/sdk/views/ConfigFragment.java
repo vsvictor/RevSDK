@@ -1,4 +1,4 @@
-package com.nuubit.demo.fragments;
+package com.nuubit.sdk.views;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nuubit.demo.R;
-import com.nuubit.sdk.NuubitApplication;
+import com.nuubit.sdk.R;
 import com.nuubit.sdk.config.Config;
 import com.nuubit.sdk.types.Pair;
 
@@ -44,7 +43,8 @@ public class ConfigFragment extends Fragment {
     private static final String CONFIG = "config";
     private int mColumnCount = 2;
     private Config config;
-
+    private PairAdapter adapter;
+    private ArrayList<Pair> data;
     public ConfigFragment() {
     }
 
@@ -56,7 +56,6 @@ public class ConfigFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,14 +77,9 @@ public class ConfigFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            ArrayList<Pair> data = config.toArray();
-            for (Pair p : data) {
-                if (p.getName().equalsIgnoreCase("operation_mode")) {
-                    p.setValue(NuubitApplication.getInstance().getABTester().getRealOperatiomMode());
-                    break;
-                }
-            }
-            recyclerView.setAdapter(new PairAdapter(getActivity(), data, PairAdapter.listener));
+            data = config.toArray();
+            adapter = new PairAdapter(getActivity(), data, PairAdapter.listener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }

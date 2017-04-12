@@ -36,7 +36,7 @@ public class QUICProtocol extends Protocol {
     }
 
     @Override
-    public long test(String url) {
-        return -1;
+    public TestOneProtocol test(String url) {
+        return new TestOneProtocol(EnumProtocol.QUIC);
     }
 }

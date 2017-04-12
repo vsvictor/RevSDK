@@ -39,6 +39,11 @@ public class NuubitConstants {
     public static final String CONFIG = "config";
     public static final String TIMEOUT = "timeout";
     public static final String TEST_PROTOCOL = "protocol";
+    public static final String SUCCESS_COUNT = "success_count";
+    public static final String SUCCESS_TIME = "success_time";
+    public static final String FAIL_COUNT = "fail_count";
+    public static final String FAIL_REASON = "fail_reason";
+    public static final String FAIL_TIME = "fail_time";
     public static final String NOW = "now";
     public static final String URL = "url";
     public static final String PROTOCOLS = "protocols";
@@ -83,6 +88,7 @@ public class NuubitConstants {
     public static final String FULL = "Full";
 
     public static final String NO_PROTOCOL = "NoProtocol";
+    public static final int COUNT_PROTOCOL = 3;
 
     public static final int ERRORS_IN_ROW = 3;
     public static final int PENALTY_TIME_SEC = 60;
@@ -96,4 +102,7 @@ public class NuubitConstants {
     public static final String REAL_MODE = "realmode";
     public static final String AB_ON = "abon";
     public static final String AB_MODE = "abmode";
+
+    public static final String AVAILABLE_PROTOCOLS = "availableprotocols";
+    public static final String CURRENT_PROTOCOL = "currentprotocol";
 }

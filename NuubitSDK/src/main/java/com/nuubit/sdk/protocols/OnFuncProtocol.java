@@ -30,5 +30,5 @@ import okhttp3.Response;
 public interface OnFuncProtocol {
     Response send(Interceptor.Chain chain) throws IOException;
 
-    long test(String url);
+    TestOneProtocol test(String url);
 }

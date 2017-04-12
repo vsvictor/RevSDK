@@ -34,6 +34,7 @@ import com.nuubit.sdk.services.Configurator;
 import com.nuubit.sdk.services.Statist;
 import com.nuubit.sdk.services.Tester;
 import com.nuubit.sdk.statistic.counters.ConfigCounters;
+import com.nuubit.sdk.statistic.counters.LMMonitorCounters;
 import com.nuubit.sdk.statistic.counters.RequestCounter;
 import com.nuubit.sdk.statistic.sections.Carrier;
 import com.nuubit.sdk.types.HTTPCode;
@@ -90,6 +91,7 @@ public class NuubitApplication extends Application implements
 
     private RequestCounter requestCounter;
     private ConfigCounters configCounters;
+    private LMMonitorCounters lmMonitorCounters;
 
     private Timer configTimer = new Timer();
     private Timer staleTimer = new Timer();
@@ -115,6 +117,7 @@ public class NuubitApplication extends Application implements
         dbHelper = new DBHelper(this);
         requestCounter = new RequestCounter();
         configCounters = new ConfigCounters();
+        lmMonitorCounters = new LMMonitorCounters();
         if (googleClient == null) {
             googleClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -180,6 +183,7 @@ public class NuubitApplication extends Application implements
         sdkKey = getKeyFromManifest();
         requestCounter.load(share);
         configCounters.load(share);
+        lmMonitorCounters.load(share);
         config = Config.load(NuubitSDK.gsonCreate(), share);
         if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();
@@ -202,7 +206,7 @@ public class NuubitApplication extends Application implements
             public void onActivityResumed(Activity activity) {
                 registration();
                 configuratorRunner(true);
-                testerRunner();
+                //testerRunner();
                 Timer t = new Timer();
                 t.schedule(new TimerTask() {
                     @Override
@@ -216,7 +220,7 @@ public class NuubitApplication extends Application implements
 
                     }
                 }, 10 * 1000);
-                testerRunner();
+                //testerRunner();
             }
 
             @Override
@@ -278,6 +282,10 @@ public class NuubitApplication extends Application implements
 
     public ConfigCounters getConfigCounters() {
         return configCounters;
+    }
+
+    public LMMonitorCounters getLMMonitorCounters() {
+        return lmMonitorCounters;
     }
 
     public ABTester getABTester() {
@@ -399,6 +407,7 @@ public class NuubitApplication extends Application implements
         unregisterReceiver(netListener);
         requestCounter.save(share);
         configCounters.save(share);
+        lmMonitorCounters.save(share);
         //Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
 
@@ -432,8 +441,11 @@ public class NuubitApplication extends Application implements
                             }
                             //allowed_protocols.clear();
                             allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
+                            Log.i("ALLOWED", "" + config.getParam().get(0).getAllowedTransportProtocols().size());
+                            lmMonitorCounters.getAvailableProtocol().clear();
                             for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {
                                 allowed_protocols.add(EnumProtocol.createInstance(sProto));
+                                lmMonitorCounters.getAvailableProtocol().add(sProto);
                             }
                             Log.i(TAG, "Save config");
                             sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
@@ -457,6 +469,7 @@ public class NuubitApplication extends Application implements
                 configCounters.setAbOn(tester.getPercent() != 0);
                 configCounters.setRealMode(tester.getRealOperatiomMode());
                 configuratorRunner(false);
+                testerRunner();
             }
         };
     }
@@ -501,6 +514,14 @@ public class NuubitApplication extends Application implements
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
                     Bundle bundle = intent.getExtras();
+                    long succ = bundle.getLong(NuubitConstants.SUCCESS_COUNT, 0);
+                    lmMonitorCounters.addSuccess(succ);
+                    long fail = bundle.getLong(NuubitConstants.FAIL_COUNT, 0);
+                    lmMonitorCounters.addFail(fail);
+
+                    lmMonitorCounters.setLastSuccessTime(bundle.getLong(NuubitConstants.SUCCESS_TIME, -1));
+                    lmMonitorCounters.setLastFailTime(bundle.getLong(NuubitConstants.FAIL_TIME, -1));
+                    lmMonitorCounters.setLastFailReason(bundle.getString(NuubitConstants.LAST_FAIL_REASON, NuubitConstants.UNDEFINED));
                     if (bundle != null) {
                         String sProtocol = bundle.getString(NuubitConstants.TEST_PROTOCOL);
                         if (!sProtocol.equalsIgnoreCase(NuubitConstants.NO_PROTOCOL)) {
@@ -510,6 +531,7 @@ public class NuubitApplication extends Application implements
                             getConfig().getParam().get(0).setOperationMode(OperationMode.report_only);
                             Log.i("TEST", "No allowed ptotocol");
                         }
+                        lmMonitorCounters.setCurrentProtocol(EnumProtocol.fromString(sProtocol));
                     }
                 }
             }

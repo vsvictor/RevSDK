@@ -104,8 +104,8 @@ public class StandardProtocol extends Protocol {
     }
 
     @Override
-    public long test(String url) {
-        long res = -1;
+    public TestOneProtocol test(String url) {
+        TestOneProtocol res = new TestOneProtocol(EnumProtocol.STANDART);
         Request.Builder builder = new Request.Builder();
         builder.url(url).tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true));
         Call callback = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
@@ -113,13 +113,17 @@ public class StandardProtocol extends Protocol {
             Response response = callback.execute();
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() != HTTPCode.Type.SUCCESSFULL) {
-                return -1;
+                res.setTime(-1);
             } else {
-                res = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
+                res.setTime(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
             }
+            res.setTimeEnded(System.currentTimeMillis());
+            res.setReason(code.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            res = -1;
+            res.setTime(-1);
+            res.setTimeEnded(System.currentTimeMillis());
+            res.setReason(NuubitConstants.UNDEFINED);
         }
         return res;
     }

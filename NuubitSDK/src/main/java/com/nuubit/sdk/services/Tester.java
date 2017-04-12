@@ -31,6 +31,7 @@ import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.protocols.EnumProtocol;
 import com.nuubit.sdk.protocols.Protocol;
 import com.nuubit.sdk.protocols.ProtocolTester;
+import com.nuubit.sdk.protocols.TestOneProtocol;
 import com.nuubit.sdk.types.PairLong;
 
 import java.util.ArrayList;
@@ -51,6 +52,13 @@ public class Tester extends IntentService {
 
     @Override
     protected synchronized void onHandleIntent(Intent intent) {
+        TestOneProtocol pData = null;
+        long lastSuccesTime = 0;
+        long succesCount = 0;
+        long lastFailTime = 0;
+        long failCount = 0;
+        String lastReason = "";
+
         Bundle b = intent.getExtras();
         if (b == null) return;
         String url = intent.getExtras().getString(NuubitConstants.URL);
@@ -59,10 +67,18 @@ public class Tester extends IntentService {
         List<PairLong> results = new ArrayList<PairLong>();
         for (String sProto : arr) {
             Protocol pp = EnumProtocol.createInstance(EnumProtocol.fromString(sProto));
-            long pTime = pp.test(url);
-            if (pTime > 0) {
-                PairLong pair = new PairLong(pp.getDescription().toString(), pTime);
+            pData = pp.test(url);
+            if (pData.getTime() > 0) {
+                PairLong pair = new PairLong(pp.getDescription().toString(), pData.getTime());
                 results.add(pair);
+                if (pData.getTimeEnded() > lastSuccesTime) lastSuccesTime = pData.getTimeEnded();
+                succesCount++;
+            } else {
+                if (pData.getTimeEnded() > lastFailTime) {
+                    lastFailTime = pData.getTimeEnded();
+                    lastReason = pData.getReason();
+                }
+                failCount++;
             }
         }
 
@@ -80,8 +96,14 @@ public class Tester extends IntentService {
                 result = results.get(0).getName();
             }
         }
+
         Intent protocolIntent = new Intent(NuubitActions.TEST_PROTOCOL_ACTION);
         protocolIntent.putExtra(NuubitConstants.TEST_PROTOCOL, result);
+        protocolIntent.putExtra(NuubitConstants.SUCCESS_COUNT, succesCount);
+        protocolIntent.putExtra(NuubitConstants.SUCCESS_TIME, lastSuccesTime);
+        protocolIntent.putExtra(NuubitConstants.FAIL_COUNT, failCount);
+        protocolIntent.putExtra(NuubitConstants.FAIL_REASON, lastReason);
+        protocolIntent.putExtra(NuubitConstants.FAIL_TIME, lastFailTime);
         sendBroadcast(protocolIntent);
     }
 }

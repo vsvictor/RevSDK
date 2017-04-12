@@ -55,7 +55,8 @@ public class RequestOneSerialize implements JsonSerializer<RequestOne>{
         result.addProperty(RequestTable.Columns.TRANSPORT_PROTOCOL, src.getTransportEnumProtocol().toString());
         result.addProperty(RequestTable.Columns.URL, src.getURL());
         result.addProperty(RequestTable.Columns.DESTINATION, src.getDestination());
-        result.addProperty(RequestTable.Columns.X_REV_CACHE, src.getXRevCach());
+        //result.addProperty(RequestTable.Columns.X_REV_CACHE, src.getXRevCach());
+        result.addProperty(RequestTable.Columns.X_REV_CACHE_ATTR, src.getXRevCach());
         result.addProperty(RequestTable.Columns.DOMAIN, src.getDomain());
         result.addProperty(RequestTable.Columns.EDGE_TRANSPORT, src.getEdgeTransport().toString());
         return result;

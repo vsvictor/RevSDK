@@ -9,5 +9,6 @@
     <dimen name="big">32dp</dimen>
     <dimen name="small">8dp</dimen>
     <dimen name="big_size">16sp</dimen>
+    <dimen name="small_font">14sp</dimen>
 
 </resources>

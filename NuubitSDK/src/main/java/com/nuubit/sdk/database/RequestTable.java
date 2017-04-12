@@ -166,6 +166,7 @@ public class RequestTable {
         final String URL = "url";
         final String DESTINATION = "destination";
         final String X_REV_CACHE = "x_rev_cache";
+        final String X_REV_CACHE_ATTR = "x-rev-cache";
         final String DOMAIN = "domain";
         final String SENT = "sent";
         final String CONFIRMED = "confirmed";

@@ -132,7 +132,8 @@ public class RequestOne extends Data implements Parcelable {
         result.setContentEncode(NuubitSDK.getEncode(original));
         result.setContentType(NuubitSDK.getContentType(original));
         result.setStartTS(response == null ? -1 : response.sentRequestAtMillis());
-        result.setEndTS(response == null ? -1 : response.receivedResponseAtMillis() - response.sentRequestAtMillis());
+        //result.setEndTS(response == null ? -1 : response.receivedResponseAtMillis() - response.sentRequestAtMillis());
+        result.setEndTS(response == null ? -1 : response.receivedResponseAtMillis());
         result.setFirstByteTime(-1);
         result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response == null ? NuubitConstants.UNDEFINED : response.cacheControl().toString());

@@ -23,11 +23,18 @@
     "smokeConfig5.3": "mocha ./tests/smoke/config/smokeConfig5.3.js",
     "smokeConfig9.1": "mocha ./tests/smoke/config/smokeConfig9.1.js",
     "smokeConfig1.15": "mocha ./tests/smoke/config/smokeConfig1.15.js",
-    "smokeInterceptor11.1": "mocha ./tests/smoke/interceptor/smokeInterceptor11.1.js"
+    "smokeInterceptor11.1": "mocha ./tests/smoke/interceptor/smokeInterceptor11.1.js",
+    "smokeInterceptor2.1": "mocha ./tests/smoke/interceptor/smokeInterceptor2.1.js",
+    "smokeInterceptor2.4": "mocha ./tests/smoke/interceptor/smokeInterceptor2.4.js",
+    "smokeInterceptor2.6": "mocha ./tests/smoke/interceptor/smokeInterceptor2.6.js",
+    "smokeInterceptor1.1": "mocha ./tests/smoke/interceptor/smokeInterceptor1.1.js",
+    "smokeConfig": "mocha ./tests/smoke/config/smokeConfig*",
+    "smokeInterceptor": "mocha ./tests/smoke/config/smokeInterceptor*"
   },
   "dependencies": {
     "selenium-webdriver": "^3.0.0-beta-3",
     "wd-bridge": "0.0.2",
-    "yiewd": "^0.6.0"
+    "yiewd": "^0.6.0",
+    "config": "^1.25.1"
   }
 }

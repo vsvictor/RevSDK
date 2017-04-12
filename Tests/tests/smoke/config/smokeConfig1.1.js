@@ -22,24 +22,25 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
+    config = require('config'),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
-    configDefaultValues = require("./../../../config/default").values,
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
     Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    Configuration = require("./../../../page_objects/RevDemo/configurationPage"),
+    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
     request = require("./../../../helpers/requests");
 
 describe("Smoke Configuration", function () {
-    this.timeout(configDefaultValues.describeTimeout);
+    var describeTimeout = config.get('describeTimeout');
+    this.timeout(describeTimeout);
     var driver = undefined;
-    var portalAPIKey = configDefaultValues.portalAPIKey;
-    var appId = configDefaultValues.appId;
-    var accountId = configDefaultValues.accountId;
-    var statsReportingIntervalSeconds82 = configDefaultValues.statsReportingIntervalSeconds82;
-    var statsReportingIntervalSeconds60 = configDefaultValues.statsReportingIntervalSeconds60;
+    var portalAPIKey = config.get('portalAPIKey');
+    var appId = config.get('appId');
+    var accountId = config.get('accountId');
+    var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
 
     before(function () {
         var serverConfig = serverConfigs.local;
@@ -48,9 +49,10 @@ describe("Smoke Configuration", function () {
         var desired = _.clone(caps.android19);
         desired.app = apps.androidApiDemos;
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds82);
+        var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
             .init(desired)
-            .setImplicitWaitTimeout(6000);
+            .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
@@ -61,14 +63,11 @@ describe("Smoke Configuration", function () {
 
     it("should load config on first initialization", function () {
         return driver
-            .sleep(2000)
             .elementByClassName(Menu.menuBtn.button.className)
             .click()
-            .sleep(2000)
             .elementByXPath(Menu.menuOptions.configurationView.xpath)
             .click()
-            .sleep(1000)
-            .elementsByXPath(Configuration.lists.config.xpath)
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
                 return els[2].text().should.become(statsReportingIntervalSeconds82 + "");
             });

@@ -1,0 +1,43 @@
+{
+  "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
+  "appId": "58d535b8519150d22ab102b4",
+  "appIdTester": "58da25e7a8cd4cb456c1f4c1",
+  "accountId": "585296f11ea9bb3c3f90e05b",
+  "statsReportingIntervalSeconds82": 82,
+  "statsReportingIntervalSeconds83": 83,
+  "statsReportingIntervalSeconds84": 84,
+  "statsReportingIntervalSeconds85": 85,
+  "statsReportingIntervalSeconds86": 86,
+  "statsReportingIntervalSeconds87": 87,
+  "statsReportingIntervalSeconds60": 60,
+  "configurationRefreshIntervalMilliSec": 60000,
+  "defaultConfig": {
+    "stats_reporting_interval_sec": "300",
+    "stats_reporting_level": "\"debug\"",
+    "edge_failures_failover_threshold_percent": "80",
+    "edge_quic_udp_port": "443",
+    "edge_data_receive_timeout_sec": "60",
+    "app_name": "_",
+    "internal_domains_black_list": "[]",
+    "a_b_testing_origin_offload_ratio": "0",
+    "sdk_release_version": "\"1\"",
+    "transport_monitoring_url": "\"https://monitor.revsw.net/test-cache.js\""
+  },
+  "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
+  "appsOptionPublish": "?options=publish",
+  "describeTimeout": 300000,
+  "implicitWaitTimeout": 6000,
+  "headerRev": "revsdk",
+  "httpWebsite": "appium.io",
+  "domainsWhiteList": [
+    "bs.to",
+    "dev.citibreak.com"
+  ],
+  "domainsBlackList": [
+    "jenkins.io",
+    "protractortest.org"
+  ],
+  "domainsProvisionedList": [
+    "google.com"
+  ]
+}

@@ -22,26 +22,30 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
+    config = require('config'),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
-    configDefaultValues = require("./../../../config/default").values,
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
     Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    Configuration = require("./../../../page_objects/RevDemo/configurationPage"),
+    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
     request = require("./../../../helpers/requests");
 wd.addPromiseChainMethod('swipe', actions.swipe);
 
 describe("Smoke Configuration", function () {
-    this.timeout(configDefaultValues.describeTimeout);
+    var describeTimeout = config.get('describeTimeout');
+    this.timeout(describeTimeout);
     var driverRevTester = undefined;
     var driverRevDemo = undefined;
-    var portalAPIKey = configDefaultValues.portalAPIKey;
-    var appId = configDefaultValues.appId;
-    var accountId = configDefaultValues.accountId;
-    var statsReportingIntervalSeconds60 = configDefaultValues.statsReportingIntervalSeconds60;
-    var configurationRefreshIntervalMiliSec = 60000;
+    var implicitWaitTimeout = config.get('implicitWaitTimeout');
+    var portalAPIKey = config.get('portalAPIKey');
+    var appId = config.get('appId');
+    var accountId = config.get('accountId');
+    var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
+    var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
+    var defaultConfig = config.get('defaultConfig');
 
     before(function () {
         var serverConfig = serverConfigs.local;
@@ -52,31 +56,32 @@ describe("Smoke Configuration", function () {
         //run RevTester then turn off the network using RevTester and then quit RevTester
         return driverRevTester
             .init(desired)
-            .setImplicitWaitTimeout(6000)
+            .setImplicitWaitTimeout(implicitWaitTimeout)
+            .sleep(1000)
             .swipe({
-                startX: 300, startY: 50,
-                endX: 300, endY: 500,
-                duration: 1500
+                startX: 600, startY: 50,
+                endX: 600, endY: 1000,
+                duration: 600
             })
-            .sleep(2000)
+            .sleep(3000)
             .swipe({
                 startX: 100, startY: 275,
                 endX: 100, endY: 275,
-                duration: 500
+                duration: 350
             })
-            .sleep(1000)
+            .sleep(4000)
             .swipe({
-                startX: 1300, startY: 150,
-                endX: 1300, endY: 150,
-                duration: 500
+                startX: 800, startY: 150,
+                endX: 800, endY: 150,
+                duration: 350
             })
-            .sleep(1000)
+            .sleep(3000)
             .swipe({
                 startX: 300, startY: 2000,
                 endX: 300, endY: 50,
-                duration: 1500
+                duration: 1000
             })
-            .sleep(2000)
+            .sleep(4000)
             .quit();
     });
 
@@ -86,29 +91,29 @@ describe("Smoke Configuration", function () {
         return driverRevDemo
             .sleep(1000)
             .swipe({
-                startX: 500, startY: 50,
-                endX: 500, endY: 500,
-                duration: 1500
+                startX: 600, startY: 50,
+                endX: 600, endY: 1000,
+                duration: 600
             })
-            .sleep(2000)
+            .sleep(3000)
             .swipe({
                 startX: 100, startY: 275,
                 endX: 100, endY: 275,
-                duration: 500
+                duration: 350
             })
-            .sleep(1000)
+            .sleep(4000)
             .swipe({
-                startX: 1300, startY: 150,
-                endX: 1300, endY: 150,
-                duration: 500
+                startX: 800, startY: 150,
+                endX: 800, endY: 150,
+                duration: 350
             })
-            .sleep(1000)
+            .sleep(3000)
             .swipe({
                 startX: 300, startY: 2000,
                 endX: 300, endY: 50,
                 duration: 1500
             })
-            .sleep(2000)
+            .sleep(4000)
             .quit();
     });
 
@@ -123,53 +128,50 @@ describe("Smoke Configuration", function () {
         //check that it has default config
         return driverRevDemo
             .init(desired)
-            .setImplicitWaitTimeout(6000)
-            .sleep(1000)
+            .setImplicitWaitTimeout(implicitWaitTimeout)
             .elementByClassName(Menu.menuBtn.button.className)
             .click()
-            .sleep(1000)
             .elementByXPath(Menu.menuOptions.configurationView.xpath)
             .click()
-            .sleep(1000)
-            .elementsByXPath(Configuration.lists.config.xpath)
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[2].text().should.become(configDefaultValues.defaultConfig.stats_reporting_interval_sec);
+                return els[2].text().should.become(defaultConfig.stats_reporting_interval_sec);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[4].text().should.become(configDefaultValues.defaultConfig.stats_reporting_level);
+                return els[4].text().should.become(defaultConfig.stats_reporting_level);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[6].text().should.become(configDefaultValues.defaultConfig.edge_failures_failover_threshold_percent);
+                return els[6].text().should.become(defaultConfig.edge_failures_failover_threshold_percent);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[8].text().should.become(configDefaultValues.defaultConfig.edge_quic_udp_port);
+                return els[8].text().should.become(defaultConfig.edge_quic_udp_port);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[10].text().should.become(configDefaultValues.defaultConfig.edge_data_receive_timeout_sec);
+                return els[10].text().should.become(defaultConfig.edge_data_receive_timeout_sec);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[12].text().should.become(configDefaultValues.defaultConfig.app_name);
+                return els[12].text().should.become(defaultConfig.app_name);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[14].text().should.become(configDefaultValues.defaultConfig.internal_domains_black_list);
+                return els[14].text().should.become(defaultConfig.internal_domains_black_list);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[16].text().should.become(configDefaultValues.defaultConfig.a_b_testing_origin_offload_ratio);
+                return els[16].text().should.become(defaultConfig.a_b_testing_origin_offload_ratio);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[18].text().should.become(configDefaultValues.defaultConfig.sdk_release_version);
+                return els[18].text().should.become(defaultConfig.sdk_release_version);
             })
-            .elementsByXPath('//android.widget.TextView')
+            .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[20].text().should.become(configDefaultValues.defaultConfig.transport_monitoring_url);
+                return els[20].text().should.become(defaultConfig.transport_monitoring_url);
             });
     });
 });

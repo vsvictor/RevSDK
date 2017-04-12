@@ -52,5 +52,28 @@ public enum OperationMode {
         }
         return result;
     }
+
+    public static OperationMode fromString(String mode) {
+        OperationMode result = OperationMode.undefined;
+        switch (mode) {
+            case "transfer_and_report": {
+                result = transfer_and_report;
+                break;
+            }
+            case "transfer_only": {
+                result = transfer_only;
+                break;
+            }
+            case "report_only": {
+                result = report_only;
+                break;
+            }
+            case "off": {
+                result = off;
+                break;
+            }
+        }
+        return result;
+    }
 }
 

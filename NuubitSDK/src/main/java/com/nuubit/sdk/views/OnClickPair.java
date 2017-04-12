@@ -1,4 +1,4 @@
-package com.nuubit.demo.fragments;
+package com.nuubit.sdk.views;
 
 import com.nuubit.sdk.types.Pair;
 

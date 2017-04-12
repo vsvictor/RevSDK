@@ -3,6 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="native_mobile_app">Native mobile App</string>
     <string name="web_app">Web App</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="url">Please enter URL...</string>
     <string name="history">History</string>

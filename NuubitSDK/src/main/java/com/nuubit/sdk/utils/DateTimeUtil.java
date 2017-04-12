@@ -1,5 +1,7 @@
 package com.nuubit.sdk.utils;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,5 +43,13 @@ public class DateTimeUtil {
         } catch (Exception e) {
         }
         return "";
+    }
+
+    public static String dateToString(Context context, long date) {
+        if (date <= 0) return "0";
+        Date d = new Date(date);
+        android.text.format.DateFormat df = new android.text.format.DateFormat();
+        df.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date());
+        return df.format("yyyy-MM-dd hh:mm:ss", d).toString();
     }
 }

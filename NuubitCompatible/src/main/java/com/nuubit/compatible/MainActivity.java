@@ -16,11 +16,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,6 +36,7 @@ import com.nuubit.compatible.fragments.VolleyFragment;
 import com.nuubit.compatible.loader.RootLoader;
 import com.nuubit.compatible.model.Root;
 import com.nuubit.compatible.permission.RequestUserPermission;
+import com.nuubit.sdk.views.CountersFragment;
 
 import java.util.ArrayList;
 /*
@@ -86,8 +90,31 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu();
+                //setActionBarMode(ActionBar.NAVIGATION_MODE_TABS);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu();
+                getFragmentManager().beginTransaction().replace(R.id.llLeftDrawer, CountersFragment.newInstance()).commit();
+            }
+
+        };
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //navigationView.setNavigationItemSelectedListener(this);
         setSupportActionBar(toolbar);
         setTitle(R.string.app_name);
+
 
         list.add(RetrofitFragment.newInstance());
         list.add(PicassoFragment.newInstance());

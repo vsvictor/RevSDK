@@ -1,4 +1,4 @@
-package com.nuubit.demo.fragments;
+package com.nuubit.sdk.views;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nuubit.demo.R;
+import com.nuubit.sdk.R;
 import com.nuubit.sdk.types.Pair;
 
 import java.util.List;

@@ -19,10 +19,10 @@
     <string name="please_wait">Please wait...</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="average">Average:</string>
-    <string name="mediane">Mediane:</string>
+    <string name="mediane">Median:</string>
     <string name="stand_deviation">Stand. Deviation:</string>
     <string name="average_origin">Average original:</string>
-    <string name="mediane_original">Mediane original:</string>
+    <string name="mediane_original">Median original:</string>
     <string name="stand_deviation_original">Stand. deviation original:</string>
     <string name="summary">Summary</string>
     <string name="more">Expand more...</string>

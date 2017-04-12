@@ -3,6 +3,7 @@ package com.nuubit.tester;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.nuubit.sdk.views.ConfigFragment;
 import com.nuubit.sdk.views.CountersFragment;
+import com.nuubit.sdk.views.StatFragment;
 import com.nuubit.tester.fragments.MainFragment;
 /*
  * ************************************************************************
@@ -37,6 +40,10 @@ import com.nuubit.tester.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener {
     private Fragment main;
+
+    private Fragment current;
+    private Fragment old;
+
     private AppBarLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +76,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         layout = (AppBarLayout) findViewById(R.id.app_bar);
         layout.setExpanded(true);
 
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         main = MainFragment.newInstance();
+        current = main;
         getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, main).commit();
     }
 
@@ -92,12 +90,34 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.config_view) {
+            old = current;
+            current = ConfigFragment.newInstance(1, NuubitApp.getInstance().getConfig());
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
+        } else if (id == R.id.stat_view) {
+            old = current;
+            current = StatFragment.newInstance();
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
+        } else if (id == R.id.log_view) {
+
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (current instanceof MainFragment) {
+                super.onBackPressed();
+            } else {
+                current = MainFragment.newInstance();
+                getFragmentManager().beginTransaction().replace(R.id.rlMainContainer, current).commit();
+            }
+        }
+    }
     @Override
     public void onMain() {
 

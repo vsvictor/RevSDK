@@ -32,7 +32,9 @@ var wd = require("wd"),
     ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
     request = require("./../../../helpers/requests");
 
-describe("Smoke Configuration", function () {
+wd.addPromiseChainMethod('swipe', actions.swipe);
+
+describe("android simple", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -40,16 +42,16 @@ describe("Smoke Configuration", function () {
     var appId = config.get('appId');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds84 = config.get('statsReportingIntervalSeconds84');
+    var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
+    var serverConfig = serverConfigs.local;
+    driver = wd.promiseChainRemote(serverConfig);
+    logging.configure(driver);
+    var desired = _.clone(caps.android19);
+    desired.app = apps.androidApiDemos;
 
     before(function () {
-        var serverConfig = serverConfigs.local;
-        driver = wd.promiseChainRemote(serverConfig);
-        logging.configure(driver);
-        var desired = _.clone(caps.android19);
-        desired.app = apps.androidApiDemos;
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
             .init(desired)
@@ -59,31 +61,83 @@ describe("Smoke Configuration", function () {
     after(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .sleep(1000)
+            .swipe({
+                startX: 600, startY: 50,
+                endX: 600, endY: 1000,
+                duration: 600
+            })
+            .sleep(3000)
+            .swipe({
+                startX: 100, startY: 275,
+                endX: 100, endY: 275,
+                duration: 350
+            })
+            .sleep(4000)
+            .swipe({
+                startX: 800, startY: 150,
+                endX: 800, endY: 150,
+                duration: 350
+            })
+            .sleep(3000)
+            .swipe({
+                startX: 300, startY: 2000,
+                endX: 300, endY: 50,
+                duration: 1500
+            })
+            .sleep(4000)
             .quit();
     });
 
-    it("should check that config reloads after config_refresh interval*2 secs", function () {
-        setTimeout(function () {
-            request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds84);
-        }, configurationRefreshIntervalMilliSec);
 
+    it("should save config after reloading the App", function () {
+        //turn off network
+        //run app, wait for config
+        //restart app
+        //check that our config is still there
+        //turn on network
         return driver
-            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .sleep(7000)
             .elementByClassName(Menu.menuBtn.button.className)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
             .elementByXPath(Menu.menuOptions.configurationView.xpath)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .sleep(1000)
+            .swipe({
+                startX: 600, startY: 50,
+                endX: 600, endY: 1000,
+                duration: 600
+            })
+            .sleep(3000)
+            .swipe({
+                startX: 100, startY: 275,
+                endX: 100, endY: 275,
+                duration: 350
+            })
+            .sleep(4000)
+            .swipe({
+                startX: 800, startY: 150,
+                endX: 800, endY: 150,
+                duration: 350
+            })
+            .sleep(3000)
+            .swipe({
+                startX: 300, startY: 2000,
+                endX: 300, endY: 50,
+                duration: 1500
+            })
+            .sleep(4000)
+            .quit()
+            .init(desired)
+            .setImplicitWaitTimeout(6000)
             .elementByClassName(Menu.menuBtn.button.className)
             .click()
-            .sleep( ( configurationRefreshIntervalMilliSec / 2 ) + 3000)
             .elementByXPath(Menu.menuOptions.configurationView.xpath)
             .click()
             .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[2].text().should.become(statsReportingIntervalSeconds84.toString());
-            });
+                return els[2].text().should.become(statsReportingIntervalSeconds85 + "");
+            })
     });
 });
 

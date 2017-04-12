@@ -29,12 +29,19 @@ var wd = require("wd"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
     Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage");
+    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
+    request = require("./../../../helpers/requests");
 
 describe("Smoke Configuration", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
+    var portalAPIKey = config.get('portalAPIKey');
+    var appId = config.get('appId');
+    var accountId = config.get('accountId');
+    var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var statsReportingIntervalSeconds87 = config.get('statsReportingIntervalSeconds87');
+    var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
 
     before(function () {
         var serverConfig = serverConfigs.local;
@@ -42,6 +49,7 @@ describe("Smoke Configuration", function () {
         logging.configure(driver);
         var desired = _.clone(caps.android19);
         desired.app = apps.androidApiDemos;
+        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
             .init(desired)
@@ -49,55 +57,39 @@ describe("Smoke Configuration", function () {
     });
 
     after(function () {
+        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
             .quit();
     });
 
-    it("should load valid config parameters", function () {
+    it("should check that config reloads after config_refresh interval*3 secs", function () {
+        setTimeout(function () {
+            request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds87);
+        }, configurationRefreshIntervalMilliSec * 2);
+
         return driver
+            .sleep(configurationRefreshIntervalMilliSec / 2)
             .elementByClassName(Menu.menuBtn.button.className)
             .click()
+            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .click()
+            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .elementByClassName(Menu.menuBtn.button.className)
+            .click()
+            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .click()
+            .sleep(configurationRefreshIntervalMilliSec / 2)
+            .elementByClassName(Menu.menuBtn.button.className)
+            .click()
+            .sleep( ( configurationRefreshIntervalMilliSec / 2 ) + 3000)
             .elementByXPath(Menu.menuOptions.configurationView.xpath)
             .click()
             .elementsByXPath(ConfigurationPage.lists.config.xpath)
             .then(function (els) {
-                return els[1].text().should.become("stats_reporting_interval_sec");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[3].text().should.become("stats_reporting_level");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[5].text().should.become("edge_failures_failover_threshold_percent");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[7].text().should.become("edge_quic_udp_port");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[9].text().should.become("edge_data_receive_timeout_sec");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[11].text().should.become("app_name");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[13].text().should.become("internal_domains_black_list");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[15].text().should.become("a_b_testing_origin_offload_ratio");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[17].text().should.become("sdk_release_version");
-            })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
-            .then(function (els) {
-                return els[19].text().should.become("transport_monitoring_url");
+                return els[2].text().should.become(statsReportingIntervalSeconds87.toString());
             });
     });
 });
+

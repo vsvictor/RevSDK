@@ -24,7 +24,7 @@ var wd = require("wd"),
     _ = require('underscore'),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
-    configDefaultValues = require("./../../../config/default").values,
+    config = require("config"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
@@ -37,14 +37,14 @@ var wd = require("wd"),
 
 describe("Smoke Interceptor", function () {
     describe("check that response bodies with and without SDK are identical.", function () {
-        this.timeout(configDefaultValues.describeTimeout);
+        var describeTimeout = config.get('describeTimeout');
+        this.timeout(describeTimeout);
         var driverRevTester = undefined;
-        var driverRevDemo = undefined;
-        var portalAPIKey = configDefaultValues.portalAPIKey;
-        var appId = configDefaultValues.appId;
-        var accountId = configDefaultValues.accountId;
+        var portalAPIKey = config.get('portalAPIKey');
+        var appIdTester = config.get('appIdTester');
+        var accountId = config.get('accountId');
+        var httpWebsite = config.get('httpWebsite');
         var responseFromAppium = responsesFromServer.responseFromAppium;
-        var responseFromAppiumMethodPOST = responsesFromServer.methodPOST;
 
         before(function () {
             var serverConfig = serverConfigs.local;
@@ -52,9 +52,10 @@ describe("Smoke Interceptor", function () {
             logging.configure(driverRevTester);
             var desired = _.clone(caps.android19);
             desired.app = apps.androidTester;
+            var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driverRevTester
                 .init(desired)
-                .setImplicitWaitTimeout(6000)
+                .setImplicitWaitTimeout(implicitWaitTimeout);
         });
 
         after(function () {
@@ -64,45 +65,41 @@ describe("Smoke Interceptor", function () {
 
         it("should check HTTP Method GET", function () {
             return driverRevTester
-                .sleep(1000)
                 .elementById(Configuration.dropdown.methods)  // methods d-down
                 .click()
-                .sleep(5000)
                 .elementsByClassName(Configuration.list.methods)   // list of methods
                 .at(0) //GET
                 .click()
-                .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
-                .click()
-                .sleep(2000)
-                .elementById(Configuration.output.response) // response body
-                .sleep(2000)
-                .then(function (els) {
-                    return els.text().should.become(responseFromAppium);
-                })
-                .sleep(3000)
-                .elementById(Configuration.dropdown.operationModes)  // modes operation
                 .click()
                 .sleep(5000)
-                .elementsByClassName(Configuration.list.operationModes)   // list of methods
-                .at(3) // Off mode
-                .click()
-                .sleep(1000)
-                .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
-                .elementById(Configuration.button.send)  // Go\Run\Send btn
-                .click()
-                .sleep(2000)
-                .elementById(Configuration.output.response)  // response body
+                .elementById(Configuration.output.response) // response body
                 .then(function (els) {
-                    return els.text().should.become(responseFromAppium);
+                  //  return els.text().should.become(responseFromAppium);
+                    return els.text();
                 })
-                .sleep(3000);
+                .then(function (response) {
+                    return driverRevTester
+                        .elementById(Configuration.dropdown.operationModes)  // modes operation
+                        .click()
+                        .elementsByClassName(Configuration.list.operationModes)   // list of methods
+                        .at(3) // Off mode
+                        .click()
+                        .elementById(Configuration.input.url) // input url
+                        .sendKeys(httpWebsite)
+                        .elementById(Configuration.button.send)  // Go\Run\Send btn
+                        .click()
+                        .sleep(5000)
+                        .elementById(Configuration.output.response)  // response body
+                        .then(function (els) {
+                            return els.text().should.become(response);
+                        });
+                });
         });
 
-        it("should check HTTP Method POST", function () {
+     /*   it("should check HTTP Method POST", function () {
             return driverRevTester
                 .sleep(1000)
                 .elementById(Configuration.dropdown.methods)  // methods d-down
@@ -113,7 +110,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -130,7 +127,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -152,7 +149,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -169,7 +166,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -179,7 +176,6 @@ describe("Smoke Interceptor", function () {
                 })
                 .sleep(3000);
         });
-
 
         it("should check HTTP Method DELETE", function () {
             return driverRevTester
@@ -192,7 +188,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -209,7 +205,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -231,7 +227,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -248,7 +244,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -270,7 +266,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -287,7 +283,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -309,7 +305,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -326,7 +322,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -348,7 +344,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -365,7 +361,7 @@ describe("Smoke Interceptor", function () {
                 .click()
                 .sleep(1000)
                 .elementById(Configuration.input.url) // input url
-                .sendKeys("appium.io")
+                .sendKeys(configDefaultValues.httpWebsite)
                 .elementById(Configuration.button.send)  // Go\Run\Send btn
                 .click()
                 .sleep(2000)
@@ -374,8 +370,7 @@ describe("Smoke Interceptor", function () {
                     return els.text().should.become(responseFromAppium);
                 })
                 .sleep(3000);
-        });
-
+        });*/
     });
 });
 

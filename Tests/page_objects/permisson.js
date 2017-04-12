@@ -16,24 +16,6 @@
  * from Rev Software, Inc.
  */
 
-
-module.exports =  {
-    dropdown: {
-        methods: 'com.rev.revtester:id/spMethod',
-        operationModes: 'com.rev.revtester:id/spMode'
-    },
-    list: {
-        methods: 'android.widget.TextView',
-        operationModes: 'android.widget.TextView'
-    },
-    input: {
-        url: 'com.rev.revtester:id/tlQuery'
-    },
-    button: {
-        send: 'com.rev.revtester:id/rlRun'
-    },
-    output: {
-        response: 'com.rev.revtester:id/tvMain',
-        responseHeaders: 'com.rev.revtester:id/tvHeaders'
-    }
+exports.allow = {
+   button: 'com.android.packageinstaller:id/permission_allow_button'
 };

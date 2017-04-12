@@ -398,6 +398,8 @@ public class MainFragment extends Fragment {
                     final Call callback = client.newCall(builder.build());
                     response = callback.execute();
 
+                    if (response == null) throw new NullPointerException();
+
                     String location = "";
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
@@ -420,6 +422,10 @@ public class MainFragment extends Fragment {
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
+                    body = null;
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    body = null;
                 }
             }
             return body;
@@ -427,9 +433,13 @@ public class MainFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String body) {
-            wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
-            tvMain.setText(body);
-            tvHeader.setText(resHeader.toString());
+            if (body != null) {
+                wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
+                tvMain.setText(body);
+                tvHeader.setText(resHeader.toString());
+            } else {
+                Toast.makeText(getActivity(), "Response null!!!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -439,6 +449,12 @@ public class MainFragment extends Fragment {
         IntentFilter ifConfig = new IntentFilter();
         ifConfig.addAction(NuubitActions.CONFIG_LOADED);
         getActivity().registerReceiver(configReceiver, ifConfig);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(configReceiver);
     }
 
     private BroadcastReceiver configReceiver = new BroadcastReceiver() {

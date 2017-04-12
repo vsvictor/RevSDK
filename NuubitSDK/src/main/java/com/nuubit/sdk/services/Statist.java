@@ -92,6 +92,9 @@ public class Statist extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
             response = null;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            response = null;
         }
         HTTPCode resCode = HTTPCode.create(response == null ? 401 : response.code());
         String textMessage;

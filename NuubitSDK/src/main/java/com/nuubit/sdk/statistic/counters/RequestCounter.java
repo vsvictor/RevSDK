@@ -1,4 +1,4 @@
-package com.nuubit.sdk.statistic;
+package com.nuubit.sdk.statistic.counters;
 
 import android.content.SharedPreferences;
 
@@ -35,7 +35,7 @@ import okhttp3.Request;
  * /
  */
 
-public class RequestCounter {
+public class RequestCounter extends Counters {
     private long revRequests;
     private long originRequests;
     private long systemRequests;
@@ -65,6 +65,7 @@ public class RequestCounter {
         }
     }
 
+    @Override
     public void save(SharedPreferences share) {
         SharedPreferences.Editor editor = share.edit();
         editor.putLong(NuubitConstants.REV, getRevRequestsCount());
@@ -76,6 +77,7 @@ public class RequestCounter {
         editor.commit();
     }
 
+    @Override
     public void load(SharedPreferences share) {
         revRequests = share.getLong(NuubitConstants.REV, 0);
         originRequests = share.getLong(NuubitConstants.ORIGIN, 0);
@@ -156,6 +158,7 @@ public class RequestCounter {
         return revProtocol;
     }
 
+    @Override
     public ArrayList<Pair> toArray() {
         ArrayList<Pair> result = new ArrayList<Pair>();
         result.add(new Pair("allRequest", String.valueOf(getAllRequest())));

@@ -1,4 +1,4 @@
-package com.nuubit.sdk.statistic;
+package com.nuubit.sdk.statistic.counters;
 
 import android.content.SharedPreferences;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by victor on 11.04.17.
  */
 
-public class ConfigCounters {
+public class ConfigCounters extends Counters {
     private long pullSuccess;
     private long pullFail;
     private long timeLastSuccess;
@@ -93,6 +93,7 @@ public class ConfigCounters {
         this.realMode = realMode;
     }
 
+    @Override
     public void save(SharedPreferences share) {
         SharedPreferences.Editor editor = share.edit();
         editor.putLong(NuubitConstants.PULL_SUCCESS, getPullSuccess());
@@ -104,6 +105,7 @@ public class ConfigCounters {
         editor.commit();
     }
 
+    @Override
     public void load(SharedPreferences share) {
         pullSuccess = share.getLong(NuubitConstants.PULL_SUCCESS, 0);
         pullFail = share.getLong(NuubitConstants.PULL_FAIL, 0);
@@ -113,6 +115,7 @@ public class ConfigCounters {
         realMode = OperationMode.fromString(share.getString(NuubitConstants.REAL_MODE, "off"));
     }
 
+    @Override
     public ArrayList<Pair> toArray() {
         ArrayList<Pair> result = new ArrayList<Pair>();
         result.add(new Pair("totalPull", String.valueOf(getPullSize())));

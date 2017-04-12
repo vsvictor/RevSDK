@@ -83,6 +83,7 @@ public class StandardProtocol extends Protocol {
                 } catch (NullPointerException ex) {
                     Log.i("database", "Database error!!!");
                 }
+
             }
             if (!isSystem(original)) {
                 this.zeroing();
@@ -98,6 +99,7 @@ public class StandardProtocol extends Protocol {
             ex.printStackTrace();
         }
         Log.i(TAG, "Response:" + response.toString());
+        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDART);
         return response;
     }
 

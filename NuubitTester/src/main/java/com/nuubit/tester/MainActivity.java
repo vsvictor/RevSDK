@@ -44,13 +44,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     private Fragment current;
     private Fragment old;
 
+    private DrawerLayout drawer;
+
     private AppBarLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
@@ -90,7 +92,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.config_view) {
+        if (id == R.id.main) {
+            old = current;
+            current = MainFragment.newInstance();
+            getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
+        } else if (id == R.id.config_view) {
             old = current;
             current = ConfigFragment.newInstance(1, NuubitApp.getInstance().getConfig());
             getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
@@ -100,15 +106,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             getFragmentManager().beginTransaction().remove(old).replace(R.id.rlMainContainer, current).commit();
         } else if (id == R.id.log_view) {
 
+        } else if (id == R.id.drawer) {
+            drawer.openDrawer(GravityCompat.END);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
         } else {
             if (current instanceof MainFragment) {
                 super.onBackPressed();

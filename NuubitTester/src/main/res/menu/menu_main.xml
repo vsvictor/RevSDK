@@ -2,6 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.nuubit.tester.MainActivity">
     <item
+        android:id="@+id/main"
+        android:icon="@drawable/ic_menu_manage"
+        android:title="@string/main" />
+    <item
         android:id="@+id/config_view"
         android:icon="@drawable/ic_menu_camera"
         android:title="@string/config_view" />
@@ -13,4 +17,9 @@
         android:id="@+id/log_view"
         android:icon="@drawable/ic_menu_slideshow"
         android:title="@string/log_view" />
+    <item
+        android:id="@+id/drawer"
+        android:icon="@drawable/ic_drawer"
+        android:title="@string/open_drawer" />
+
 </menu>

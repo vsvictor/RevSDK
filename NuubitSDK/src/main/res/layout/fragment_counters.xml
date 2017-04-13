@@ -14,9 +14,9 @@
 
             <TextView
                 android:id="@+id/tvConfig"
-                android:text="@string/counter_config"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:text="@string/counter_config" />
 
             <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,20 +24,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
-            <!--
-                        <TextView
-                            android:id="@+id/tvRequests"
-                            android:text="@string/stat_Requests"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
 
-                        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                            xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/rvRequests"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
-            -->
+            <TextView
+                android:id="@+id/tvLMMonitoring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/lm_monitoring" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvLMMonitoring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tvRequests"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_Requests" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvRequests"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tvStats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_stat" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvStats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -63,11 +63,19 @@ public class CountersFragment extends Fragment {
         RecyclerView rvMain = (RecyclerView) view.findViewById(R.id.rvConfig);
         rvMain.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvMain.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getConfigCounters().toArray(), PairAdapter.listener));
-/*
+
+        RecyclerView rvLMMonitoring = (RecyclerView) view.findViewById(R.id.rvLMMonitoring);
+        rvLMMonitoring.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvLMMonitoring.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getLMMonitorCounters().toArray(), PairAdapter.listener));
+
         RecyclerView rvRequests = (RecyclerView) view.findViewById(R.id.rvRequests);
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvRequests.setAdapter(new PairAdapter(NuubitApplication.getInstance(), NuubitApplication.getInstance().getRequestCounter().toArray(), PairAdapter.listener));
-*/
+        rvRequests.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getRequestCounter().toArray(), PairAdapter.listener));
+
+        RecyclerView rvStats = (RecyclerView) view.findViewById(R.id.rvStats);
+        rvStats.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvStats.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getStatsCounters().toArray(), PairAdapter.listener));
+
     }
 
 

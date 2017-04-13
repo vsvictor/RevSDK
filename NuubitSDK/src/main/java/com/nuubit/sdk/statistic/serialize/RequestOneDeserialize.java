@@ -42,6 +42,7 @@ public class RequestOneDeserialize implements JsonDeserializer<RequestOne> {
         result.setContentEncode(obj.get(RequestTable.Columns.CONTENT_ENCODING).getAsString());
         result.setContentType(obj.get(RequestTable.Columns.CONTENT_TYPE).getAsString());
         result.setStartTS(obj.get(RequestTable.Columns.START_TS).getAsLong());
+        result.setSentTS(obj.get(RequestTable.Columns.SENT_TS).getAsLong());
         result.setEndTS(obj.get(RequestTable.Columns.END_TS).getAsLong());
         result.setFirstByteTime(obj.get(RequestTable.Columns.FIRST_BYTE_TIMESTAMP).getAsLong());
         result.setKeepAliveStatus(obj.get(RequestTable.Columns.KEEP_ALIVE_STATUS).getAsInt());

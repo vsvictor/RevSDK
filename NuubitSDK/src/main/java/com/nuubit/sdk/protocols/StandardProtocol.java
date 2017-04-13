@@ -65,24 +65,30 @@ public class StandardProtocol extends Protocol {
             result = original;
         }
         Response response = null;
+        long beginTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
         try {
+
             response = chain.proceed(result);
+
+            endTime = System.currentTimeMillis();
             if (response == null) {
-                throw new HTTPException(original, result, response, this);
+                throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
-                throw new HTTPException(original, result, response, this);
+                throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
 
             if (!isSystem(original) && isStatistic()) {
                 try {
-                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription());
+                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
                     NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", statRequest.toString());
                 } catch (NullPointerException ex) {
                     Log.i("database", "Database error!!!");
                 }
+
             }
             if (!isSystem(original)) {
                 this.zeroing();
@@ -98,12 +104,13 @@ public class StandardProtocol extends Protocol {
             ex.printStackTrace();
         }
         Log.i(TAG, "Response:" + response.toString());
+        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDART);
         return response;
     }
 
     @Override
-    public long test(String url) {
-        long res = -1;
+    public TestOneProtocol test(String url) {
+        TestOneProtocol res = new TestOneProtocol(EnumProtocol.STANDART);
         Request.Builder builder = new Request.Builder();
         builder.url(url).tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true));
         Call callback = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
@@ -111,13 +118,17 @@ public class StandardProtocol extends Protocol {
             Response response = callback.execute();
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() != HTTPCode.Type.SUCCESSFULL) {
-                return -1;
+                res.setTime(-1);
             } else {
-                res = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
+                res.setTime(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
             }
+            res.setTimeEnded(System.currentTimeMillis());
+            res.setReason(code.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            res = -1;
+            res.setTime(-1);
+            res.setTimeEnded(System.currentTimeMillis());
+            res.setReason(NuubitConstants.UNDEFINED);
         }
         return res;
     }

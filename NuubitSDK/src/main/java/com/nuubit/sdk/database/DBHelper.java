@@ -55,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String TAG = DBHelper.class.getSimpleName();
     public static Uri BASE_CONTENT_URI;
     public static String DATABASE_NAME = "database.db";
-    public static int DATABASE_VERSION = 1;
+    public static int DATABASE_VERSION = 2;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

@@ -43,6 +43,7 @@ public class RequestOne extends Data implements Parcelable {
     private String contentEncode;
     private String contentType;
     private long startTS;
+    private long sentTS;
     private long endTS;
     private long firstByteTime;
     private int keepAliveStatus;
@@ -71,6 +72,7 @@ public class RequestOne extends Data implements Parcelable {
         contentEncode = in.readString();
         contentType = in.readString();
         startTS = in.readLong();
+        sentTS = in.readLong();
         endTS = in.readLong();
         firstByteTime = in.readLong();
         keepAliveStatus = in.readInt();
@@ -95,6 +97,7 @@ public class RequestOne extends Data implements Parcelable {
         result.add(new Pair("contentEncode", String.valueOf(contentEncode)));
         result.add(new Pair(contentType, String.valueOf(contentType)));
         result.add(new Pair("startTS", String.valueOf(startTS)));
+        result.add(new Pair("sentTS", String.valueOf(sentTS)));
         result.add(new Pair("endTS", String.valueOf(endTS)));
         result.add(new Pair("firstByteTime", String.valueOf(firstByteTime)));
         result.add(new Pair("keepAliveStatus", String.valueOf(keepAliveStatus)));
@@ -124,22 +127,23 @@ public class RequestOne extends Data implements Parcelable {
         }
     };
 
-    public static RequestOne toRequestOne(Request original, Request processed, Response response, EnumProtocol edge_transport) {
+    public static RequestOne toRequestOne(Request original, Request processed, Response response, EnumProtocol edge_transport, long begTime, long endTime) {
         RequestOne result = new RequestOne();
-
         result.setID(-1);
         result.setConnectionID(-1);
         result.setContentEncode(NuubitSDK.getEncode(original));
         result.setContentType(NuubitSDK.getContentType(original));
-        result.setStartTS(response == null ? -1 : response.sentRequestAtMillis());
-        result.setEndTS(response == null ? -1 : response.receivedResponseAtMillis() - response.sentRequestAtMillis());
-        result.setFirstByteTime(-1);
+
+        result.setStartTS(begTime);
+        result.setSentTS(response == null ? -1 : response.sentRequestAtMillis());
+        result.setFirstByteTime(response == null ? -1 : response.receivedResponseAtMillis());
+        result.setEndTS(endTime);
+
         result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response == null ? NuubitConstants.UNDEFINED : response.cacheControl().toString());
         result.setMethod(original.method());
         result.setEdgeTransport(edge_transport);
 
-        //result.setNetwork(NetworkUtil.getNetworkName(NuubitApplication.getInstance()));
         result.setNetwork("NETWORK");
 
         result.setEnumProtocol(EnumProtocol.fromString(original.isHttps() ? "https" : "http"));
@@ -153,7 +157,7 @@ public class RequestOne extends Data implements Parcelable {
             }
         } else result.setSentBytes(0);
         result.setStatusCode(response == null ? -1 : response.code());
-        result.setSuccessStatus(response == null ? -1 : response.code());
+        result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
         result.setDestination(original.equals(processed) ? "origin" : "rev_edge");
@@ -203,6 +207,14 @@ public class RequestOne extends Data implements Parcelable {
 
     public void setStartTS(long startTS) {
         this.startTS = startTS;
+    }
+
+    public long getSentTS() {
+        return sentTS;
+    }
+
+    public void setSentTS(long sentTS) {
+        this.sentTS = sentTS;
     }
 
     public long getEndTS() {

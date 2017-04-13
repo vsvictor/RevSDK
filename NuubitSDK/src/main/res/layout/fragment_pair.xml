@@ -15,6 +15,7 @@
         <TextView
             android:layout_weight="1"
             android:id="@+id/id"
+            android:textSize="@dimen/small_font"
             android:paddingLeft="@dimen/middle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,6 +25,7 @@
         <TextView
             android:layout_weight="2"
             android:id="@+id/content"
+            android:textSize="@dimen/small_font"
             android:paddingRight="@dimen/small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

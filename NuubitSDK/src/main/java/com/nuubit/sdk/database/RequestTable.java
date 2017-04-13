@@ -37,28 +37,10 @@ import java.util.List;
 public class RequestTable {
     private static final String TAG = "RequestTable";
 
-    //public static final Uri URI = DBHelper.BASE_CONTENT_URI.buildUpon().appendPath(RequestTable.Requests.TABLE_NAME).build();
-/*
-    public static Uri insert(Context context, RequestOne req){
-        NuubitApplication con = (NuubitApplication) context;
-        return context.getContentResolver().insert(URI, toContentValues(con.getConfig().getAppName(), req));
-    }
-*/
     public static void insert(Context context, RequestOne req) {
         NuubitApplication con = (NuubitApplication) context;
         con.getDatabase().insertRequest(toContentValues(con.getConfig().getAppName(), req));
     }
-
-    /*
-        public static void insertRequests(@NonNull List<RequestOne> reqs){
-            NuubitApplication con = (NuubitApplication) context;
-            ContentValues[] values = new ContentValues[reqs.size()];
-            for(int i = 0; i<reqs.size();i++){
-                values[i] = toContentValues(con.getConfig().getAppName(), reqs.get(i));
-            }
-            context.getContentResolver().bulkInsert(URI, values);
-        }
-    */
     @NonNull
     public static RequestOne fromCursor(@NonNull Cursor cursor){
         RequestOne value = new RequestOne();
@@ -67,6 +49,7 @@ public class RequestTable {
         value.setContentEncode(cursor.getString(cursor.getColumnIndex(Columns.CONTENT_ENCODING)));
         value.setContentType(cursor.getString(cursor.getColumnIndex(Columns.CONTENT_TYPE)));
         value.setStartTS(cursor.getLong(cursor.getColumnIndex(Columns.START_TS)));
+        value.setSentTS(cursor.getLong(cursor.getColumnIndex(Columns.SENT_TS)));
         value.setEndTS(cursor.getLong(cursor.getColumnIndex(Columns.END_TS)));
         value.setFirstByteTime(cursor.getLong(cursor.getColumnIndex(Columns.FIRST_BYTE_TIMESTAMP)));
         value.setKeepAliveStatus(cursor.getInt(cursor.getColumnIndex(Columns.KEEP_ALIVE_STATUS)));
@@ -102,28 +85,19 @@ public class RequestTable {
         }
         return values;
     }
-/*
-    public static void setSelected(Context context, int count){
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String command = "Update From Select * selected=1 Where selected=0 and confirmed=0 limit "+String.valueOf(count);
-        db.execSQL(command);
-    }
-*/
     @NonNull
     public static void clear(Context context){
-        //context.getContentResolver().delete(URI, null, null);
         NuubitApplication.getInstance().getDatabase().deleteAll();
     }
     @NonNull
     public static ContentValues toContentValues(String appName, @NonNull RequestOne req) {
         ContentValues values = new ContentValues();
-
         values.put(Columns.APP_NAME, appName);
         values.put(Columns.CONNECTION_ID, req.getConnectionID());
         values.put(Columns.CONTENT_ENCODING, req.getContentEncode());
         values.put(Columns.CONTENT_TYPE, req.getContentType());
         values.put(Columns.START_TS, req.getStartTS());
+        values.put(Columns.SENT_TS, req.getSentTS());
         values.put(Columns.END_TS, req.getEndTS());
         values.put(Columns.FIRST_BYTE_TIMESTAMP, req.getFirstByteTime());
         values.put(Columns.KEEP_ALIVE_STATUS, req.getKeepAliveStatus());
@@ -151,6 +125,7 @@ public class RequestTable {
         final String CONTENT_ENCODING = "cont_encoding";
         final String CONTENT_TYPE = "cont_type";
         final String START_TS = "start_ts";
+        final String SENT_TS = "sent_ts";
         final String END_TS = "end_ts";
         final String FIRST_BYTE_TIMESTAMP = "first_byte_ts";
         final String KEEP_ALIVE_STATUS = "keepalive_status";
@@ -166,6 +141,7 @@ public class RequestTable {
         final String URL = "url";
         final String DESTINATION = "destination";
         final String X_REV_CACHE = "x_rev_cache";
+        final String X_REV_CACHE_ATTR = "x-rev-cache";
         final String DOMAIN = "domain";
         final String SENT = "sent";
         final String CONFIRMED = "confirmed";
@@ -180,6 +156,7 @@ public class RequestTable {
                 Columns.CONTENT_ENCODING + " varchar(128) not null," +
                 Columns.CONTENT_TYPE + " varchar(64) not null," +
                 Columns.START_TS + " int not null," +
+                Columns.SENT_TS + " int not null," +
                 Columns.END_TS + " int not null," +
                 Columns.FIRST_BYTE_TIMESTAMP + " int not null," +
                 Columns.KEEP_ALIVE_STATUS + " int not null," +

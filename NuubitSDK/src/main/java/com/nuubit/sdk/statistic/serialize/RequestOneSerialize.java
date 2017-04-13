@@ -41,6 +41,7 @@ public class RequestOneSerialize implements JsonSerializer<RequestOne>{
         result.addProperty(RequestTable.Columns.CONTENT_ENCODING, src.getContentEncode());
         result.addProperty(RequestTable.Columns.CONTENT_TYPE, src.getContentType());
         result.addProperty(RequestTable.Columns.START_TS, src.getStartTS());
+        result.addProperty(RequestTable.Columns.SENT_TS, src.getSentTS());
         result.addProperty(RequestTable.Columns.END_TS, src.getEndTS());
         result.addProperty(RequestTable.Columns.FIRST_BYTE_TIMESTAMP, src.getFirstByteTime());
         result.addProperty(RequestTable.Columns.KEEP_ALIVE_STATUS, src.getKeepAliveStatus());
@@ -55,7 +56,7 @@ public class RequestOneSerialize implements JsonSerializer<RequestOne>{
         result.addProperty(RequestTable.Columns.TRANSPORT_PROTOCOL, src.getTransportEnumProtocol().toString());
         result.addProperty(RequestTable.Columns.URL, src.getURL());
         result.addProperty(RequestTable.Columns.DESTINATION, src.getDestination());
-        result.addProperty(RequestTable.Columns.X_REV_CACHE, src.getXRevCach());
+        result.addProperty(RequestTable.Columns.X_REV_CACHE_ATTR, src.getXRevCach());
         result.addProperty(RequestTable.Columns.DOMAIN, src.getDomain());
         result.addProperty(RequestTable.Columns.EDGE_TRANSPORT, src.getEdgeTransport().toString());
         return result;

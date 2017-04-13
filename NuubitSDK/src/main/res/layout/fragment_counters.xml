@@ -51,6 +51,19 @@
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
+            <TextView
+                android:id="@+id/tvStats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_stat" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvStats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

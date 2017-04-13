@@ -72,6 +72,10 @@ public class CountersFragment extends Fragment {
         rvRequests.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvRequests.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getRequestCounter().toArray(), PairAdapter.listener));
 
+        RecyclerView rvStats = (RecyclerView) view.findViewById(R.id.rvStats);
+        rvStats.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvStats.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getStatsCounters().toArray(), PairAdapter.listener));
+
     }
 
 

@@ -105,4 +105,11 @@ public class NuubitConstants {
 
     public static final String AVAILABLE_PROTOCOLS = "availableprotocols";
     public static final String CURRENT_PROTOCOL = "currentprotocol";
+
+    public static final String STAT_REQUESTS_UPLOADED = "statRequestUploaded";
+    public static final String STAT_REQUESTS_FAILED = "statRequestFailed";
+    public static final String STAT_REQUESTS_COUNT = "requestCount";
+    public static final String STAT_LAST_TIME_SUCCESS = "lastSuccessTime";
+    public static final String STAT_LAST_TIME_FAIL = "lastFailTime";
+    public static final String STAT_LAST_FAIL_REASON = "lastFailReason";
 }

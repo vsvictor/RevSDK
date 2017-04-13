@@ -86,38 +86,47 @@ public class Statist extends IntentService {
                 .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
                 .build();
         Response response;
-
+        long lastTimeSuccess = 0;
+        long lastTimeFail = 0;
+        HTTPCode resCode;
+        long count = 0;
+        String reason = "";
         try {
             response = client.newCall(req).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-            response = null;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            response = null;
-        }
-        HTTPCode resCode = HTTPCode.create(response == null ? 401 : response.code());
-        String textMessage;
-        if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
-            ArrayList<RequestOne> rows = statistic.getRequests();
-            ContentValues values = new ContentValues();
-            values.put(RequestTable.Columns.SENT, 1);
-            values.put(RequestTable.Columns.CONFIRMED, 1);
-            int count = 0;
-            if (!statistic.getRequests().isEmpty()) {
-                long mixIndex = statistic.getRequests().get(0).getID();
-                long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
-                count = NuubitApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
+            resCode = HTTPCode.create(response.code());
+            if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                ArrayList<RequestOne> rows = statistic.getRequests();
+                ContentValues values = new ContentValues();
+                values.put(RequestTable.Columns.SENT, 1);
+                values.put(RequestTable.Columns.CONFIRMED, 1);
+                count = 0;
+                if (!statistic.getRequests().isEmpty()) {
+                    long mixIndex = statistic.getRequests().get(0).getID();
+                    long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
+                    count = NuubitApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
+                }
+                Log.i(TAG, "Updated: " + String.valueOf(count));
+                lastTimeSuccess = System.currentTimeMillis();
             }
-            textMessage = "Success";
-            Log.i(TAG, "Updated: "+String.valueOf(count));
-        } else {
-            textMessage = resCode.getMessage();
+        } catch (NullPointerException ex) {
+            resCode = HTTPCode.BAD_REQUEST;
+            lastTimeFail = System.currentTimeMillis();
+            reason = "Null response";
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            resCode = HTTPCode.BAD_REQUEST;
+            lastTimeFail = System.currentTimeMillis();
+            reason = "I/O exception";
+            ex.printStackTrace();
         }
 
         Intent statIntent = new Intent(NuubitActions.STAT_ACTION);
         statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
-        statIntent.putExtra(NuubitConstants.STATISTIC, textMessage);
+        statIntent.putExtra(NuubitConstants.STAT_REQUESTS_COUNT, count);
+        statIntent.putExtra(NuubitConstants.STATISTIC, "Test");
+        statIntent.putExtra(NuubitConstants.STAT_LAST_TIME_SUCCESS, lastTimeSuccess);
+        statIntent.putExtra(NuubitConstants.STAT_LAST_TIME_FAIL, lastTimeFail);
+        statIntent.putExtra(NuubitConstants.STAT_LAST_FAIL_REASON, reason);
         sendBroadcast(statIntent);
     }
 }

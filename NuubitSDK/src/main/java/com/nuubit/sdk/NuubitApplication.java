@@ -36,6 +36,7 @@ import com.nuubit.sdk.services.Tester;
 import com.nuubit.sdk.statistic.counters.ConfigCounters;
 import com.nuubit.sdk.statistic.counters.LMMonitorCounters;
 import com.nuubit.sdk.statistic.counters.RequestCounter;
+import com.nuubit.sdk.statistic.counters.StatsCounters;
 import com.nuubit.sdk.statistic.sections.Carrier;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.utils.ABTester;
@@ -92,6 +93,7 @@ public class NuubitApplication extends Application implements
     private RequestCounter requestCounter;
     private ConfigCounters configCounters;
     private LMMonitorCounters lmMonitorCounters;
+    private StatsCounters statsCounters;
 
     private Timer configTimer = new Timer();
     private Timer staleTimer = new Timer();
@@ -118,6 +120,7 @@ public class NuubitApplication extends Application implements
         requestCounter = new RequestCounter();
         configCounters = new ConfigCounters();
         lmMonitorCounters = new LMMonitorCounters();
+        statsCounters = new StatsCounters();
         if (googleClient == null) {
             googleClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -184,6 +187,7 @@ public class NuubitApplication extends Application implements
         requestCounter.load(share);
         configCounters.load(share);
         lmMonitorCounters.load(share);
+        statsCounters.load(share);
         config = Config.load(NuubitSDK.gsonCreate(), share);
         if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();
@@ -286,6 +290,10 @@ public class NuubitApplication extends Application implements
 
     public LMMonitorCounters getLMMonitorCounters() {
         return lmMonitorCounters;
+    }
+
+    public StatsCounters getStatsCounters() {
+        return statsCounters;
     }
 
     public ABTester getABTester() {
@@ -408,6 +416,7 @@ public class NuubitApplication extends Application implements
         requestCounter.save(share);
         configCounters.save(share);
         lmMonitorCounters.save(share);
+        statsCounters.save(share);
         //Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
 
@@ -548,8 +557,18 @@ public class NuubitApplication extends Application implements
                     String sResponce;
                     if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                         sResponce = bundle.getString(NuubitConstants.STATISTIC);
+                        long countReq = bundle.getLong(NuubitConstants.STAT_REQUESTS_COUNT, new Long(0));
+                        long lastSuccess = bundle.getLong(NuubitConstants.STAT_LAST_TIME_SUCCESS, new Long(0));
+                        statsCounters.addRequestUploaded();
+                        statsCounters.addRequestCount(countReq);
+                        statsCounters.setLastSuccessTime(lastSuccess);
                     } else {
                         sResponce = resCode.getMessage();
+                        long lastFail = bundle.getLong(NuubitConstants.STAT_LAST_TIME_FAIL, new Long(0));
+                        String reason = bundle.getString(NuubitConstants.STAT_LAST_FAIL_REASON);
+                        statsCounters.addStatRequestFailed();
+                        statsCounters.setLastFailTime(lastFail);
+                        statsCounters.setLastFailReason(reason);
                     }
                     Log.i(TAG + " statistic receiver", "Response: " + sResponce);
                 }

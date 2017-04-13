@@ -37,8 +37,8 @@ public class DateTimeUtil {
             //calendar.setTimeInMillis(timestamp * 1000);
             calendar.setTimeInMillis(timestamp);
             calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS z");
-            Date currenTimeZone = (Date) calendar.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SS z");
+            Date currenTimeZone = new Date(timestamp); //(Date) calendar.getTime();
             return sdf.format(currenTimeZone);
         } catch (Exception e) {
         }

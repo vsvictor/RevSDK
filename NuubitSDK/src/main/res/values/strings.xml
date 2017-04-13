@@ -23,5 +23,6 @@
     <string name="stat_wifi">WiFi:</string>
     <string name="counter_config">Config counter:</string>
     <string name="lm_monitoring">LM Monitoring</string>
+    <string name="stat_stat">Stats</string>
 
 </resources>

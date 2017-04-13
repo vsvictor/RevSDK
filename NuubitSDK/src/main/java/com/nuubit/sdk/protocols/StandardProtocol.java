@@ -65,19 +65,24 @@ public class StandardProtocol extends Protocol {
             result = original;
         }
         Response response = null;
+        long beginTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
         try {
+
             response = chain.proceed(result);
+
+            endTime = System.currentTimeMillis();
             if (response == null) {
-                throw new HTTPException(original, result, response, this);
+                throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
-                throw new HTTPException(original, result, response, this);
+                throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
 
             if (!isSystem(original) && isStatistic()) {
                 try {
-                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription());
+                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
                     NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", statRequest.toString());
                 } catch (NullPointerException ex) {

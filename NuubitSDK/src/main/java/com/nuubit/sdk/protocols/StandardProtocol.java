@@ -81,12 +81,15 @@ public class StandardProtocol extends Protocol {
             }
 
             if (!isSystem(original) && isStatistic()) {
+                RequestOne statRequest = null;
                 try {
-                    final RequestOne statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
+                    statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
                     NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", statRequest.toString());
                 } catch (NullPointerException ex) {
-                    Log.i("database", "Database error!!!");
+                    //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
+                    Log.i("database", "Standart exception Database error!!!");
+                    ex.printStackTrace();
                 }
 
             }

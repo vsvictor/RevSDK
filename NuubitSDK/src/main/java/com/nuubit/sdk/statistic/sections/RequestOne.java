@@ -25,6 +25,7 @@ package com.nuubit.sdk.statistic.sections;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.protocols.EnumProtocol;
@@ -33,9 +34,11 @@ import com.nuubit.sdk.types.Pair;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.Buffer;
 
 public class RequestOne extends Data implements Parcelable {
     private long id;
@@ -131,8 +134,8 @@ public class RequestOne extends Data implements Parcelable {
         RequestOne result = new RequestOne();
         result.setID(-1);
         result.setConnectionID(-1);
-        result.setContentEncode(NuubitSDK.getEncode(original));
-        result.setContentType(NuubitSDK.getContentType(original));
+        result.setContentEncode(NuubitSDK.getEncode(processed));
+        result.setContentType(NuubitSDK.getContentType(processed));
 
         result.setStartTS(begTime);
         result.setSentTS(response == null ? -1 : response.sentRequestAtMillis());
@@ -141,26 +144,33 @@ public class RequestOne extends Data implements Parcelable {
 
         result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response == null ? NuubitConstants.UNDEFINED : response.cacheControl().toString());
-        result.setMethod(original.method());
+        result.setMethod(processed.method());
         result.setEdgeTransport(edge_transport);
 
         result.setNetwork("NETWORK");
 
-        result.setEnumProtocol(EnumProtocol.fromString(original.isHttps() ? "https" : "http"));
+        result.setEnumProtocol(EnumProtocol.fromString(processed.isHttps() ? "https" : "http"));
         result.setReceivedBytes(response == null ? 0 : response.body().contentLength());
-        RequestBody body = original.body();
+
+        RequestBody body = processed.body();
+
+        long bodySize = 0;
         if (body != null) {
             try {
-                result.setSentBytes(body.contentLength());
+                Buffer buffer = new Buffer();
+                body.writeTo(buffer);
+                bodySize = buffer.size();
             } catch (IOException e) {
                 e.printStackTrace();
+                bodySize = 0;
             }
-        } else result.setSentBytes(0);
+        }
+        result.setSentBytes(bodySize+processed.headers().toString().length());
         result.setStatusCode(response == null ? -1 : response.code());
         result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
-        result.setDestination(original.equals(processed) ? "origin" : "rev_edge");
+        result.setDestination(processed.url().toString().contains(NuubitApplication.getInstance().getSDKKey()) ? "rev_edge":"origin");
         String cache = response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache");
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
         result.setDomain(original.url().host());
@@ -168,6 +178,11 @@ public class RequestOne extends Data implements Parcelable {
         return result;
     }
 
+    private static long getSizeRequest(RequestBody body, Headers headers){
+        int headersSize = headers.toString().length();
+        long bodySize = 0;
+        return  headersSize+bodySize;
+    }
 
     public long getID() {
         return id;

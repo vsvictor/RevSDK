@@ -34,7 +34,7 @@ public class DateTimeUtil {
         try {
             Calendar calendar = Calendar.getInstance();
             TimeZone tz = TimeZone.getDefault();
-            //calendar.setTimeInMillis(timestamp * 1000);
+            //calendar.setTimeInMillis(1492194585245L);
             calendar.setTimeInMillis(timestamp);
             calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SS z");

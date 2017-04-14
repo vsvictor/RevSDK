@@ -27,10 +27,10 @@ public class ABTester {
     public void init() {
         ArrayList<Boolean> test = new ArrayList<Boolean>();
         for (int i = 0; i < percent; i++) {
-            test.add(new Boolean(true));
+            test.add(new Boolean(false));
         }
         for (int i = percent; i < 100; i++) {
-            test.add(new Boolean(false));
+            test.add(new Boolean(true));
         }
         Random random = new Random();
         for (int i = 0; i < 100; i++) {

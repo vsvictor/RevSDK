@@ -154,10 +154,11 @@ public class MainFragment extends Fragment {
                     }
 
                     HTTPCode code = HTTPCode.create(response.code());
+/*
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
                         response = runRequest(client, response.request().url().toString(), response.request().method(), null);
                     }
-
+*/
                     body = response.body().string();
                     final String endURL = location == null ? url : location;
                     getActivity().runOnUiThread(new Runnable() {

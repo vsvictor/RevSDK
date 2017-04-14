@@ -150,7 +150,7 @@ public class RequestOne extends Data implements Parcelable {
         result.setNetwork("NETWORK");
 
         result.setEnumProtocol(EnumProtocol.fromString(processed.isHttps() ? "https" : "http"));
-        result.setReceivedBytes(response == null ? 0 : response.body().contentLength());
+        result.setReceivedBytes(response == null ? 0 : response.body().contentLength()+response.headers().toString().length());
 
         RequestBody body = processed.body();
 

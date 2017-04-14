@@ -64,6 +64,7 @@ public class TaskFragment extends Fragment {
     private RelativeLayout rlHistory;
     private RelativeLayout rlStart;
     private RelativeLayout rlParalelly;
+    private RelativeLayout rlUnlim;
     private HttpUrl url;
     private OnTaskListener listener;
 
@@ -233,6 +234,15 @@ public class TaskFragment extends Fragment {
                 listener.onStartTaskParelelly(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
             }
         });
+        rlUnlim = (RelativeLayout) view.findViewById(R.id.rlUnlimit);
+        rlUnlim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edURL.clearFocus();
+                Log.i(TAG, url.toString());
+                listener.onStartUnlimTaskSeries(sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
+            }
+        });
 
     }
 
@@ -255,7 +265,7 @@ public class TaskFragment extends Fragment {
 
     public interface OnTaskListener {
         void onStartTaskInSeries(int steps, long body, String url, String method, String type);
-
         void onStartTaskParelelly(int steps, long body, String url, String method, String type);
+        void onStartUnlimTaskSeries(long body, String url, String method, String type);
     }
 }

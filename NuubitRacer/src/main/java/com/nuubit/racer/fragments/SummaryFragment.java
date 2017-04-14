@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -134,6 +135,10 @@ public class SummaryFragment extends Fragment {
 
     public interface OnSummaryListener {
         void onSummary(Uri uri);
+        void onStopRequests();
+    }
+
+    public void updateRequests(int count){
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {

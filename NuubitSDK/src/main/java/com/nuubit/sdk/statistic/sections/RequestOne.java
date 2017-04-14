@@ -28,13 +28,13 @@ import android.os.Parcelable;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.config.OperationMode;
 import com.nuubit.sdk.protocols.EnumProtocol;
 import com.nuubit.sdk.types.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -170,18 +170,17 @@ public class RequestOne extends Data implements Parcelable {
         result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
-        result.setDestination(processed.url().toString().contains(NuubitApplication.getInstance().getSDKKey()) ? "rev_edge":"origin");
+        result.setDestination(getDest());
         String cache = response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache");
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
         result.setDomain(original.url().host());
 
         return result;
     }
-
-    private static long getSizeRequest(RequestBody body, Headers headers){
-        int headersSize = headers.toString().length();
-        long bodySize = 0;
-        return  headersSize+bodySize;
+    private static String getDest(){
+        OperationMode mode = NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode();
+        boolean isOrigin = (mode == OperationMode.transfer_and_report) || (mode == OperationMode.transfer_only);
+        return isOrigin?"origin":"rev_edge";
     }
 
     public long getID() {

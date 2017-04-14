@@ -36,6 +36,7 @@ public class Const {
     public static String MODE = "mode";
     public static int MODE_CONSISTENTLY = 1;
     public static int MODE_PARALELLY = 2;
+    public static int MODE_UNLIM = 3;
 
     public static String UPDATE_DATA = "com.nuubit.sdk.UPDATE_DATA";
 }

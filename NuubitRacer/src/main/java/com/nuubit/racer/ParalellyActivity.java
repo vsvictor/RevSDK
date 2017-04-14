@@ -275,6 +275,10 @@ public class ParalellyActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onStopRequests(){
+
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

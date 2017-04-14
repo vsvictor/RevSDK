@@ -8,6 +8,7 @@ import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.database.RequestTable;
+import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
@@ -50,6 +51,7 @@ public class StandardProtocol extends Protocol {
     private HTTPException prevException;
     public StandardProtocol() {
         this.descroption = EnumProtocol.STANDART;
+        counter = new ProtocolCounters(this.descroption);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class StandardProtocol extends Protocol {
         long beginTime = System.currentTimeMillis();
         long endTime = System.currentTimeMillis();
         try {
-
+            //counter.addSent(getRequestSize(result));
             response = chain.proceed(result);
 
             endTime = System.currentTimeMillis();
@@ -86,12 +88,14 @@ public class StandardProtocol extends Protocol {
                     statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
                     NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", statRequest.toString());
+                    counter.addSuccessRequest();
+                    //counter.addReceive(getResponseSize(response));
                 } catch (NullPointerException ex) {
                     //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", "Standart exception Database error!!!");
+                    counter.addFailRequest();
                     ex.printStackTrace();
                 }
-
             }
             if (!isSystem(original)) {
                 this.zeroing();
@@ -108,6 +112,7 @@ public class StandardProtocol extends Protocol {
         }
         Log.i(TAG, "Response:" + response.toString());
         NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDART);
+
         return response;
     }
 

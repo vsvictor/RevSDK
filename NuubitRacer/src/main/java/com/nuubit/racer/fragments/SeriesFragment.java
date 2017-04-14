@@ -82,11 +82,15 @@ public class SeriesFragment extends Fragment {
         rvResult.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (mode == Const.MODE_CONSISTENTLY) {
             rvResult.setAdapter(((ResultActivity) getActivity()).getAdapter());
+        } else if(mode == Const.MODE_UNLIM){
+            rvResult.setAdapter(((ResultActivity) getActivity()).getAdapter());
         } else {
             rvResult.setAdapter(((ParalellyActivity) getActivity()).getAdapter());
         }
         rvResult.setNestedScrollingEnabled(false);
         if (mode == Const.MODE_CONSISTENTLY) {
+            ((ResultActivity) getActivity()).startTask();
+        } else if(mode == Const.MODE_UNLIM){
             ((ResultActivity) getActivity()).startTask();
         } else {
             ((ParalellyActivity) getActivity()).startTask();

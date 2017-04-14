@@ -116,5 +116,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         intent.putExtra(Const.TYPE, type);
         startActivity(intent);
     }
+    @Override
+    public void onStartUnlimTaskSeries(long body, String url, String method, String type) {
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra(Const.STEPS, -1);
+        intent.putExtra(Const.SIZE, body);
+        intent.putExtra(Const.URL, url);
+        intent.putExtra(Const.METHOD, method);
+        intent.putExtra(Const.TYPE, type);
+        startActivity(intent);
+    }
 
 }

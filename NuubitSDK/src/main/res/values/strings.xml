@@ -24,5 +24,8 @@
     <string name="counter_config">Config counter:</string>
     <string name="lm_monitoring">LM Monitoring</string>
     <string name="stat_stat">Stats</string>
+    <string name="stat_standart">Standart</string>
+    <string name="stat_quic">QUIC</string>
+    <string name="stat_rmp">RMP</string>
 
 </resources>

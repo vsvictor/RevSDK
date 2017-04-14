@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.R;
 import com.nuubit.sdk.statistic.Statistic;
+import com.nuubit.sdk.types.Pair;
+
+import java.util.ArrayList;
 /*
  * ************************************************************************
  *
@@ -76,6 +79,17 @@ public class CountersFragment extends Fragment {
         rvStats.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvStats.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getStatsCounters().toArray(), PairAdapter.listener));
 
+        RecyclerView rvStandart = (RecyclerView) view.findViewById(R.id.rvStandart);
+        rvStandart.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvStandart.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
+
+        RecyclerView rvQUIC = (RecyclerView) view.findViewById(R.id.rvQUIC);
+        rvQUIC.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvQUIC.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
+
+        RecyclerView rvRMP = (RecyclerView) view.findViewById(R.id.rvRTM);
+        rvRMP.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvRMP.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
     }
 
 

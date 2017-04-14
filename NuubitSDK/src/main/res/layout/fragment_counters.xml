@@ -64,6 +64,45 @@
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
+            <TextView
+                android:id="@+id/tvStandart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_standart" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvStandart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tvQUIC"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_quic" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvQUIC"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/tvRMP"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_rmp" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvRTM"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

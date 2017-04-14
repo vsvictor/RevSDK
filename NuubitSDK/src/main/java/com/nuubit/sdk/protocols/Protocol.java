@@ -3,6 +3,15 @@ package com.nuubit.sdk.protocols;
 import android.support.annotation.NonNull;
 
 import com.nuubit.sdk.NuubitConstants;
+import com.nuubit.sdk.statistic.counters.ProtocolCounters;
+
+import java.io.IOException;
+
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
 
 /*
  * ************************************************************************
@@ -29,6 +38,7 @@ import com.nuubit.sdk.NuubitConstants;
 public abstract class Protocol implements OnFuncProtocol {
     protected static int errorCounter;
     protected EnumProtocol descroption;
+    protected ProtocolCounters counter;
 
     public Protocol() {
     }
@@ -53,5 +63,9 @@ public abstract class Protocol implements OnFuncProtocol {
 
     public void zeroing() {
         errorCounter = 0;
+    }
+
+    public ProtocolCounters getCounter() {
+        return counter;
     }
 }

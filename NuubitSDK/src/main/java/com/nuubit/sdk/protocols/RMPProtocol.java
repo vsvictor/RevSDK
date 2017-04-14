@@ -1,5 +1,7 @@
 package com.nuubit.sdk.protocols;
 
+import com.nuubit.sdk.statistic.counters.ProtocolCounters;
+
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
@@ -29,6 +31,7 @@ public class RMPProtocol extends Protocol {
 
     public RMPProtocol() {
         this.descroption = EnumProtocol.RMP;
+        counter = new ProtocolCounters(descroption);
     }
     @Override
     public Response send(Interceptor.Chain chain) {

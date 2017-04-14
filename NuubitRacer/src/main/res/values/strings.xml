@@ -34,6 +34,9 @@
     <string name="title">nuu:bit Racer</string>
     <string name="summ_title_nuu">NUU:BIT</string>
     <string name="summ_title_org">Origin</string>
-    <string name="detaile_format">Time, ms\n(Code response, request body size, KB/response body size, KB)</string>
+    <string name="detaile_format">Time, ms\n(HTTP code, request body size, KB/response body size, KB)</string>
     <string name="requests">Requests: </string>
+    <string name="mode">Testing mode: </string>
+    <string name="unlimit">Run Forever</string>
+    <string name="stop">Stop</string>
 </resources>

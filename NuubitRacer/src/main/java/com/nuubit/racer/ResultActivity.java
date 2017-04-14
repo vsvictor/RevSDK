@@ -2,6 +2,7 @@ package com.nuubit.racer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -97,11 +99,15 @@ public class ResultActivity extends AppCompatActivity implements
     private ProgressDialog pd;
     private RelativeLayout rlSendMail;
 
+    private boolean isStop;
+    private TextView tvCounter;
+    private AlertDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-
+        isStop = false;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -156,9 +162,6 @@ public class ResultActivity extends AppCompatActivity implements
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-        //tvMethodMode.setText(method + " , " + getResources().getString(R.string.start));
-
-
     }
 
 
@@ -179,7 +182,7 @@ public class ResultActivity extends AppCompatActivity implements
     }
 
     public String getMethodMode() {
-        return method + " , " + getResources().getString(R.string.start);
+        return method + ", " + getResources().getString(R.string.start);
     }
 
     public Table getTable() {
@@ -232,14 +235,39 @@ public class ResultActivity extends AppCompatActivity implements
             Log.i(TAG, "+++++++++++++++" + textBody + "++++++++++++++");
             new Getter(textBody.length(), true).execute(r);
         }
-        pd = new ProgressDialog(this);
-        pd.setTitle("");
-        pd.setMessage(this.getResources().getString(R.string.please_wait));
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        pd.setProgress(0);
-        pd.setMax(steps);
-        pd.setIndeterminate(false);
-        pd.show();
+        if (steps > 0) {
+            pd = new ProgressDialog(this);
+            pd.setTitle("");
+            pd.setMessage(this.getResources().getString(R.string.please_wait));
+            pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pd.setProgress(0);
+            pd.setMax(steps);
+            pd.setIndeterminate(false);
+            pd.show();
+        } else{
+            AlertDialog.Builder alb = new AlertDialog.Builder(this);
+            alb.setTitle("");
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.counter,null);
+            tvCounter = (TextView) view.findViewById(R.id.tvCounter);
+            RelativeLayout rlStop= (RelativeLayout) view.findViewById(R.id.rlStop);
+            rlStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.cancel();
+                    isStop = true;
+                }
+            });
+            alb.setView(view);
+            alb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    isStop = true;
+                }
+            });
+            dialog = alb.show();
+        }
+
     }
 
     private String generateBody(String type, long size) {
@@ -285,26 +313,37 @@ public class ResultActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onStopRequests(){
+        isStop = true;
+    }
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
+        private SummaryFragment first;
+        private SeriesFragment second;
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            first = SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
+            second = SeriesFragment.newInstance(Const.MODE_CONSISTENTLY);
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: {
-                    return SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return first;
                 }
                 case 1: {
-                    return SeriesFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return second;
                 }
                 default:
-                    return SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
+                    return first;
             }
         }
+
+        public SummaryFragment getSummary(){return first;}
+        public SeriesFragment getSeries(){return second;}
 
         @Override
         public int getCount() {
@@ -423,17 +462,14 @@ public class ResultActivity extends AppCompatActivity implements
             HTTPCode res = HTTPCode.UNDEFINED;
             Response response = null;
             do {
-                //Log.i(TAG, res.toString());
                 if (res.getType() == HTTPCode.Type.REDIRECTION) {
                     Request.Builder builder = new Request.Builder();
                     String newURL = response.header("location");
-                    //Log.i(TAG, newURL);
                     builder.url(newURL);
                     builder.method(req.method(), req.body());
                     builder.tag(req.tag());
                     builder.headers(req.headers());
                     req = builder.build();
-                    //Log.i(TAG, req.toString());
                 }
                 if (serv) {
                     Request.Builder builder = req.newBuilder();
@@ -447,9 +483,6 @@ public class ResultActivity extends AppCompatActivity implements
                     e.printStackTrace();
                 }
                 res = HTTPCode.create(response.code());
-
-                //Log.i(TAG, res.toString());
-                //Log.i(TAG, response.headers().toString());
             } while (res.getType() == HTTPCode.Type.REDIRECTION);
             Row row = new Row();
             if (response != null) {
@@ -459,7 +492,6 @@ public class ResultActivity extends AppCompatActivity implements
                 try {
                     Log.i(TAG, String.valueOf(bodySize));
                     row.setBody(bodySize / 1024);
-                    //row.setBody(response.request().body().contentLength() / 1024);
                 } catch (NullPointerException e) {
                     row.setBody(0);
                 }
@@ -482,7 +514,9 @@ public class ResultActivity extends AppCompatActivity implements
             if (!this.serv) {
                 row.setSource("R");
                 getTable().add(row);
-                pd.incrementProgressBy(1);
+                if(steps > 0) {
+                    pd.incrementProgressBy(1);
+                }
             } else {
                 row.setSource("O");
                 getTableOriginal().add(row);
@@ -490,19 +524,30 @@ public class ResultActivity extends AppCompatActivity implements
             adapter.dataUpdated();
             Log.i(TAG, getTable().toString());
             counter++;
-
-            if ((counter) < (steps * 2)) {
-                Request req = buildRequest();
-                if (req.method().equalsIgnoreCase("GET")) {
-                    new Getter(0, counter % 2 == 0).execute(buildRequest());
+            if(steps > 0) {
+                if ((counter) < (steps * 2)) {
+                    Request req = buildRequest();
+                    if (req.method().equalsIgnoreCase("GET")) {
+                        new Getter(0, counter % 2 == 0).execute(buildRequest());
+                    } else {
+                        Request request = buildRequest();
+                        new Getter(textBody.length(), counter % 2 == 0).execute(request);
+                    }
                 } else {
-                    Request request = buildRequest();
-                    new Getter(textBody.length(), counter % 2 == 0).execute(request);
+                    pd.dismiss();
                 }
-            } else {
-                pd.dismiss();
+            } else{
+                if(!isStop) {
+                    tvCounter.setText(String.valueOf(getAdapter().getItemCount()+1));
+                    Request req = buildRequest();
+                    if (req.method().equalsIgnoreCase("GET")) {
+                        new Getter(0, counter % 2 == 0).execute(buildRequest());
+                    } else {
+                        Request request = buildRequest();
+                        new Getter(textBody.length(), counter % 2 == 0).execute(request);
+                    }
+                }
             }
-            //this.serv = !this.serv;
         }
     }
 

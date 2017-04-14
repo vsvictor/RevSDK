@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rev.racer.fragments.TaskFragment">
+    tools:context="com.nuubit.racer.fragments.TaskFragment">
 
     <LinearLayout
         android:id="@+id/llMainFragmentContainer"
@@ -218,6 +218,30 @@
 
                 <TextView
                     android:text="@string/start"
+                    android:textSize="@dimen/button_font"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_weight="2.8"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/rlUnlimit"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/big"
+                    android:layout_marginRight="@dimen/big"
+                    android:layout_marginTop="@dimen/small"
+                    android:background="@drawable/background_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:text="@string/unlimit"
                     android:textSize="@dimen/button_font"
                     android:layout_centerInParent="true"
                     android:layout_width="wrap_content"

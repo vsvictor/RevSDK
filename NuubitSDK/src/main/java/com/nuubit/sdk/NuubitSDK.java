@@ -262,5 +262,4 @@ public class NuubitSDK {
         Log.i("System", String.valueOf(result));
         return result;
     }
-
 }

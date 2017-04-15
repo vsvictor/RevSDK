@@ -128,7 +128,8 @@ public class NuubitSDK {
                 return response;
             }
         }).connectTimeout(timeoutSec, TimeUnit.SECONDS)
-        .followRedirects(followRedirect)
+                //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
+                .followRedirects(followRedirect)
                 .followSslRedirects(followSllRedirect).cookieJar(new NuubitCookie());
         OkHttpClient result = httpClient.build();
         return result;

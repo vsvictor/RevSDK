@@ -12,7 +12,7 @@ import java.util.Random;
 public class ABTester {
     private int percent;
     private boolean[] data;
-
+    private boolean mode;
     private OperationMode realOperatiomMode;
 
     public ABTester() {
@@ -26,11 +26,11 @@ public class ABTester {
 
     public void init() {
         ArrayList<Boolean> test = new ArrayList<Boolean>();
-        for (int i = 0; i < percent; i++) {
-            test.add(new Boolean(false));
-        }
         for (int i = percent; i < 100; i++) {
             test.add(new Boolean(true));
+        }
+        for (int i = 0; i < percent; i++) {
+            test.add(new Boolean(false));
         }
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
@@ -48,9 +48,13 @@ public class ABTester {
         this.percent = percent;
     }
 
-    public boolean isAMode() {
+    public void generate(){
         Random random = new Random();
-        return data[random.nextInt(100)];
+        mode = data[random.nextInt(100)];
+    }
+
+    public boolean isAMode() {
+        return mode;
     }
 
     public OperationMode getRealOperatiomMode() {

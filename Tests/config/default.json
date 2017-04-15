@@ -29,15 +29,7 @@
   "implicitWaitTimeout": 6000,
   "headerRev": "revsdk",
   "httpWebsite": "appium.io",
-  "domainsWhiteList": [
-    "bs.to",
-    "dev.citibreak.com"
-  ],
-  "domainsBlackList": [
-    "jenkins.io",
-    "protractortest.org"
-  ],
-  "domainsProvisionedList": [
-    "google.com"
-  ]
+  "domainsWhiteList": ["bs.to", "dev.citibreak.com"],
+  "domainsBlackList": ["jenkins.io", "protractortest.org"],
+  "domainsProvisionedList": ["google.com"]
 }

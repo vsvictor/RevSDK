@@ -24,6 +24,7 @@ package com.nuubit.sdk.statistic.sections;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
@@ -41,6 +42,7 @@ import okhttp3.Response;
 import okio.Buffer;
 
 public class RequestOne extends Data implements Parcelable {
+    private static final String TAG = RequestOne.class.getSimpleName();
     private long id;
     private int connectionID;
     private String contentEncode;
@@ -170,17 +172,20 @@ public class RequestOne extends Data implements Parcelable {
         result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
+        Log.i(TAG, getDest());
         result.setDestination(getDest());
-        String cache = response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache");
+        Log.i(TAG, NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode().toString());
+        String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
+        Log.i(TAG, original.url().host());
         result.setDomain(original.url().host());
 
         return result;
     }
     private static String getDest(){
         OperationMode mode = NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode();
-        boolean isOrigin = (mode == OperationMode.transfer_and_report) || (mode == OperationMode.transfer_only);
-        return isOrigin?"origin":"rev_edge";
+        boolean isEdge = ((mode == OperationMode.transfer_and_report) || (mode == OperationMode.transfer_only));
+        return isEdge?"rev_edge":"origin";
     }
 
     public long getID() {

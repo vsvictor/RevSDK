@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,17 +155,21 @@ public class MainFragment extends Fragment {
                     }
 
                     HTTPCode code = HTTPCode.create(response.code());
-/*
+
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
-                        response = runRequest(client, response.request().url().toString(), response.request().method(), null);
+                        //response = runRequest(client, response.request().url().toString(), response.request().method(), null);
+                        Log.i(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 404 AAAAAAAAAAAAAAAAAAA");
                     }
-*/
+
                     body = response.body().string();
                     final String endURL = location == null ? url : location;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            edQuery.setText(endURL);
+                            if(!endURL.trim().isEmpty()) {
+                                currURL = endURL;
+                                edQuery.setText(currURL);
+                            }
                         }
                     });
                 } catch (IOException e) {

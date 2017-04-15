@@ -441,13 +441,17 @@ public class NuubitApplication extends Application implements
                             //config.save(gson, share);
                             config.save(newConfig, share);
                             tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
+
                             if (tester.getPercent() != config.getParam().get(0).getABTestingOriginOffloadRatio()) {
                                 Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
                                 tester.setPercent(config.getParam().get(0).getABTestingOriginOffloadRatio());
+                                OperationMode mode = config.getParam().get(0).getOperationMode();
                                 tester.init();
-                                config.getParam().get(0).setOperationMode(tester.isAMode() ? config.getParam().get(0).getOperationMode() : OperationMode.report_only);
+                                tester.generate();
+                                config.getParam().get(0).setOperationMode(tester.isAMode() ?  mode : OperationMode.report_only);
                                 Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
                             }
+
                             //allowed_protocols.clear();
                             allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
                             Log.i("ALLOWED", "" + config.getParam().get(0).getAllowedTransportProtocols().size());
@@ -475,7 +479,7 @@ public class NuubitApplication extends Application implements
                         configCounters.setTimeLastFail(System.currentTimeMillis());
                     }
                 }
-                configCounters.setAbOn(tester.getPercent() != 0);
+                //configCounters.setAbOn(tester.getPercent() != 0);
                 configCounters.setRealMode(tester.getRealOperatiomMode());
                 configuratorRunner(false);
                 testerRunner();

@@ -171,7 +171,7 @@ public class RequestOne extends Data implements Parcelable {
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
         result.setDestination(getDest());
-        String cache = response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache");
+        String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
         result.setDomain(original.url().host());
 

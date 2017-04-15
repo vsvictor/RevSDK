@@ -78,13 +78,13 @@ public class ConfigCounters extends Counters {
     }
 
     public boolean isAbOn() {
-        return abOn;
+        return (NuubitApplication.getInstance().getABTester().getPercent()>0);
     }
-
+/*
     public void setAbOn(boolean abOn) {
         this.abOn = abOn;
     }
-
+*/
     public OperationMode getRealMode() {
         return realMode;
     }
@@ -127,9 +127,9 @@ public class ConfigCounters extends Counters {
         result.add(new Pair("realMode", String.valueOf(getRealMode())));
         String sOn = isAbOn() ? "On, " : "Off ";
         String sMode = "";
-        if (isAbOn()) {
+        //if (isAbOn()) {
             sMode = NuubitApplication.getInstance().getABTester().isAMode() ? "A" : "B";
-        }
+        //}
         result.add(new Pair("A/B testing", sOn + sMode + (isAbOn() ? " mode" : "")));
         return result;
     }

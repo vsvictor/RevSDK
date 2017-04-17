@@ -14,6 +14,7 @@ import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import okhttp3.Call;
 import okhttp3.Interceptor;
@@ -100,7 +101,12 @@ public class StandardProtocol extends Protocol {
             if (!isSystem(original)) {
                 this.zeroing();
             }
-        } catch (HTTPException ex) {
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+            Log.i("Timeout", ex.getMessage()+" my timeout");
+        }
+        catch (HTTPException ex) {
             response = chain.proceed(original);
             this.errorIncrement();
             if (this.isOverflow()) {

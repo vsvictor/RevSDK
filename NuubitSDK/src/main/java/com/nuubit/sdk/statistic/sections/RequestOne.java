@@ -168,7 +168,7 @@ public class RequestOne extends Data implements Parcelable {
             }
         }
         result.setSentBytes(bodySize+processed.headers().toString().length());
-        result.setStatusCode(response == null ? -1 : response.code());
+        result.setStatusCode(response == null ? 0 : response.code());
         result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());

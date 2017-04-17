@@ -19,6 +19,7 @@ import com.nuubit.sdk.config.serialization.OperationModeDeserialize;
 import com.nuubit.sdk.config.serialization.OperationModeSerialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolDeserialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolSerialize;
+import com.nuubit.sdk.database.RequestTable;
 import com.nuubit.sdk.interseptor.RequestCreator;
 import com.nuubit.sdk.protocols.ListProtocol;
 import com.nuubit.sdk.statistic.Statistic;
@@ -120,10 +121,17 @@ public class NuubitSDK {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Response response;
+                long begTime = System.currentTimeMillis();
+                long endTime;
                 try {
+                    begTime = System.currentTimeMillis();
                     response = NuubitApplication.getInstance().getBest().send(chain);
                 } catch (UnknownHostException ex) {
                     response = null;
+                    endTime = System.currentTimeMillis();
+                    final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime);
+                    NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
+
                 }
                 return response;
             }

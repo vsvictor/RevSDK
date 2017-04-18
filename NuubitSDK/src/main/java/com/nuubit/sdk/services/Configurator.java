@@ -84,7 +84,7 @@ public class Configurator extends IntentService {
         Request req = new Request.Builder()
                 .url(url+"/"+key)
                 .cacheControl(CacheControl.FORCE_NETWORK)
-                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
+                //.tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
                 .build();
         Response response = null;
         try {

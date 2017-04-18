@@ -182,7 +182,7 @@ public class RequestOne extends Data implements Parcelable {
 
         return result;
     }
-    private static String getDest(){
+    public static String getDest(){
         OperationMode mode = NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode();
         boolean isEdge = ((mode == OperationMode.transfer_and_report) || (mode == OperationMode.transfer_only));
         return isEdge?"rev_edge":"origin";

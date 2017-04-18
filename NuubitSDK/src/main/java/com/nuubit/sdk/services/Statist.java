@@ -83,7 +83,7 @@ public class Statist extends IntentService {
                 .cacheControl(CacheControl.FORCE_NETWORK)
                 .method("POST", RequestBody.create(null, new byte[0]))
                 .post(RequestBody.create(MediaType.parse("application/json"),stat))
-                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
+                //.tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
                 .build();
         Response response;
         long lastTimeSuccess = 0;

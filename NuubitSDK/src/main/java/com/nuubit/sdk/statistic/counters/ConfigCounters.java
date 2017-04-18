@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.config.OperationMode;
+import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.Pair;
 import com.nuubit.sdk.utils.DateTimeUtil;
 
@@ -131,6 +132,7 @@ public class ConfigCounters extends Counters {
             sMode = NuubitApplication.getInstance().getABTester().isAMode() ? "A" : "B";
         //}
         result.add(new Pair("A/B testing", sOn + sMode + (isAbOn() ? " mode" : "")));
+        result.add(new Pair("Destination", RequestOne.getDest()));
         return result;
     }
 }

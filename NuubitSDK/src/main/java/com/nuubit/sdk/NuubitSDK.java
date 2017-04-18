@@ -91,6 +91,7 @@ import okhttp3.Response;
 
 public class NuubitSDK {
     private static final String TAG = NuubitSDK.class.getSimpleName();
+    private static OkHttpClient client = null;
 
     public static NuubitWebViewClient createWebViewClient(Context context, WebView view, OkHttpClient client) {
         return new NuubitWebViewClient(context, view, client);
@@ -116,6 +117,7 @@ public class NuubitSDK {
     }
 
     public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSllRedirect) {
+        if(client != null) return client;
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
@@ -139,9 +141,12 @@ public class NuubitSDK {
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
                 .followRedirects(followRedirect)
                 .followSslRedirects(followSllRedirect).cookieJar(new NuubitCookie());
-        OkHttpClient result = httpClient.build();
-        return result;
+        client  = httpClient.build();
+        return client;
     }
+
+    public static OkHttpClient getClient(){return client;}
+
     public static Gson gsonCreate() {
         GsonBuilder gsonBuilder;
 

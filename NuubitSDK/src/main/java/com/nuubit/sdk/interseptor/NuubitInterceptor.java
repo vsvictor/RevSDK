@@ -27,57 +27,8 @@ import okio.Sink;
 public class NuubitInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
-        RealInterceptorChain realChain = (RealInterceptorChain) chain;
-        HttpCodec httpCodec = realChain.httpStream();
-        StreamAllocation streamAllocation = realChain.streamAllocation();
-        RealConnection connection = (RealConnection) realChain.connection();
-        Request request = realChain.request();
 
-        long sentRequestMillis = System.currentTimeMillis();
-        httpCodec.writeRequestHeaders(request);
-
-        Response.Builder responseBuilder = null;
-        if (HttpMethod.permitsRequestBody(request.method()) && request.body() != null) {
-            if ("100-continue".equalsIgnoreCase(request.header("Expect"))) {
-                httpCodec.flushRequest();
-                responseBuilder = httpCodec.readResponseHeaders(true);
-            }
-            if (responseBuilder == null) {
-                Sink requestBodyOut = httpCodec.createRequestBody(request, request.body().contentLength());
-                BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
-                request.body().writeTo(bufferedRequestBody);
-                bufferedRequestBody.close();
-            } else if (!connection.isMultiplexed()) {
-                streamAllocation.noNewStreams();
-            }
-        }
-        httpCodec.finishRequest();
-        if (responseBuilder == null) {
-            responseBuilder = httpCodec.readResponseHeaders(false);
-        }
-
-        Response response = responseBuilder
-                .request(request)
-                .handshake(streamAllocation.connection().handshake())
-                .sentRequestAtMillis(sentRequestMillis)
-                .receivedResponseAtMillis(System.currentTimeMillis())
-                .build();
-
-        int code = response.code();
-        response = response.newBuilder()
-                .body(httpCodec.openResponseBody(response))
-                .build();
-        if ("close".equalsIgnoreCase(response.request().header("Connection"))
-                || "close".equalsIgnoreCase(response.header("Connection"))) {
-            streamAllocation.noNewStreams();
-        }
-
-        if ((code == 204 || code == 205) && response.body().contentLength() > 0) {
-            throw new ProtocolException(
-                    "HTTP " + code + " had non-zero Content-Length: " + response.body().contentLength());
-        }
-
-
+        Response response;
 
         long begTime = System.currentTimeMillis();
         long endTime;

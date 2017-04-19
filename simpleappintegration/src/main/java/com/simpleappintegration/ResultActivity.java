@@ -11,6 +11,9 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.nuubit.sdk.NuubitConstants;
+import com.nuubit.sdk.NuubitSDK;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -86,7 +89,8 @@ public class ResultActivity extends AppCompatActivity implements CompoundButton.
 
             @Override
             protected Message doInBackground(Void... voids) {
-                OkHttpClient okHttpClient = new OkHttpClient();
+                //OkHttpClient okHttpClient = new OkHttpClient();
+                OkHttpClient okHttpClient = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false);
 
                 Request.Builder builder = new Request.Builder();
                 Request request = builder.url("http://date.jsontest.com/").build();

@@ -125,7 +125,7 @@ public class StandardProtocol extends Protocol {
     public TestOneProtocol test(String url) {
         TestOneProtocol res = new TestOneProtocol(EnumProtocol.STANDART);
         Request.Builder builder = new Request.Builder();
-        //builder.url(url).tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true));
+        builder.url(url).tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true));
         builder.url(url);
         Call callback = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
         try {

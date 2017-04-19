@@ -80,31 +80,44 @@ public class DBHelper extends SQLiteOpenHelper{
 
     public void deleteAll() {
         SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
         db.delete(RequestTable.Requests.TABLE_NAME, null, null);
+        db.endTransaction();
     }
 
     public long insertRequest(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
         long id = db.insert(RequestTable.Requests.TABLE_NAME, null, values);
+        db.endTransaction();
         return id;
     }
 
     public int updateRequest(ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.update(RequestTable.Requests.TABLE_NAME, values, null, null);
+        db.beginTransaction();
+        int r = db.update(RequestTable.Requests.TABLE_NAME, values, null, null);
+        db.endTransaction();
+        return r;
     }
 
     public int updateRequestFromTo(ContentValues values, long from, long to) {
         SQLiteDatabase db = getWritableDatabase();
-        return db.update(RequestTable.Requests.TABLE_NAME,
+        db.beginTransaction();
+        int r = db.update(RequestTable.Requests.TABLE_NAME,
                 values,
                 RequestTable.Columns.ID + ">=? AND " + RequestTable.Columns.ID + "<=?",
                 new String[]{String.valueOf(from), String.valueOf(to)});
+        db.endTransaction();
+        return r;
     }
 
     public Cursor getUnsent() {
         String[] args = {"1", "0"};
-        SQLiteDatabase db = getReadableDatabase();
-        return db.query(RequestTable.Requests.TABLE_NAME, null, RequestTable.Columns.SENT + "=? AND " + RequestTable.Columns.CONFIRMED + "=?", args, null, null, null);
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        Cursor c = db.query(RequestTable.Requests.TABLE_NAME, null, RequestTable.Columns.SENT + "=? AND " + RequestTable.Columns.CONFIRMED + "=?", args, null, null, null);
+        db.endTransaction();
+        return c;
     }
 }

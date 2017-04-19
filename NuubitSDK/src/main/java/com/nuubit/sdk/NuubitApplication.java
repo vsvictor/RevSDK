@@ -413,10 +413,10 @@ public class NuubitApplication extends Application implements
         unregisterReceiver(testReceiver);
         unregisterReceiver(statReceiver);
         unregisterReceiver(netListener);
-        requestCounter.save(share);
-        configCounters.save(share);
-        lmMonitorCounters.save(share);
-        statsCounters.save(share);
+        //requestCounter.save(share);
+        //configCounters.save(share);
+        //lmMonitorCounters.save(share);
+        //statsCounters.save(share);
         //Log.i("PROMO", config.getAppName() + ": Shutdown all receivers");
     }
 

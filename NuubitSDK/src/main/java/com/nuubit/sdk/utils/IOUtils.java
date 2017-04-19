@@ -1,11 +1,13 @@
 package com.nuubit.sdk.utils;
 
 import com.nuubit.sdk.NuubitConstants;
+import com.nuubit.sdk.protocols.HTTPException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -42,19 +44,25 @@ public class IOUtils {
         return out.toByteArray();
     }
 
-    public static Response runRequest(OkHttpClient client, String url, String method, RequestBody abody) {
+    public static Response runRequest(OkHttpClient client, String url, String method, RequestBody abody) throws HTTPException {
         Response response;
         RequestBody body = abody;
-        if (body == null && method.equalsIgnoreCase("POST"))
-            body = RequestBody.create(null, new byte[0]);
-        Request req = new Request.Builder()
-                .url(url)
-                .header(NuubitConstants.USER_AGENT, NuubitConstants.USER_AGENT_VALUE)
-                .method(method, body)
-                .build();
         try {
+            HttpUrl realURL = HttpUrl.parse(url);
+            if(realURL == null) throw new IOException("Bad URL");
+            if (body == null && method.equalsIgnoreCase("POST"))
+                body = RequestBody.create(null, new byte[0]);
+            Request req = new Request.Builder()
+                    .url(url)
+                    .header(NuubitConstants.USER_AGENT, NuubitConstants.USER_AGENT_VALUE)
+                    .method(method, body)
+                    .build();
+
             response = client.newCall(req).execute();
         } catch (IOException e) {
+            response = null;
+            e.printStackTrace();
+        } catch (NullPointerException e){
             response = null;
             e.printStackTrace();
         }

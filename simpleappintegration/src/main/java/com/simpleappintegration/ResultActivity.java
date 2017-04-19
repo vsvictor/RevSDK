@@ -11,8 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.artitk.okhttpexample.R;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;

@@ -10,9 +10,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         release {
@@ -25,5 +22,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    //compile project(path: ':NuubitSDK')
+    compile 'com.nuubit.sdk:NuubitSDK:1.0.0@aar'
 }

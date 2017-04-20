@@ -58,7 +58,7 @@ public class NuubitWebViewClient extends WebViewClient {
     private OkHttpClient client;
 
     private String sData;
-
+/*
     private class JavaScriptInterface {
         private final String TAG = JavaScriptInterface.class.getSimpleName();
         @JavascriptInterface
@@ -67,7 +67,7 @@ public class NuubitWebViewClient extends WebViewClient {
             sData = formData;
         }
     }
-
+*/
 
     public NuubitWebViewClient(Context context, WebView view, OkHttpClient client) {
         super();
@@ -79,7 +79,7 @@ public class NuubitWebViewClient extends WebViewClient {
         view.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
         view.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         view.getSettings().setPluginState(WebSettings.PluginState.ON);
-        view.addJavascriptInterface(new JavaScriptInterface(), "AndroidInterface");
+//        view.addJavascriptInterface(new JavaScriptInterface(), "AndroidInterface");
     }
 
     public NuubitWebViewClient(OkHttpClient client) {
@@ -89,7 +89,7 @@ public class NuubitWebViewClient extends WebViewClient {
     public NuubitWebViewClient() {
         this(NuubitSDK.OkHttpCreate());
     }
-
+/*
     @Override
     public void onPageFinished(WebView view, String url) {
         try {
@@ -105,6 +105,7 @@ public class NuubitWebViewClient extends WebViewClient {
         Log.i("FormResubmission",dontResend.toString());
         Log.i("FormResubmission", resend.toString());
     }
+*/
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
         WebResourсeRequestDefault request = new WebResourсeRequestDefault(Uri.parse(url));

@@ -20,6 +20,7 @@ import com.nuubit.sdk.config.serialization.OperationModeSerialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolDeserialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolSerialize;
 import com.nuubit.sdk.database.RequestTable;
+import com.nuubit.sdk.interseptor.NuubitInterceptor;
 import com.nuubit.sdk.interseptor.RequestCreator;
 import com.nuubit.sdk.protocols.ListProtocol;
 import com.nuubit.sdk.statistic.Statistic;
@@ -58,7 +59,10 @@ import com.nuubit.sdk.web.NuubitWebChromeClient;
 import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
@@ -66,6 +70,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.connection.ConnectInterceptor;
 
 /*
  * ************************************************************************
@@ -118,30 +123,22 @@ public class NuubitSDK {
 
     public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSllRedirect) {
         if(client != null) return client;
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Response response;
-                long begTime = System.currentTimeMillis();
-                long endTime;
-                try {
-                    begTime = System.currentTimeMillis();
-                    response = NuubitApplication.getInstance().getBest().send(chain);
-                } catch (UnknownHostException ex) {
-                    response = null;
-                    endTime = System.currentTimeMillis();
-                    final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime);
-                    NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
 
-                }
-                return response;
-            }
-        }).connectTimeout(timeoutSec, TimeUnit.SECONDS)
+        //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient
+                .addInterceptor(new NuubitInterceptor())
+                .connectTimeout(timeoutSec, TimeUnit.SECONDS)
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
                 .followRedirects(followRedirect)
                 .followSslRedirects(followSllRedirect).cookieJar(new NuubitCookie());
         client  = httpClient.build();
+
+        List<Interceptor> inter = client.interceptors();
+        for(Interceptor in : inter){
+            Log.i("INTERCEPTOR", in.toString());
+        }
         return client;
     }
 
@@ -179,6 +176,7 @@ public class NuubitSDK {
             result = false;
         }
         return result;
+        //return false;
     }
 
     public static boolean isFree(Request req) {

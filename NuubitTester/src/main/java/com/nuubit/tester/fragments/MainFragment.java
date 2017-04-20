@@ -34,6 +34,7 @@ import com.nuubit.sdk.NuubitActions;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.config.OperationMode;
+import com.nuubit.sdk.protocols.HTTPException;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.tester.NuubitApp;
 import com.nuubit.tester.R;
@@ -404,12 +405,20 @@ public class MainFragment extends Fragment {
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");
-                        response = runRequest(client, location, response.request().method(), null);
+                        try {
+                            response = runRequest(client, location, response.request().method(), null);
+                        } catch (HTTPException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     HTTPCode code = HTTPCode.create(response.code());
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
-                        response = runRequest(client, response.request().url().toString(), response.request().method(), null);
+                        try {
+                            response = runRequest(client, response.request().url().toString(), response.request().method(), null);
+                        } catch (HTTPException e) {
+                            e.printStackTrace();
+                        }
                     }
                     resHeader = response.headers();
                     body = response.body().string();

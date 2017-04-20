@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.nuubit.demo.R;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.protocols.HTTPException;
 import com.nuubit.sdk.types.HTTPCode;
 
 import java.io.IOException;
@@ -146,7 +147,11 @@ public class MainFragment extends Fragment {
             String body = null;
             if (url != null && !url.isEmpty()) {
                 try {
-                    response = runRequest(client, url, "GET", null);
+                    try {
+                        response = runRequest(client, url, "GET", null);
+                    } catch (HTTPException e) {
+                        e.printStackTrace();
+                    }
                     String location = "";
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
@@ -176,6 +181,8 @@ public class MainFragment extends Fragment {
                     e.printStackTrace();
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
+                } catch (HTTPException e) {
+                    e.printStackTrace();
                 }
             }
             return body;

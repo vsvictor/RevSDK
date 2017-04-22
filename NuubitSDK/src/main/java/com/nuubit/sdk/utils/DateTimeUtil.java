@@ -49,7 +49,14 @@ public class DateTimeUtil {
         if (date <= 0) return "0";
         Date d = new Date(date);
         android.text.format.DateFormat df = new android.text.format.DateFormat();
-        df.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date());
+        //df.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date());
         return df.format("yyyy-MM-dd hh:mm:ss", d).toString();
+    }
+    public static String longDateToString(Context context, long date) {
+        if (date <= 0) return "0";
+        Date d = new Date(date);
+        android.text.format.DateFormat df = new android.text.format.DateFormat();
+        //df.format("yyyy-MM-dd hh:mm:ss.SSS a", new java.util.Date());
+        return df.format("yyyy-MM-dd hh:mm:ss.SSS", d).toString();
     }
 }

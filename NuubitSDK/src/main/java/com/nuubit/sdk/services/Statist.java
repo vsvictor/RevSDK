@@ -65,64 +65,65 @@ public class Statist extends IntentService {
 
         Log.i(TAG, "Statist running...");
 
-        statistic = new Statistic(getApplicationContext());
-
-        if(statistic.getRequests().size()<=0) return;
-
-        String stat = NuubitSDK.gsonCreate().toJson(statistic);
-        Log.i(TAG+" stat", "\n\n"+stat);
-
-        if(intent != null){
-            Bundle params = intent.getExtras();
-            if(params != null){
-                timeOut = params.getInt(NuubitConstants.TIMEOUT, NuubitConstants.DEFAULT_TIMEOUT_SEC);
-                url = params.getString(NuubitConstants.STATISTIC);
-            }
-        }
-        OkHttpClient client = NuubitSDK.OkHttpCreate(timeOut);
-
-        Request req = new Request.Builder()
-                .url(url)
-                .cacheControl(CacheControl.FORCE_NETWORK)
-                .method("POST", RequestBody.create(null, new byte[0]))
-                .post(RequestBody.create(MediaType.parse("application/json"),stat))
-                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
-                .build();
-        Response response;
         long lastTimeSuccess = 0;
         long lastTimeFail = 0;
-        HTTPCode resCode;
+        HTTPCode resCode = HTTPCode.UNDEFINED;
         long count = 0;
-        String reason = "";
-        try {
-            response = client.newCall(req).execute();
-            resCode = HTTPCode.create(response.code());
-            if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
-                ArrayList<RequestOne> rows = statistic.getRequests();
-                ContentValues values = new ContentValues();
-                values.put(RequestTable.Columns.SENT, 1);
-                values.put(RequestTable.Columns.CONFIRMED, 1);
-                count = 0;
-                if (!statistic.getRequests().isEmpty()) {
-                    long mixIndex = statistic.getRequests().get(0).getID();
-                    long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
-                    count = NuubitApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
-                }
-                Log.i(TAG, "Updated: " + String.valueOf(count));
-                lastTimeSuccess = System.currentTimeMillis();
-            }
-        } catch (NullPointerException ex) {
-            resCode = HTTPCode.BAD_REQUEST;
-            lastTimeFail = System.currentTimeMillis();
-            reason = "Null response";
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            resCode = HTTPCode.BAD_REQUEST;
-            lastTimeFail = System.currentTimeMillis();
-            reason = "I/O exception";
-            ex.printStackTrace();
-        }
+        String reason = NuubitConstants.UNDEFINED;
 
+        statistic = new Statistic(getApplicationContext());
+
+        if(statistic.getRequests().size()>0) {
+
+            String stat = NuubitSDK.gsonCreate().toJson(statistic);
+            Log.i(TAG + " stat", "\n\n" + stat);
+
+            if (intent != null) {
+                Bundle params = intent.getExtras();
+                if (params != null) {
+                    timeOut = params.getInt(NuubitConstants.TIMEOUT, NuubitConstants.DEFAULT_TIMEOUT_SEC);
+                    url = params.getString(NuubitConstants.STATISTIC);
+                }
+            }
+            OkHttpClient client = NuubitSDK.OkHttpCreate(timeOut);
+
+            Request req = new Request.Builder()
+                    .url(url)
+                    .cacheControl(CacheControl.FORCE_NETWORK)
+                    .method("POST", RequestBody.create(null, new byte[0]))
+                    .post(RequestBody.create(MediaType.parse("application/json"), stat))
+                    .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
+                    .build();
+            Response response;
+            try {
+                response = client.newCall(req).execute();
+                resCode = HTTPCode.create(response.code());
+                if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                    ArrayList<RequestOne> rows = statistic.getRequests();
+                    ContentValues values = new ContentValues();
+                    values.put(RequestTable.Columns.SENT, 1);
+                    values.put(RequestTable.Columns.CONFIRMED, 1);
+                    count = 0;
+                    if (!statistic.getRequests().isEmpty()) {
+                        long mixIndex = statistic.getRequests().get(0).getID();
+                        long maxIndex = statistic.getRequests().get(statistic.getRequests().size() - 1).getID();
+                        count = NuubitApplication.getInstance().getDatabase().updateRequestFromTo(values, mixIndex, maxIndex);
+                    }
+                    Log.i(TAG, "Updated: " + String.valueOf(count));
+                    lastTimeSuccess = System.currentTimeMillis();
+                }
+            } catch (NullPointerException ex) {
+                resCode = HTTPCode.BAD_REQUEST;
+                lastTimeFail = System.currentTimeMillis();
+                reason = "Null response";
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                resCode = HTTPCode.BAD_REQUEST;
+                lastTimeFail = System.currentTimeMillis();
+                reason = "I/O exception";
+                ex.printStackTrace();
+            }
+        }
         Intent statIntent = new Intent(NuubitActions.STAT_ACTION);
         statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
         statIntent.putExtra(NuubitConstants.STAT_REQUESTS_COUNT, count);

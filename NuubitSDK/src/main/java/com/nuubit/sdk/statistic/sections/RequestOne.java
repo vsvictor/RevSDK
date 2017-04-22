@@ -132,7 +132,7 @@ public class RequestOne extends Data implements Parcelable {
         }
     };
 
-    public static RequestOne toRequestOne(Request original, Request processed, Response response, EnumProtocol edge_transport, long begTime, long endTime) {
+    public static RequestOne toRequestOne(Request original, Request processed, Response response, EnumProtocol edge_transport, long begTime, long endTime, long firstByte) {
         RequestOne result = new RequestOne();
         result.setID(-1);
         result.setConnectionID(-1);
@@ -141,8 +141,14 @@ public class RequestOne extends Data implements Parcelable {
 
         result.setStartTS(begTime);
         result.setSentTS(response == null ? -1 : response.sentRequestAtMillis());
-        result.setFirstByteTime(response == null ? -1 : response.receivedResponseAtMillis());
+        //result.setFirstByteTime(response == null ? -1 : response.receivedResponseAtMillis());
+        result.setFirstByteTime(firstByte);
         result.setEndTS(endTime);
+
+        Log.i("FIRSTBYTETIME", "ST: "+String.valueOf(result.getStartTS()));
+        Log.i("FIRSTBYTETIME", "FB: "+String.valueOf(result.getFirstByteTime()));
+        Log.i("FIRSTBYTETIME", "ET: "+String.valueOf(result.getEndTS()));
+        Log.i("FIRSTBYTETIME", "CHECK: "+String.valueOf((result.getFirstByteTime()>result.getStartTS()) && (result.getFirstByteTime()<result.getEndTS())));
 
         result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response == null ? NuubitConstants.UNDEFINED : response.cacheControl().toString());

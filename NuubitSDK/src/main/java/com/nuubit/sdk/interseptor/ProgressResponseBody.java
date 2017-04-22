@@ -75,6 +75,9 @@ public class ProgressResponseBody extends ResponseBody {
             }
         };
     }
+    public long getFirstByteTime(){
+        return firstByteTime;
+    }
     public interface ProgressListener {
         void update(long bytesRead, long contentLength, boolean done);
         void firstByteTime(long time);

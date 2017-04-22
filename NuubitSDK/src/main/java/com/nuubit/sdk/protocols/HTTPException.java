@@ -40,7 +40,7 @@ public class HTTPException extends Exception {
     public HTTPException(Request origin, Request transfered, Response response, Protocol protocol, long begTime, long endTime) {
         if (!isSystem(origin) && isStatistic()) {
             try {
-                final RequestOne statRequest = RequestOne.toRequestOne(origin, transfered, response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime);
+                final RequestOne statRequest = RequestOne.toRequestOne(origin, transfered, response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, 0);
                 NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                 Log.i("database", statRequest.toString());
             } catch (NullPointerException ex) {

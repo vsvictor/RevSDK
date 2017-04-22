@@ -80,7 +80,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        edQuery.setText("google.com.ua");
+        //edQuery.setText("google.com.ua");
+        edQuery.setText("https://monitor.revsw.net/1M.jpg");
         //edQuery.setText("mail.ru");
         //edQuery.setText("http://httpbin.org/status/500");
         wvMain = (WebView) view.findViewById(R.id.wvMain);

@@ -128,7 +128,7 @@ public class NuubitSDK {
         NuubitCookie cookie = new NuubitCookie();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient
-                .addInterceptor(new NuubitInterceptor(cookie))
+                .addInterceptor(new NuubitInterceptor())
                 .connectTimeout(timeoutSec, TimeUnit.SECONDS)
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
                 .followRedirects(followRedirect)

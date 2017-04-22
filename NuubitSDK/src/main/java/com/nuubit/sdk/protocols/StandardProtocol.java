@@ -86,7 +86,7 @@ public class StandardProtocol extends Protocol {
             if (!isSystem(original) && isStatistic()) {
                 RequestOne statRequest = null;
                 try {
-                    statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime);
+                    statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, 0);
                     NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
                     Log.i("database", statRequest.toString());
                     counter.addSuccessRequest();

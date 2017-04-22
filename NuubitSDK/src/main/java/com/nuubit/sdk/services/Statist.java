@@ -66,6 +66,9 @@ public class Statist extends IntentService {
         Log.i(TAG, "Statist running...");
 
         statistic = new Statistic(getApplicationContext());
+
+        if(statistic.getRequests().size()<=0) return;
+
         String stat = NuubitSDK.gsonCreate().toJson(statistic);
         Log.i(TAG+" stat", "\n\n"+stat);
 

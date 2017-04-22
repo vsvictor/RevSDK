@@ -125,14 +125,14 @@ public class NuubitSDK {
         if(client != null) return client;
 
         //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
-
+        NuubitCookie cookie = new NuubitCookie();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient
-                .addInterceptor(new NuubitInterceptor())
+                .addInterceptor(new NuubitInterceptor(cookie))
                 .connectTimeout(timeoutSec, TimeUnit.SECONDS)
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
                 .followRedirects(followRedirect)
-                .followSslRedirects(followSllRedirect).cookieJar(new NuubitCookie());
+                .followSslRedirects(followSllRedirect).cookieJar(cookie);
         client  = httpClient.build();
 
         List<Interceptor> inter = client.interceptors();

@@ -69,9 +69,10 @@ public class StandardProtocol extends Protocol {
             result = original;
         }
         Response response = null;
-        long beginTime = System.currentTimeMillis();
-        long endTime = System.currentTimeMillis();
+        long beginTime = 0;
+        long endTime = 0;
         try {
+            beginTime = System.currentTimeMillis();
             response = chain.proceed(result);
             endTime = System.currentTimeMillis();
             if (response == null) {

@@ -1,1 +1,1 @@
-include ':NuubitDemo', ':NuubitSDK', ':NuubitRacer', ':NuubitTester', ':NuubitCompatible'
+include ':NuubitDemo', ':NuubitSDK', ':NuubitRacer', ':NuubitTester', ':NuubitCompatible', ':NuubitABGenerator'

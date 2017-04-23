@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NuubitABGenerator</string>
+    <string name="app_header">Nuubit A/B Generator test</string>
+</resources>

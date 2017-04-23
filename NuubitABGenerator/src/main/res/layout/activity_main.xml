@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/qube"
+    tools:context="com.nuubit.abgenerator.MainActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <SeekBar
+            android:id="@+id/sb_ab_percent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="100"
+            android:layout_weight="16" />
+        <RelativeLayout
+            android:layout_weight="16"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/ab_b"
+                android:text="B"
+                android:textSize="@dimen/big_font_size"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="@dimen/middle"
+                android:layout_marginRight="@dimen/middle"
+                android:layout_marginBottom="@dimen/small"
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/ab_a"
+                android:text="A"
+                android:textSize="@dimen/big_font_size"
+                android:textColor="@color/colorWhite"
+                android:layout_marginLeft="@dimen/middle"
+                android:layout_marginRight="@dimen/middle"
+                android:layout_marginBottom="@dimen/small"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvText"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/middle_font_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/middle"
+            android:layout_marginRight="@dimen/middle"
+            android:layout_marginBottom="@dimen/small"
+            android:layout_weight="1.9"
+            android:alpha="0.85"
+            android:background="@drawable/background_data">
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

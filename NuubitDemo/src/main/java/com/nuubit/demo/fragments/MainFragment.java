@@ -3,14 +3,18 @@ package com.nuubit.demo.fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.nuubit.demo.R;
 import com.nuubit.sdk.NuubitConstants;
@@ -86,7 +90,13 @@ public class MainFragment extends Fragment {
         //edQuery.setText("http://httpbin.org/status/500");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(NuubitSDK.createWebViewClient(getActivity(), wvMain, client));
-        wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
+        //wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
+        CookieManager cookieManager = CookieManager.getInstance();
+        Log.i("COOKIES", ""+cookieManager.acceptCookie());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.setAcceptThirdPartyCookies(wvMain, false);
+        }
+        Log.i("COOKIES", ""+cookieManager.acceptCookie());
 
         rlRun = (RelativeLayout) view.findViewById(R.id.rlRun);
         rlRun.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +149,7 @@ public class MainFragment extends Fragment {
         private String contentType;
         private String codePage;
         private String currURL;
-
+        private HTTPCode code;
         @Override
         protected String doInBackground(String... params) {
             final String url = params[0];
@@ -153,6 +163,7 @@ public class MainFragment extends Fragment {
                     } catch (HTTPException e) {
                         e.printStackTrace();
                     }
+                    
                     String location = "";
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
@@ -160,7 +171,7 @@ public class MainFragment extends Fragment {
                         response = runRequest(client, location, response.request().method(), null);
                     }
 
-                    HTTPCode code = HTTPCode.create(response.code());
+                    code = HTTPCode.create(response.code());
 
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
                         //response = runRequest(client, response.request().url().toString(), response.request().method(), null);
@@ -178,9 +189,14 @@ public class MainFragment extends Fragment {
                             }
                         }
                     });
-                } catch (IOException e) {
+                } catch (HTTPException ex){
+                    response = null;
+                    ex.printStackTrace();
+                }catch (IOException e) {
+                    response = null;
                     e.printStackTrace();
                 } catch (NullPointerException ex) {
+                    response = null;
                     ex.printStackTrace();
                 } catch (HTTPException e) {
                     e.printStackTrace();
@@ -191,8 +207,12 @@ public class MainFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String body) {
-            wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
-            edQuery.setText(currURL);
+            if(body != null) {
+                wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
+                edQuery.setText(currURL);
+            } else {
+                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.bad_request), Toast.LENGTH_SHORT).show();
+            }
             //edQuery.setText("http://httpbin.org/status/500");
         }
     }

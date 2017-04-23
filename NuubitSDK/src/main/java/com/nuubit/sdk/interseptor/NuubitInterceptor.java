@@ -21,6 +21,7 @@ import okhttp3.internal.connection.StreamAllocation;
 import okhttp3.internal.http.HttpCodec;
 import okhttp3.internal.http.HttpMethod;
 import okhttp3.internal.http.RealInterceptorChain;
+
 import okio.Buffer;
 import okio.BufferedSink;
 import okio.BufferedSource;
@@ -36,7 +37,7 @@ import okio.Source;
 public class NuubitInterceptor implements Interceptor {
     private static final String TAG = NuubitInterceptor.class.getSimpleName();
 
-    @Override
+  @Override
     public Response intercept(Chain chain) throws IOException {
 
         Response response;
@@ -46,11 +47,6 @@ public class NuubitInterceptor implements Interceptor {
         try {
             begTime = System.currentTimeMillis();
             response = NuubitApplication.getInstance().getBest().send(chain);
-/*
-            response = resp.newBuilder()
-                    .body(pb = new ProgressResponseBody(resp.body()))
-                    .build();
-*/
             endTime = System.currentTimeMillis();
         } catch (UnknownHostException ex) {
             response = null;
@@ -58,11 +54,6 @@ public class NuubitInterceptor implements Interceptor {
             final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, 0);
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
         }
-        /*
-        if(pb != null) {
-            return response.newBuilder().receivedResponseAtMillis(pb.getFirstByteTime()).build();
-        }
-
-        else*/ return response;
+        return response;
     }
 }

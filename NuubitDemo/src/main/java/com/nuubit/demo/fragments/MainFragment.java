@@ -163,6 +163,7 @@ public class MainFragment extends Fragment {
                     HTTPCode code = HTTPCode.create(response.code());
 
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
+                        //response = runRequest(client, response.request().url().toString(), response.request().method(), null);
                         Log.i(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 404 AAAAAAAAAAAAAAAAAAA");
                     }
 
@@ -190,10 +191,9 @@ public class MainFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String body) {
-            if(body != null) {
-                wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
-                edQuery.setText(currURL);
-            }
+            wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
+            edQuery.setText(currURL);
+            //edQuery.setText("http://httpbin.org/status/500");
         }
     }
 }

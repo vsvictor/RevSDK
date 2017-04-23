@@ -125,6 +125,7 @@ public class NuubitSDK {
         if(client != null) return client;
 
         //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+
         NuubitCookie cookie = new NuubitCookie();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient

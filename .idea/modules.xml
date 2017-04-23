@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" filepath="$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitTester/NuubitTester.iml" filepath="$PROJECT_DIR$/NuubitTester/NuubitTester.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simpleappintegration/simpleappintegration.iml" filepath="$PROJECT_DIR$/simpleappintegration/simpleappintegration.iml" />
     </modules>
   </component>
 </project>

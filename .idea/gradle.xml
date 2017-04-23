@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/NuubitRacer" />
             <option value="$PROJECT_DIR$/NuubitSDK" />
             <option value="$PROJECT_DIR$/NuubitTester" />
+            <option value="$PROJECT_DIR$/simpleappintegration" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -1,9 +1,13 @@
 package com.nuubit.sdk.protocols;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
+import com.nuubit.sdk.database.RequestTable;
 import com.nuubit.sdk.statistic.counters.ProtocolCounters;
+import com.nuubit.sdk.statistic.sections.RequestOne;
 
 import java.io.IOException;
 
@@ -67,5 +71,21 @@ public abstract class Protocol implements OnFuncProtocol {
 
     public ProtocolCounters getCounter() {
         return counter;
+    }
+
+    public void save(Request original, Request result, Response response, EnumProtocol protocol, long beginTime, long endTime, long firsByteTime){
+        RequestOne statRequest = null;
+        try {
+            statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, firsByteTime);
+            NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
+            Log.i("database", statRequest.toString());
+            counter.addSuccessRequest();
+            //counter.addReceive(getResponseSize(response));
+        } catch (NullPointerException ex) {
+            //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
+            Log.i("database", "Standart exception Database error!!!");
+            counter.addFailRequest();
+            ex.printStackTrace();
+        }
     }
 }

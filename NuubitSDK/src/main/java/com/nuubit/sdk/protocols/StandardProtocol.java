@@ -8,6 +8,7 @@ import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.database.RequestTable;
+import com.nuubit.sdk.interseptor.ProgressResponseBody;
 import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
@@ -51,6 +52,11 @@ import static com.nuubit.sdk.NuubitSDK.isSystem;
 public class StandardProtocol extends Protocol {
     private static final String TAG = StandardProtocol.class.getSimpleName();
     private HTTPException prevException;
+    private Request original;
+    private Request result;
+    private Response response;
+    private long beginTime;
+    private long endTime;
     public StandardProtocol() {
         this.descroption = EnumProtocol.STANDART;
         counter = new ProtocolCounters(this.descroption);
@@ -58,8 +64,8 @@ public class StandardProtocol extends Protocol {
 
     @Override
     public synchronized Response send(Interceptor.Chain chain) throws IOException {
-        Request result = null;
-        Request original = chain.request();
+        result = null;
+        original = chain.request();
         boolean systemRequest = isSystem(original);
         boolean freeRequest = isFree(original);
         if (!systemRequest && !freeRequest) {
@@ -68,12 +74,18 @@ public class StandardProtocol extends Protocol {
             Log.i("System", original.toString());
             result = original;
         }
-        Response response = null;
-        long beginTime = 0;
-        long endTime = 0;
+        response = null;
+        beginTime = 0;
+        endTime = 0;
+        ProgressResponseBody pb = null;
         try {
             beginTime = System.currentTimeMillis();
-            response = chain.proceed(result);
+            Response resp = chain.proceed(result);
+
+            response = resp.newBuilder()
+                    .body(pb = new ProgressResponseBody(resp.body(), listener))
+                    .build();
+
             endTime = System.currentTimeMillis();
             if (response == null) {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
@@ -83,21 +95,6 @@ public class StandardProtocol extends Protocol {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
 
-            if (!isSystem(original) && isStatistic()) {
-                RequestOne statRequest = null;
-                try {
-                    statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, 0);
-                    NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
-                    Log.i("database", statRequest.toString());
-                    counter.addSuccessRequest();
-                    //counter.addReceive(getResponseSize(response));
-                } catch (NullPointerException ex) {
-                    //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
-                    Log.i("database", "Standart exception Database error!!!");
-                    counter.addFailRequest();
-                    ex.printStackTrace();
-                }
-            }
             if (!isSystem(original)) {
                 this.zeroing();
             }
@@ -147,4 +144,23 @@ public class StandardProtocol extends Protocol {
         }
         return res;
     }
+
+    private ProgressResponseBody.ProgressListener listener = new ProgressResponseBody.ProgressListener() {
+        @Override
+        public void update(long bytesRead, long contentLength, boolean done) {
+
+        }
+
+        @Override
+        public void firstByteTime(long time) {
+            if (!isSystem(original) && isStatistic()) {
+                save(original, result, response, EnumProtocol.STANDART, beginTime, endTime, time);
+            }
+        }
+
+        @Override
+        public void lastByteTime(long time) {
+
+        }
+    };
 }

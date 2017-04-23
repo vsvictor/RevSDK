@@ -43,19 +43,19 @@ public class NuubitInterceptor implements Interceptor {
 
         long begTime = System.currentTimeMillis();
         long endTime;
-        ProgressResponseBody pb = null;
         try {
             begTime = System.currentTimeMillis();
-            Response resp = NuubitApplication.getInstance().getBest().send(chain);
-
+            response = NuubitApplication.getInstance().getBest().send(chain);
+/*
             response = resp.newBuilder()
                     .body(pb = new ProgressResponseBody(resp.body()))
                     .build();
+*/
             endTime = System.currentTimeMillis();
         } catch (UnknownHostException ex) {
             response = null;
             endTime = System.currentTimeMillis();
-            final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, pb.getFirstByteTime());
+            final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, 0);
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
         }
         /*

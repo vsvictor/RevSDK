@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">NuubitABGenerator</string>
     <string name="app_header">Nuubit A/B Generator test</string>
+    <string name="generate">Generate</string>
+    <string name="count_10">Count       10:</string>
+    <string name="count_100">Count      100:</string>
+    <string name="count_1000">Count     1000:</string>
+    <string name="count_10000">Count    10000:</string>
+    <string name="count_100000">Count   100000:</string>
+    <string name="count_1000000">Count  1000000:</string>
+    <string name="count_10000000">Count 10000000:</string>
 </resources>

@@ -23,18 +23,38 @@
     "smokeConfig5.3": "mocha ./tests/smoke/config/smokeConfig5.3.js",
     "smokeConfig9.1": "mocha ./tests/smoke/config/smokeConfig9.1.js",
     "smokeConfig1.15": "mocha ./tests/smoke/config/smokeConfig1.15.js",
-    "smokeInterceptor11.1": "mocha ./tests/smoke/interceptor/smokeInterceptor11.1.js",
+    "smokeConfig11": "mocha ./tests/smoke/config/smokeConfig11.js",
+    "smokeInterceptor11": "mocha ./tests/smoke/interceptor/smokeInterceptor11.js",
     "smokeInterceptor2.1": "mocha ./tests/smoke/interceptor/smokeInterceptor2.1.js",
+    "smokeInterceptor2.2": "mocha ./tests/smoke/interceptor/smokeInterceptor2.2.js",
     "smokeInterceptor2.4": "mocha ./tests/smoke/interceptor/smokeInterceptor2.4.js",
     "smokeInterceptor2.6": "mocha ./tests/smoke/interceptor/smokeInterceptor2.6.js",
-    "smokeInterceptor1.1": "mocha ./tests/smoke/interceptor/smokeInterceptor1.1.js",
+    "smokeInterceptor1": "mocha ./tests/smoke/interceptor/smokeInterceptor1.js",
+    "smokeStats1.4": "mocha ./tests/smoke/stats/smokeStats1.4.js",
+    "smokeStats1.7": "mocha ./tests/smoke/stats/smokeStats1.7.js",
     "smokeConfig": "mocha ./tests/smoke/config/smokeConfig*",
-    "smokeInterceptor": "mocha ./tests/smoke/config/smokeInterceptor*"
+    "smokeInterceptor": "mocha ./tests/smoke/interceptor/smokeInterceptor*",
+    "smokeStats": "mocha ./tests/smoke/stats/smokeStats*",
+    "smoke": "mocha ./tests/smoke/**/*.js",
+    "functionalInterceptor13": "mocha ./tests/functional/interceptor/functionalInterceptor13.js",
+    "functionalInterceptor3.1": "mocha ./tests/functional/interceptor/functionalInterceptor3.1.js",
+    "functionalInterceptor3.4": "mocha ./tests/functional/interceptor/functionalInterceptor3.4.js",
+    "functionalInterceptor3.6": "mocha ./tests/functional/interceptor/functionalInterceptor3.6.js",
+    "functionalInterceptor7.1": "mocha ./tests/functional/interceptor/functionalInterceptor7.1.js",
+    "functionalInterceptor7.2": "mocha ./tests/functional/interceptor/functionalInterceptor7.2.js",
+    "functionalInterceptor7.3": "mocha ./tests/functional/interceptor/functionalInterceptor7.3.js",
+    "functionalInterceptor7.4": "mocha ./tests/functional/interceptor/functionalInterceptor7.4.js",
+    "functionalInterceptor7.5": "mocha ./tests/functional/interceptor/functionalInterceptor7.5.js",
+    "functionalInterceptor7.6": "mocha ./tests/functional/interceptor/functionalInterceptor7.6.js",
+    "functionalInterceptor10": "mocha ./tests/functional/interceptor/functionalInterceptor10.js",
+    "functionalConfig3.5": "mocha ./tests/functional/config/functionalConfig3.5.js",
+    "functionalConfig4.5": "mocha ./tests/functional/config/functionalConfig4.5.js"
   },
   "dependencies": {
+    "adbkit-logcat": "^1.1.0",
+    "config": "^1.25.1",
     "selenium-webdriver": "^3.0.0-beta-3",
     "wd-bridge": "0.0.2",
-    "yiewd": "^0.6.0",
-    "config": "^1.25.1"
+    "yiewd": "^0.6.0"
   }
 }

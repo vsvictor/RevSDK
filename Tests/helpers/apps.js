@@ -1,4 +1,4 @@
-exports.androidApiDemos = "/home/larik/StudioProjects/revsw-sdk-android7/RevDemo/build/outputs/apk/RevDemo-debug.apk";
-exports.androidTester = "/home/larik/StudioProjects/revsw-sdk-android7/RevTester/build/outputs/apk/RevTester-debug.apk";
+exports.androidTester = "/home/larik/StudioProjects/revsw-sdk-android10/NuubitTester/build/outputs/apk/NuubitTester-debug.apk";
+exports.androidDemo = "/home/larik/StudioProjects/revsw-sdk-android9/NuubitDemo/build/outputs/apk/NuubitDemo-debug.apk";
 
 

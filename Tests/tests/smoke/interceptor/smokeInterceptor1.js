@@ -1,4 +1,4 @@
-/*************************************************************************
+                                                                                                                                                /*************************************************************************
  *
  * REV SOFTWARE CONFIDENTIAL
  *
@@ -28,28 +28,17 @@ var wd = require("wd"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    App = require("./../../../page_objects/RevTester/mainPage"),
-    request = require("./../../../helpers/requests");
+    App = require("./../../../page_objects/RevTester/mainPage");
 
 describe("Smoke Interceptor", function () {
-    describe("Operation Modes: transfer_only", function () {
+    describe("Operation Modes", function () {
         var describeTimeout = config.get('describeTimeout');
         this.timeout(describeTimeout);
         var driverRevTester = undefined;
-        var implicitWaitTimeout = config.get('implicitWaitTimeout');
-        var portalAPIKey = config.get('portalAPIKey');
-        var appIdTester = config.get('appIdTester');
-        var accountId = config.get('accountId');
-        var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-        var domainsWhiteList = config.get('domainsWhiteList');
-        var domainsBlackList = config.get('domainsBlackList');
-        var domainsProvisionedList = config.get('domainsProvisionedList');
         var headerRev = config.get('headerRev');
+        var httpWebsite = config.get('httpWebsite');
 
         before(function () {
-            request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-                domainsWhiteList, domainsBlackList, domainsProvisionedList);
-
             var serverConfig = serverConfigs.local;
             driverRevTester = wd.promiseChainRemote(serverConfig);
             logging.configure(driverRevTester);
@@ -57,25 +46,40 @@ describe("Smoke Interceptor", function () {
             desired.app = apps.androidTester;
             var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driverRevTester
-                .sleep(10000)
                 .init(desired)
                 .setImplicitWaitTimeout(implicitWaitTimeout);
         });
 
         after(function () {
-            request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
             return driverRevTester
                 .quit();
         });
 
-        it("should check that domain from 'BLACK' list won't return Rev Headers", function () {
+        it("should check that using operation mode 'report only' there are not headers in response", function () {
             return driverRevTester
                 .elementById(App.dropdown.operationModes)
                 .click()
-                .elementByXPath(App.list.operationModes.transfer_only)
+                .elementByXPath(App.list.operationModes.report_only)
                 .click()
                 .elementById(App.input.url)
-                .sendKeys(domainsBlackList[1])
+                .sendKeys(httpWebsite)
+                .elementById(App.button.send)
+                .click()
+                .sleep(5000)
+                .elementById(App.output.responseHeaders)
+                .then(function (els) {
+                     return els.text().should.not.eventually.include(headerRev)
+                })
+        });
+
+        it("should check that using operation mode 'off' there are not headers in response", function () {
+            return driverRevTester
+                .elementById(App.dropdown.operationModes)
+                .click()
+                .elementByXPath(App.list.operationModes.off)
+                .click()
+                .elementById(App.input.url)
+                .sendKeys(httpWebsite)
                 .elementById(App.button.send)
                 .click()
                 .sleep(5000)

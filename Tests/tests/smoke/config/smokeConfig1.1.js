@@ -28,8 +28,7 @@ var wd = require("wd"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
+    App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
 describe("Smoke Configuration", function () {
@@ -47,7 +46,7 @@ describe("Smoke Configuration", function () {
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
         var desired = _.clone(caps.android19);
-        desired.app = apps.androidApiDemos;
+        desired.app = apps.androidTester;
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds82);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
@@ -63,11 +62,11 @@ describe("Smoke Configuration", function () {
 
     it("should load config on first initialization", function () {
         return driver
-            .elementByClassName(Menu.menuBtn.button.className)
+            .elementByClassName(App.menuBtn.button)
             .click()
-            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .elementByXPath(App.menuOptions.configurationView)
             .click()
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
                 return els[2].text().should.become(statsReportingIntervalSeconds82 + "");
             });

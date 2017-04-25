@@ -22,94 +22,102 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    config = require("config"),
+    config = require('config'),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    App = require("./../../../page_objects/RevTester/mainPage");
+    App = require("./../../../page_objects/RevTester/mainPage"),
+    request = require("./../../../helpers/requests");
+wd.addPromiseChainMethod('swipe', actions.swipe);
 
 describe("Smoke Configuration", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
-    var driver = undefined;
-    var defaultConfigVars = config.get('defaultConfigVars');
-
+    var driverRevTester = undefined;
+    var implicitWaitTimeout = config.get('implicitWaitTimeout');
+    var portalAPIKey = config.get('portalAPIKey');
+    var appId = config.get('appId');
+    var accountId = config.get('accountId');
+    var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
+    var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
+    var defaultConfig = config.get('defaultConfig');
 
     before(function () {
         var serverConfig = serverConfigs.local;
-        driver = wd.promiseChainRemote(serverConfig);
-        logging.configure(driver);
+        driverRevTester = wd.promiseChainRemote(serverConfig);
+        logging.configure(driverRevTester);
         var desired = _.clone(caps.android19);
         desired.app = apps.androidTester;
-        var implicitWaitTimeout = config.get('implicitWaitTimeout');
-        return driver
+        return driverRevTester
             .init(desired)
-            .setImplicitWaitTimeout(implicitWaitTimeout);
-    });
-
-    after(function () {
-        return driver
+            .setImplicitWaitTimeout(implicitWaitTimeout)
+            .sleep(10000)
             .quit();
     });
 
-    it("should load valid config parameters", function () {
-      /*  var logcat = require('adbkit-logcat');
-        var spawn = require('child_process').spawn;
+    after(function () {
+        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        return driverRevTester
+            .quit();
+    });
 
-// Retrieve a binary log stream
-        var proc = spawn('adb', ['logcat', '-B']);
 
-// Connect logcat to the stream
-        var reader = logcat.readStream(proc.stdout);
-        reader.on('entry', function(entry) {
-            console.log(entry.message);
-        });*/
-        return driver
+    it("should check that two apps with SAME SDK keys can work properly on the same device", function () {
+        var serverConfig = serverConfigs.local;
+        driverRevTester = wd.promiseChainRemote(serverConfig);
+        logging.configure(driverRevTester);
+        var desired = _.clone(caps.android19);
+        desired.app = apps.androidTester;
+        return driverRevTester
+            .init(desired)
+            .setImplicitWaitTimeout(implicitWaitTimeout)
             .elementByClassName(App.menuBtn.button)
             .click()
             .elementByXPath(App.menuOptions.configurationView)
             .click()
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[1].text().should.become(defaultConfigVars.stats_reporting_interval_sec);
+                return els[2].text().should.become(defaultConfig.stats_reporting_interval_sec);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[3].text().should.become(defaultConfigVars.stats_reporting_level);
+                return els[4].text().should.become(defaultConfig.stats_reporting_level);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[5].text().should.become(defaultConfigVars.edge_failures_failover_threshold_percent);
+                return els[6].text().should.become(defaultConfig.edge_failures_failover_threshold_percent);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[7].text().should.become(defaultConfigVars.edge_quic_udp_port);
+                return els[8].text().should.become(defaultConfig.edge_quic_udp_port);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[9].text().should.become(defaultConfigVars.edge_data_receive_timeout_sec);
+                return els[10].text().should.become(defaultConfig.edge_data_receive_timeout_sec);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[11].text().should.become(defaultConfigVars.app_name);
+                return els[12].text().should.become(defaultConfig.app_name);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[13].text().should.become(defaultConfigVars.internal_domains_black_list);
+                return els[14].text().should.become(defaultConfig.internal_domains_black_list);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[15].text().should.become(defaultConfigVars.a_b_testing_origin_offload_ratio);
+                return els[16].text().should.become(defaultConfig.a_b_testing_origin_offload_ratio);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[17].text().should.become(defaultConfigVars.sdk_release_version);
+                return els[18].text().should.become(defaultConfig.sdk_release_version);
             })
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[19].text().should.become(defaultConfigVars.transport_monitoring_url);
+                return els[20].text().should.become(defaultConfig.transport_monitoring_url);
             });
     });
 });
+

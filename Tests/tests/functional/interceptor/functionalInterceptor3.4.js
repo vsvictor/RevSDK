@@ -31,8 +31,8 @@ var wd = require("wd"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
-describe("Smoke Interceptor", function () {
-    describe("Operation Modes: transfer_only", function () {
+describe("Functional Interceptor", function () {
+    describe("Operation Modes: transfer_and_report", function () {
         var describeTimeout = config.get('describeTimeout');
         this.timeout(describeTimeout);
         var driverRevTester = undefined;
@@ -72,7 +72,7 @@ describe("Smoke Interceptor", function () {
             return driverRevTester
                 .elementById(App.dropdown.operationModes)
                 .click()
-                .elementByXPath(App.list.operationModes.transfer_only)
+                .elementByXPath(App.list.operationModes.transfer_and_report)
                 .click()
                 .elementById(App.input.url)
                 .sendKeys(domainsBlackList[1])

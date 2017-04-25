@@ -30,6 +30,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
+wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 
 describe("Smoke Interceptor", function () {
     describe("Operation Modes: transfer_only", function () {
@@ -42,14 +43,12 @@ describe("Smoke Interceptor", function () {
         var accountId = config.get('accountId');
         var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
         var domainsWhiteList = config.get('domainsWhiteList');
-        var domainsBlackList = config.get('domainsBlackList');
-        var domainsProvisionedList = config.get('domainsProvisionedList');
-        var headerRev = config.get('headerRev');
+        var domainsBlackList = undefined;
+        var domainsProvisionedList = undefined;
 
         before(function () {
             request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-                domainsWhiteList, domainsBlackList, domainsProvisionedList);
-
+                domainsWhiteList, domainsBlackList = [], domainsProvisionedList = []);
             var serverConfig = serverConfigs.local;
             driverRevTester = wd.promiseChainRemote(serverConfig);
             logging.configure(driverRevTester);
@@ -57,7 +56,7 @@ describe("Smoke Interceptor", function () {
             desired.app = apps.androidTester;
             var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driverRevTester
-                .sleep(10000)
+                .sleep(5000)
                 .init(desired)
                 .setImplicitWaitTimeout(implicitWaitTimeout);
         });
@@ -68,21 +67,35 @@ describe("Smoke Interceptor", function () {
                 .quit();
         });
 
-        it("should check that domain from 'BLACK' list won't return Rev Headers", function () {
+       it("should check that domain from 'WHITE' list will return Rev Headers", function () {
             return driverRevTester
                 .elementById(App.dropdown.operationModes)
                 .click()
                 .elementByXPath(App.list.operationModes.transfer_only)
                 .click()
                 .elementById(App.input.url)
-                .sendKeys(domainsBlackList[1])
+                .sendKeys(domainsWhiteList[1])
                 .elementById(App.button.send)
                 .click()
                 .sleep(5000)
-                .elementById(App.output.responseHeaders)
+                .elementByClassName(App.menuBtn.button)
+                .click()
+                .elementByXPath(App.menuOptions.statsView)
+                .click()
+                .sleep(2000)
+                .scrollDown()
+                .scrollDown()
+                .scrollDown()
+                .scrollDown()
+                .sleep(5000)
+                .elementsByXPath(App.list.stats)
                 .then(function (els) {
-                    return els.text().should.not.eventually.include(headerRev)
+                    return els[21].text();
                 })
+                .then(function (el21) {
+                    var revRequestsValue = Number(el21);
+                    return revRequestsValue.should.equal(0);
+                });
         });
     });
 });

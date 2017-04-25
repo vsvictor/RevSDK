@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.nuubit.racer.fragments.MainFragment;
 import com.nuubit.racer.fragments.TaskFragment;
+import com.nuubit.racer.fragments.WebTaskFragment;
 /*
  * ************************************************************************
  *
@@ -32,7 +33,9 @@ import com.nuubit.racer.fragments.TaskFragment;
  * /
  */
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener, TaskFragment.OnTaskListener {
+public class MainActivity extends AppCompatActivity implements MainFragment.OnMainListener,
+        TaskFragment.OnTaskListener,
+        WebTaskFragment.OnWebTaskListener {
     public static Fragment current;
 
     //private SharedPreferences settings;
@@ -92,7 +95,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onWeb() {
-
+        current = WebTaskFragment.newInstance();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, current)
+                .commit();
     }
 
     @Override
@@ -127,4 +134,24 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         startActivity(intent);
     }
 
+    @Override
+    public void onWebStartTaskInSeries(int steps, long body, String url, String method, String type) {
+
+    }
+
+    @Override
+    public void onWebStartTaskParelelly(int steps, long body, String url, String method, String type) {
+        Intent intent = new Intent(this, ParalellyWebActivity.class);
+        intent.putExtra(Const.STEPS, steps);
+        intent.putExtra(Const.SIZE, body);
+        intent.putExtra(Const.URL, url);
+        intent.putExtra(Const.METHOD, method);
+        intent.putExtra(Const.TYPE, type);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onWebStartUnlimTaskSeries(long body, String url, String method, String type) {
+
+    }
 }

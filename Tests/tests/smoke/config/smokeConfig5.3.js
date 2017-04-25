@@ -28,8 +28,7 @@ var wd = require("wd"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
+    App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
 describe("Smoke Configuration", function () {
@@ -48,7 +47,7 @@ describe("Smoke Configuration", function () {
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
         var desired = _.clone(caps.android19);
-        desired.app = apps.androidApiDemos;
+        desired.app = apps.androidTester;
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
@@ -63,30 +62,32 @@ describe("Smoke Configuration", function () {
     });
 
     it("should check that config reloads after config_refresh interval*3 secs", function () {
+        var halfConfigRefreshInterval = configurationRefreshIntervalMilliSec / 2;
+        //change config on API after two minutes
         setTimeout(function () {
             request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds87);
         }, configurationRefreshIntervalMilliSec * 2);
-
+        //check that sdk will load new config after config_refresh interval*2 secs
         return driver
-            .sleep(configurationRefreshIntervalMilliSec / 2)
-            .elementByClassName(Menu.menuBtn.button.className)
+            .sleep(halfConfigRefreshInterval)
+            .elementByClassName(App.menuBtn.button)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
-            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .sleep(halfConfigRefreshInterval)
+            .elementByXPath(App.menuOptions.configurationView)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
-            .elementByClassName(Menu.menuBtn.button.className)
+            .sleep(halfConfigRefreshInterval)
+            .elementByClassName(App.menuBtn.button)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
-            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .sleep(halfConfigRefreshInterval)
+            .elementByXPath(App.menuOptions.configurationView)
             .click()
-            .sleep(configurationRefreshIntervalMilliSec / 2)
-            .elementByClassName(Menu.menuBtn.button.className)
+            .sleep(halfConfigRefreshInterval)
+            .elementByClassName(App.menuBtn.button)
             .click()
-            .sleep( ( configurationRefreshIntervalMilliSec / 2 ) + 3000)
-            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .sleep(halfConfigRefreshInterval + 3000)
+            .elementByXPath(App.menuOptions.configurationView)
             .click()
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
                 return els[2].text().should.become(statsReportingIntervalSeconds87.toString());
             });

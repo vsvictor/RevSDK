@@ -22,84 +22,62 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    config = require("config"),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
+    config = require("config"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
-    Settings = require("./../../../page_objects/RevTester/settingsWindow"),
     request = require("./../../../helpers/requests");
-wd.addPromiseChainMethod('openSettings', actions.openSettings);
-wd.addPromiseChainMethod('closeSettings', actions.closeSettings);
 
-describe("android simple", function () {
+describe("Functional Config", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
-    var driver = undefined;
+    var driverRevTester = undefined;
+    var implicitWaitTimeout = config.get('implicitWaitTimeout');
     var portalAPIKey = config.get('portalAPIKey');
-    var appId = config.get('appId');
+    var appIdTester = config.get('appIdTester');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
+    var domainsBlackList = config.get('domainsBlackList');
+    var domainsWhiteList = config.get('domainsWhiteList');
+    var headerRev = config.get('headerRev');
     var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
-    var serverConfig = serverConfigs.local;
-    driver = wd.promiseChainRemote(serverConfig);
-    logging.configure(driver);
-    var desired = _.clone(caps.android19);
-    desired.app = apps.androidTester;
+    var halfConfigurationRefreshInterval = configurationRefreshIntervalMilliSec / 2;
 
     before(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        var serverConfig = serverConfigs.local;
+        driverRevTester = wd.promiseChainRemote(serverConfig);
+        logging.configure(driverRevTester);
+        var desired = _.clone(caps.android19);
+        desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
-        return driver
+        return driverRevTester
+            .sleep(10000)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
-        return driver
-            .openSettings()
-            .elementByXPath(Settings.button.networkImage)
-            .click()
-            .elementByClassName(Settings.checkBox.switchNetwork)
-            .click()
-            .closeSettings()
+        return driverRevTester
             .quit();
     });
 
-
-    it("should save config after reloading the App", function () {
-        //run app, wait for config
-        //turn off network
-        //restart app
-        //check that our config is still there and it's not default
-        //turn on network
-        return driver
-            .elementByClassName(App.menuBtn.button)
-            .click()
-            .elementByXPath(App.menuOptions.configurationView)
-            .click()
-            .openSettings()
-            .elementByXPath(Settings.button.networkImage)
-            .click()
-            .elementByClassName(Settings.checkBox.switchNetwork)
-            .click()
-            .closeSettings()
-            // RESET APP
-            .quit()
-            .init(desired)
-            .setImplicitWaitTimeout(6000)
+   it("should check that SDK switches to report_only mode on the first initialization", function () {
+        return driverRevTester
             .elementByClassName(App.menuBtn.button)
             .click()
             .elementByXPath(App.menuOptions.configurationView)
             .click()
             .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[2].text().should.become(statsReportingIntervalSeconds85 + "");
-            })
+                for (var i = 0; i < els.length; i++)
+                console.log(els[i].text());
+                return els[2].text().should.become(statsReportingIntervalSeconds82 + "");
+            });
     });
 });
+
 

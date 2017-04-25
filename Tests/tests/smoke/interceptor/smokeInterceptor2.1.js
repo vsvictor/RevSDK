@@ -28,13 +28,11 @@ var wd = require("wd"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    Configuration = require("./../../../page_objects/RevTester/mainPage"),
+    App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
-wd.addPromiseChainMethod('swipe', actions.swipe);
-
 describe("Smoke Interceptor", function () {
-    describe("Operation Modes", function () {
+    describe("Operation Modes: transfer_only", function () {
         var describeTimeout = config.get('describeTimeout');
         this.timeout(describeTimeout);
         var driverRevTester = undefined;
@@ -46,6 +44,7 @@ describe("Smoke Interceptor", function () {
         var domainsWhiteList = config.get('domainsWhiteList');
         var domainsBlackList = config.get('domainsBlackList');
         var domainsProvisionedList = config.get('domainsProvisionedList');
+        var headerRev = config.get('headerRev');
 
         before(function () {
             request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
@@ -57,6 +56,7 @@ describe("Smoke Interceptor", function () {
             desired.app = apps.androidTester;
             var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driverRevTester
+                .sleep(10000)
                 .init(desired)
                 .setImplicitWaitTimeout(implicitWaitTimeout);
         });
@@ -67,24 +67,20 @@ describe("Smoke Interceptor", function () {
                 .quit();
         });
 
-       it("should check that domain from 'WHITE' list will return SDK key", function () {
+       it("should check that domain from 'WHITE' list will return Rev Headers", function () {
             return driverRevTester
-                .sleep(5000)
-                .elementById(Configuration.dropdown.operationModes)  // modes operation
+                .elementById(App.dropdown.operationModes)
                 .click()
-                .sleep(3000)
-                .elementsByClassName(Configuration.list.operationModes)   // list of methods
-                .at(1) // Transfer mode
+                .elementByXPath(App.list.operationModes.transfer_only)
                 .click()
-                .sleep(3000)
-                .elementById(Configuration.input.url) // input url
+                .elementById(App.input.url)
                 .sendKeys(domainsWhiteList[1])
-                .elementById(Configuration.button.send)  // Go\Run\Send btn
+                .elementById(App.button.send)
                 .click()
                 .sleep(5000)
-                .elementById(Configuration.output.responseHeaders) // response header
+                .elementById(App.output.responseHeaders)
                 .then(function (els) {
-                    return els.text().should.eventually.include("x-rev-host")
+                    return els.text().should.eventually.include(headerRev)
                 })
         });
     });

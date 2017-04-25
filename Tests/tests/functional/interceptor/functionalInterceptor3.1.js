@@ -31,8 +31,8 @@ var wd = require("wd"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
-describe("Smoke Interceptor", function () {
-    describe("Operation Modes: transfer_only", function () {
+describe("Functional Interceptor", function () {
+    describe("Operation Modes: transfer_and_report", function () {
         var describeTimeout = config.get('describeTimeout');
         this.timeout(describeTimeout);
         var driverRevTester = undefined;
@@ -49,7 +49,6 @@ describe("Smoke Interceptor", function () {
         before(function () {
             request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
                 domainsWhiteList, domainsBlackList, domainsProvisionedList);
-
             var serverConfig = serverConfigs.local;
             driverRevTester = wd.promiseChainRemote(serverConfig);
             logging.configure(driverRevTester);
@@ -68,20 +67,20 @@ describe("Smoke Interceptor", function () {
                 .quit();
         });
 
-        it("should check that domain from 'BLACK' list won't return Rev Headers", function () {
+       it("should check that domain from 'WHITE' list will return Rev Headers", function () {
             return driverRevTester
                 .elementById(App.dropdown.operationModes)
                 .click()
-                .elementByXPath(App.list.operationModes.transfer_only)
+                .elementByXPath(App.list.operationModes.transfer_and_report)
                 .click()
                 .elementById(App.input.url)
-                .sendKeys(domainsBlackList[1])
+                .sendKeys(domainsWhiteList[1])
                 .elementById(App.button.send)
                 .click()
                 .sleep(5000)
                 .elementById(App.output.responseHeaders)
                 .then(function (els) {
-                    return els.text().should.not.eventually.include(headerRev)
+                    return els.text().should.eventually.include(headerRev)
                 })
         });
     });

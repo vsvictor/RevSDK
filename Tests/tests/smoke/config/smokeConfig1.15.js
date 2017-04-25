@@ -28,16 +28,23 @@ var wd = require("wd"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
-    Menu = require("./../../../page_objects/RevDemo/mainNavigation"),
-    ConfigurationPage = require("./../../../page_objects/RevDemo/configurationPage"),
+    App = require("./../../../page_objects/RevTester/mainPage"),
+    Settings = require("./../../../page_objects/RevTester/settingsWindow"),
     request = require("./../../../helpers/requests");
-wd.addPromiseChainMethod('swipe', actions.swipe);
+wd.addPromiseChainMethod('openSettings', actions.openSettings);
+wd.addPromiseChainMethod('closeSettings', actions.closeSettings);
+
+var driverRevTester = undefined;
+var serverConfig = serverConfigs.local;
+driverRevTester = wd.promiseChainRemote(serverConfig);
+logging.configure(driverRevTester);
+var desired = _.clone(caps.android19);
+desired.app = apps.androidTester;
 
 describe("Smoke Configuration", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
-    var driverRevTester = undefined;
-    var driverRevDemo = undefined;
+
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
     var portalAPIKey = config.get('portalAPIKey');
     var appId = config.get('appId');
@@ -45,133 +52,85 @@ describe("Smoke Configuration", function () {
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
     var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
-    var defaultConfig = config.get('defaultConfig');
+    var defaultConfigValues = config.get('defaultConfig');
 
     before(function () {
-        var serverConfig = serverConfigs.local;
-        driverRevTester = wd.promiseChainRemote(serverConfig);
-        logging.configure(driverRevTester);
-        var desired = _.clone(caps.android19);
-        desired.app = apps.androidTester;
-        //run RevTester then turn off the network using RevTester and then quit RevTester
+        //Run Rev Tester, turn on off the network, quit RevTester
         return driverRevTester
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
-            .sleep(1000)
-            .swipe({
-                startX: 600, startY: 50,
-                endX: 600, endY: 1000,
-                duration: 600
-            })
-            .sleep(3000)
-            .swipe({
-                startX: 100, startY: 275,
-                endX: 100, endY: 275,
-                duration: 350
-            })
-            .sleep(4000)
-            .swipe({
-                startX: 800, startY: 150,
-                endX: 800, endY: 150,
-                duration: 350
-            })
-            .sleep(3000)
-            .swipe({
-                startX: 300, startY: 2000,
-                endX: 300, endY: 50,
-                duration: 1000
-            })
-            .sleep(4000)
+            .openSettings()
+            .elementByXPath(Settings.button.networkImage)
+            .click()
+            .elementByClassName(Settings.checkBox.switchNetwork)
+            .click()
+            .closeSettings()
             .quit();
     });
 
     after(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
-        //turn on the network and quit RevDemo
-        return driverRevDemo
-            .sleep(1000)
-            .swipe({
-                startX: 600, startY: 50,
-                endX: 600, endY: 1000,
-                duration: 600
-            })
-            .sleep(3000)
-            .swipe({
-                startX: 100, startY: 275,
-                endX: 100, endY: 275,
-                duration: 350
-            })
-            .sleep(4000)
-            .swipe({
-                startX: 800, startY: 150,
-                endX: 800, endY: 150,
-                duration: 350
-            })
-            .sleep(3000)
-            .swipe({
-                startX: 300, startY: 2000,
-                endX: 300, endY: 50,
-                duration: 1500
-            })
-            .sleep(4000)
+        //turn on the network and quit RevTester
+        return driverRevTester
+            .openSettings()
+            .elementByXPath(Settings.button.networkImage)
+            .click()
+            .elementByClassName(Settings.checkBox.switchNetwork)
+            .click()
+            .closeSettings()
             .quit();
     });
 
 
     it("should have a defauld config on the first initizlization and cannot load config from API", function () {
-        //run RevDemo
-        var serverConfig = serverConfigs.local;
-        driverRevDemo = wd.promiseChainRemote(serverConfig);
-        logging.configure(driverRevDemo);
-        var desired = _.clone(caps.android19);
-        desired.app = apps.androidApiDemos;
+        //Run Nuubittester second time
         //check that it has default config
-        return driverRevDemo
+        return driverRevTester
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
-            .elementByClassName(Menu.menuBtn.button.className)
+            .elementByClassName(App.menuBtn.button)
             .click()
-            .elementByXPath(Menu.menuOptions.configurationView.xpath)
+            .elementByXPath(App.menuOptions.configurationView)
             .click()
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[2].text().should.become(defaultConfig.stats_reporting_interval_sec);
+                return els[2].text().should.become(defaultConfigValues.stats_reporting_interval_sec);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[4].text().should.become(defaultConfig.stats_reporting_level);
+                return els[4].text().should.become(defaultConfigValues.stats_reporting_level);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[6].text().should.become(defaultConfig.edge_failures_failover_threshold_percent);
+                return els[6].text().should.become(defaultConfigValues.edge_failures_failover_threshold_percent);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[8].text().should.become(defaultConfig.edge_quic_udp_port);
+                return els[8].text().should.become(defaultConfigValues.edge_quic_udp_port);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[10].text().should.become(defaultConfig.edge_data_receive_timeout_sec);
+                return els[10].text().should.become(defaultConfigValues.edge_data_receive_timeout_sec);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[12].text().should.become(defaultConfig.app_name);
+                return els[12].text().should.become(defaultConfigValues.app_name);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[14].text().should.become(defaultConfig.internal_domains_black_list);
+                return els[14].text().should.become(defaultConfigValues.internal_domains_black_list);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[16].text().should.become(defaultConfig.a_b_testing_origin_offload_ratio);
+                return els[16].text().should.become(defaultConfigValues.a_b_testing_origin_offload_ratio);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[18].text().should.become(defaultConfig.sdk_release_version);
+                return els[18].text().should.become(defaultConfigValues.sdk_release_version);
             })
-            .elementsByXPath(ConfigurationPage.lists.config.xpath)
+            .elementsByXPath(App.list.config)
             .then(function (els) {
-                return els[20].text().should.become(defaultConfig.transport_monitoring_url);
+                return els[20].text().should.become(defaultConfigValues.transport_monitoring_url);
             });
     });
 });

@@ -54,3 +54,36 @@ exports.zoom = function (el) {
     return m.perform();
   }.bind(this));
 };
+
+exports.openSettings = function () {
+    var action = new wd.TouchAction();
+    var opts = {startX:500, endX:500, startY:50, endY:1500, duration:600}
+    action
+        .press({x: opts.startX, y: opts.startY})
+        .wait(opts.duration)
+        .moveTo({x: opts.endX, y: opts.endY})
+        .release()
+    return this.performTouchAction(action);
+};
+
+exports.closeSettings = function () {
+    var action = new wd.TouchAction();
+    var opts = {startX:500, endX:500, startY:1500, endY:50, duration:600}
+    action
+        .press({x: opts.startX, y: opts.startY})
+        .wait(opts.duration)
+        .moveTo({x: opts.endX, y: opts.endY})
+        .release()
+    return this.performTouchAction(action);
+};
+
+exports.scrollDown = function () {
+    var action = new wd.TouchAction();
+    var opts = {startX:500, endX:500, startY:2300, endY:300, duration:500}
+    action
+        .press({x: opts.startX, y: opts.startY})
+        .wait(opts.duration)
+        .moveTo({x: opts.endX, y: opts.endY})
+        .release()
+    return this.performTouchAction(action);
+};

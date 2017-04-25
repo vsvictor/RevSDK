@@ -22,69 +22,73 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    config = require("config"),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
+    config = require("config"),
     logging = require("./../../../helpers/logging"),
     apps = require("./../../../helpers/apps"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
 
-describe("Smoke Configuration", function () {
+describe("Functional Config", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
-    var driver = undefined;
+    var driverRevTester = undefined;
+    var implicitWaitTimeout = config.get('implicitWaitTimeout');
     var portalAPIKey = config.get('portalAPIKey');
-    var appId = config.get('appId');
+    var appIdTester = config.get('appIdTester');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds84 = config.get('statsReportingIntervalSeconds84');
+    var domainsBlackList = config.get('domainsBlackList');
+    var domainsWhiteList = config.get('domainsWhiteList');
+    var headerRev = config.get('headerRev');
     var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
+    var halfConfigurationRefreshInterval = configurationRefreshIntervalMilliSec / 2;
 
     before(function () {
+        request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         var serverConfig = serverConfigs.local;
-        driver = wd.promiseChainRemote(serverConfig);
-        logging.configure(driver);
+        driverRevTester = wd.promiseChainRemote(serverConfig);
+        logging.configure(driverRevTester);
         var desired = _.clone(caps.android19);
         desired.app = apps.androidTester;
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
-        return driver
+        return driverRevTester
+            .sleep(10000)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
-        return driver
+        request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        return driverRevTester
             .quit();
     });
 
-    it("should check that config reloads after config_refresh interval*2 secs", function () {
-        var halfConfigRefreshInterval = configurationRefreshIntervalMilliSec / 2;
-        //change config on API after a minute
-        setTimeout(function () {
-            request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds84);
-        }, configurationRefreshIntervalMilliSec);
-        //check that sdk will load new config after config_refresh interval*2 secs
-        return driver
-            .sleep(halfConfigRefreshInterval)
-            .elementByClassName(App.menuBtn.button)
+   it("should check that new loaded config is used, not default", function () {
+        return driverRevTester
+            .sleep(1000)
+            .then(function () {
+                request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+                    domainsWhiteList, domainsBlackList, []);
+            })
+            .elementById(App.dropdown.operationModes)
             .click()
-            .sleep(halfConfigRefreshInterval)
-            .elementByXPath(App.menuOptions.configurationView)
+            .sleep(halfConfigurationRefreshInterval)
+            .elementByXPath(App.list.operationModes.transfer_only)
             .click()
-            .sleep(halfConfigRefreshInterval)
-            .elementByClassName(App.menuBtn.button)
+            .sleep(halfConfigurationRefreshInterval)
+            .elementById(App.input.url)
+            .sendKeys(domainsBlackList[1])
+            .elementById(App.button.send)
             .click()
-            .sleep(halfConfigRefreshInterval + 3000)
-            .elementByXPath(App.menuOptions.configurationView)
-            .click()
-            .elementsByXPath(App.list.config)
+            .sleep(5000)
+            .elementById(App.output.responseHeaders)
             .then(function (els) {
-                return els[2].text().should.become(statsReportingIntervalSeconds84.toString());
-            });
+                return els.text().should.not.eventually.include(headerRev)
+            })
     });
 });
+
 

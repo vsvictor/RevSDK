@@ -22,7 +22,7 @@ require("./../../../helpers/setup");
 
 var wd = require("wd"),
     _ = require('underscore'),
-    config = require("config"),
+    config = require('config'),
     actions = require("./../../../helpers/actions"),
     serverConfigs = require('./../../../helpers/appium-servers'),
     logging = require("./../../../helpers/logging"),
@@ -30,61 +30,67 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     request = require("./../../../helpers/requests");
+wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 
-describe("Smoke Configuration", function () {
+describe("Smoke Stats", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
-    var driver = undefined;
-    var portalAPIKey = config.get('portalAPIKey');
-    var appId = config.get('appId');
-    var accountId = config.get('accountId');
+    var driverRevTester = undefined;
+    var httpWebsite = config.get('httpWebsite');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds84 = config.get('statsReportingIntervalSeconds84');
-    var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
+    var appId = config.get('appId');
+    var portalAPIKey = config.get('portalAPIKey');
+    var accountId = config.get('accountId');
 
     before(function () {
         var serverConfig = serverConfigs.local;
-        driver = wd.promiseChainRemote(serverConfig);
-        logging.configure(driver);
+        driverRevTester = wd.promiseChainRemote(serverConfig);
+        logging.configure(driverRevTester);
         var desired = _.clone(caps.android19);
         desired.app = apps.androidTester;
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
-        return driver
+        return driverRevTester
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
-        return driver
+        return driverRevTester
             .quit();
     });
 
-    it("should check that config reloads after config_refresh interval*2 secs", function () {
-        var halfConfigRefreshInterval = configurationRefreshIntervalMilliSec / 2;
-        //change config on API after a minute
-        setTimeout(function () {
-            request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds84);
-        }, configurationRefreshIntervalMilliSec);
-        //check that sdk will load new config after config_refresh interval*2 secs
-        return driver
-            .sleep(halfConfigRefreshInterval)
+    it("should collect stats when we send requests", function () {
+        return driverRevTester
+            .elementById(App.dropdown.operationModes)
+            .click()
+            .elementByXPath(App.list.operationModes.transfer_and_report)
+            .click()
+            .elementById(App.input.url)
+            .sendKeys(httpWebsite)
+            .elementById(App.button.send)
+            .click()
             .elementByClassName(App.menuBtn.button)
             .click()
-            .sleep(halfConfigRefreshInterval)
-            .elementByXPath(App.menuOptions.configurationView)
+            .elementByXPath(App.menuOptions.statsView)
             .click()
-            .sleep(halfConfigRefreshInterval)
-            .elementByClassName(App.menuBtn.button)
-            .click()
-            .sleep(halfConfigRefreshInterval + 3000)
-            .elementByXPath(App.menuOptions.configurationView)
-            .click()
-            .elementsByXPath(App.list.config)
+            .sleep(2000)
+            .scrollDown()
+            .scrollDown()
+            .scrollDown()
+            .scrollDown()
+            .sleep(5000)
+            .elementsByXPath(App.list.stats)
             .then(function (els) {
-                return els[2].text().should.become(statsReportingIntervalSeconds84.toString());
+                return els[21].text();
+            })
+            .then(function (el21) {
+                var revRequestsValue = Number(el21);
+                return revRequestsValue.should.be.above(0);
             });
     });
 });
+
+
+
 

@@ -70,6 +70,195 @@
             android:alpha="0.85"
             android:background="@drawable/background_data">
 
+            <RelativeLayout
+                android:id="@+id/rlCount10"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount10"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_10"
+                    android:layout_toRightOf="@id/tvCount10"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlCount100"
+                android:layout_below="@id/rlCount10"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount100"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_100"
+                    android:layout_toRightOf="@id/tvCount100"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlCount1000"
+                android:layout_below="@id/rlCount100"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount1000"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_1000"
+                    android:layout_toRightOf="@id/tvCount1000"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_1000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlCount10000"
+                android:layout_below="@id/rlCount1000"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount10000"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_10000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_10000"
+                    android:layout_toRightOf="@id/tvCount10000"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_10000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlCount100000"
+                android:layout_below="@id/rlCount10000"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount100000"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_100000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_100000"
+                    android:layout_toRightOf="@id/tvCount100000"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_100000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlCount1000000"
+                android:layout_below="@id/rlCount100000"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount1000000"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_1000000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_1000000"
+                    android:layout_toRightOf="@id/tvCount1000000"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_1000000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rlCount10000000"
+                android:layout_below="@id/rlCount1000000"
+                android:layout_marginTop="@dimen/middle"
+                android:layout_marginLeft="@dimen/middle"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCount10000000"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/count_10000000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvText_10000000"
+                    android:layout_toRightOf="@id/tvCount10000000"
+                    android:layout_marginLeft="@dimen/small"
+                    android:text="@string/count_10000000"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlGenerate"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/middle"
+                android:background="@drawable/background_gray">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/generate"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/middle_font_size" />
+
+            </RelativeLayout>
+
         </RelativeLayout>
 
 

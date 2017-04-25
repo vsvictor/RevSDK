@@ -105,3 +105,4 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
         console.log(body);
     });
 };
+

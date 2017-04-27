@@ -169,7 +169,7 @@ public class StandardProtocol extends Protocol {
         public void onRequest(RequestOne req){
             if (!isSystem(original) && isStatistic()) {
                 save(req);
-                Log.i("REQESTONE", req.toString());
+                //Log.i("REQESTONE", req.toString());
             }
 
         }

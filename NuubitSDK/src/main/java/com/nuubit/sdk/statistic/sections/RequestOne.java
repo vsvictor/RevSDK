@@ -147,10 +147,10 @@ public class RequestOne extends Data implements Parcelable {
         result.setFirstByteTime(firstByte);
         result.setEndTS(endTime);
 
-        Log.i("FIRSTBYTETIME", "ST: "+String.valueOf(result.getStartTS()));
-        Log.i("FIRSTBYTETIME", "FB: "+String.valueOf(result.getFirstByteTime()));
-        Log.i("FIRSTBYTETIME", "ET: "+String.valueOf(result.getEndTS()));
-        Log.i("FIRSTBYTETIME", "CHECK: "+String.valueOf((result.getFirstByteTime()>result.getStartTS()) && (result.getFirstByteTime()<result.getEndTS())));
+        //Log.i("FIRSTBYTETIME", "ST: "+String.valueOf(result.getStartTS()));
+        //Log.i("FIRSTBYTETIME", "FB: "+String.valueOf(result.getFirstByteTime()));
+        //Log.i("FIRSTBYTETIME", "ET: "+String.valueOf(result.getEndTS()));
+        //Log.i("FIRSTBYTETIME", "CHECK: "+String.valueOf((result.getFirstByteTime()>result.getStartTS()) && (result.getFirstByteTime()<result.getEndTS())));
 
         result.setKeepAliveStatus(1);
         result.setLocalCacheStatus(response == null ? NuubitConstants.UNDEFINED : response.cacheControl().toString());
@@ -180,12 +180,12 @@ public class RequestOne extends Data implements Parcelable {
         result.setSuccessStatus(response == null ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDART);
         result.setURL(original.url().toString());
-        Log.i(TAG, getDest());
+        //Log.i(TAG, getDest());
         result.setDestination(getDest());
-        Log.i(TAG, NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode().toString());
+        //Log.i(TAG, NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode().toString());
         String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
-        Log.i(TAG, original.url().host());
+        //Log.i(TAG, original.url().host());
         result.setDomain(original.url().host());
 
         return result;

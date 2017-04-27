@@ -68,11 +68,10 @@ public class RequestCreator {
     }
 
     private Request transfer(Request original) {
-
         if (checker.isInternalBlack(original) || checker.isBlack(original)) {
             return original;
         }
-
+        int r = 0;
         if (checker.isWhite(original)) {
             Request.Builder builder = new Request.Builder();
             HttpUrl oldURL = original.url();
@@ -88,7 +87,10 @@ public class RequestCreator {
             builder.url(newURL).headers(addAllHeaders(original)).method(original.method(), original.body());
             return builder.build();
         }
-        return original;
+        else {
+            int t = 0;
+            return original;
+        }
     }
     private Headers addAllHeaders(Request original){
         Headers.Builder builder = new Headers.Builder();

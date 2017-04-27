@@ -94,7 +94,7 @@ public class ProgressResponseBody extends ResponseBody {
                     req.setEndTS(lastByteTime);
                     progressListener.onRequest(req);
                     progressListener.lastByteTime(lastByteTime);
-                    Log.i("REQESTONE", "Read "+String.valueOf(bytesRead));
+                    //Log.i("REQESTONE", "Read "+String.valueOf(bytesRead));
                     lastStep = true;
                 }
                 return bytesRead;

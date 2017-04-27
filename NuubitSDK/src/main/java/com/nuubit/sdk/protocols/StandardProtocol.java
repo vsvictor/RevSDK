@@ -77,13 +77,13 @@ public class StandardProtocol extends Protocol {
         response = null;
         beginTime = 0;
         endTime = 0;
-        ProgressResponseBody pb = null;
+        //ProgressResponseBody pb = null;
         try {
             beginTime = System.currentTimeMillis();
             Response resp = chain.proceed(result);
-
+            RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
             response = resp.newBuilder()
-                    .body(pb = new ProgressResponseBody(resp.body(), listener))
+                    .body(new ProgressResponseBody(resp.body(), listener, req))
                     .build();
 
             endTime = System.currentTimeMillis();
@@ -153,13 +153,24 @@ public class StandardProtocol extends Protocol {
 
         @Override
         public void firstByteTime(long time) {
+/*
             if (!isSystem(original) && isStatistic()) {
                 save(original, result, response, EnumProtocol.STANDART, beginTime, endTime, time);
             }
+*/
         }
 
         @Override
         public void lastByteTime(long time) {
+
+        }
+
+        @Override
+        public void onRequest(RequestOne req){
+            if (!isSystem(original) && isStatistic()) {
+                save(req);
+                Log.i("REQESTONE", req.toString());
+            }
 
         }
     };

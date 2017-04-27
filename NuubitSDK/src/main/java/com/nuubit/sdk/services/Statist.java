@@ -123,11 +123,14 @@ public class Statist extends IntentService {
                 reason = "I/O exception";
                 ex.printStackTrace();
             }
+        } {
+            reason = NuubitConstants.STAT_NO_REQUEST;
+            resCode = HTTPCode.OK;
         }
         Intent statIntent = new Intent(NuubitActions.STAT_ACTION);
         statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
         statIntent.putExtra(NuubitConstants.STAT_REQUESTS_COUNT, count);
-        statIntent.putExtra(NuubitConstants.STATISTIC, "Test");
+        statIntent.putExtra(NuubitConstants.STATISTIC, String.valueOf(statistic.getRequests().size()+" requests sent"));
         statIntent.putExtra(NuubitConstants.STAT_LAST_TIME_SUCCESS, lastTimeSuccess);
         statIntent.putExtra(NuubitConstants.STAT_LAST_TIME_FAIL, lastTimeFail);
         statIntent.putExtra(NuubitConstants.STAT_LAST_FAIL_REASON, reason);

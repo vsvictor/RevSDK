@@ -26,6 +26,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
@@ -35,6 +36,7 @@ import com.nuubit.sdk.types.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -402,5 +404,11 @@ public class RequestOne extends Data implements Parcelable {
         dest.writeString(destination);
         dest.writeString(xRevCach);
         dest.writeString(domain);
+    }
+
+    public String toString(){
+        Gson gson = NuubitSDK.gsonCreate();
+        String s = gson.toJson(this, RequestOne.class);
+        return s;
     }
 }

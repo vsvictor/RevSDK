@@ -566,6 +566,7 @@ public class NuubitApplication extends Application implements
                         statsCounters.addRequestUploaded();
                         statsCounters.addRequestCount(countReq);
                         statsCounters.setLastSuccessTime(lastSuccess);
+                        Log.i(TAG + " statistic receiver", "Response: success " + sResponce);
                     } else {
                         sResponce = resCode.getMessage();
                         long lastFail = bundle.getLong(NuubitConstants.STAT_LAST_TIME_FAIL, new Long(0));
@@ -573,8 +574,9 @@ public class NuubitApplication extends Application implements
                         statsCounters.addStatRequestFailed();
                         statsCounters.setLastFailTime(lastFail);
                         statsCounters.setLastFailReason(reason);
+                        Log.i(TAG + " statistic receiver", "Response: fail " + sResponce);
                     }
-                    Log.i(TAG + " statistic receiver", "Response: " + sResponce);
+
                 }
                 if (NuubitSDK.isStatistic()) {
                     while (statTimer != null) {

@@ -88,4 +88,21 @@ public abstract class Protocol implements OnFuncProtocol {
             ex.printStackTrace();
         }
     }
+
+    public void save(RequestOne req){
+        //RequestOne statRequest = null;
+        try {
+            //statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, firsByteTime);
+            NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), req));
+            Log.i("database", req.toString());
+            counter.addSuccessRequest();
+            //counter.addReceive(getResponseSize(response));
+        } catch (NullPointerException ex) {
+            //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
+            Log.i("database", "Standart exception Database error!!!");
+            counter.addFailRequest();
+            ex.printStackTrace();
+        }
+    }
+
 }

@@ -132,14 +132,16 @@ public class NuubitSDK {
                 .addInterceptor(new NuubitInterceptor())
                 .connectTimeout(timeoutSec, TimeUnit.SECONDS)
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
+                .cache(null)
                 .followRedirects(followRedirect)
                 .followSslRedirects(followSllRedirect).cookieJar(cookie);
         client  = httpClient.build();
-
+/*
         List<Interceptor> inter = client.interceptors();
         for(Interceptor in : inter){
             Log.i("INTERCEPTOR", in.toString());
         }
+*/
         return client;
     }
 

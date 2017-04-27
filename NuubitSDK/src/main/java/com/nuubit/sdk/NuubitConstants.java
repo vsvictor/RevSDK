@@ -113,6 +113,8 @@ public class NuubitConstants {
     public static final String STAT_LAST_TIME_FAIL = "lastFailTime";
     public static final String STAT_LAST_FAIL_REASON = "lastFailReason";
 
+    public static final String STAT_NO_REQUEST = "No requests for send";
+
     public static final String TOTAL_REQUEST = "totalRequest";
     public static final String TOTAL_FAIL = "totalFail";
     public static final String TOTAL_KB_RECEIVED = "totalKBReceived";

@@ -44,6 +44,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -244,6 +245,11 @@ public class NuubitWebViewClient extends WebViewClient {
                 "    return true;\n" +
                 "};\n";
         return sBuf;
+    }
+
+    public interface OnURLChanged {
+        void onURLChanged(HttpUrl url);
+        void onURLChanged(String url);
     }
 
 }

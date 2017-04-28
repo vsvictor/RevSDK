@@ -34,6 +34,8 @@ import com.nuubit.racer.model.Row;
 import com.nuubit.racer.model.Table;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.interseptor.ProgressResponseBody;
+import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
 import com.nuubit.sdk.views.CountersFragment;
@@ -450,17 +452,44 @@ public class ResultActivity extends AppCompatActivity implements
     private class Getter extends AsyncTask<Request, Void, Row> {
         private long bodySize = 0;
         private boolean serv;
+        private Response response;
+        private Response resp;
+        private ProgressResponseBody.ProgressListener listener;
 
         public Getter(long bodySize, boolean serv) {
             this.bodySize = bodySize;
             this.serv = serv;
         }
 
+        protected void onPreExecute(){
+            listener = new ProgressResponseBody.ProgressListener() {
+                @Override
+                public void update(long bytesRead, long contentLength, boolean done) {
+
+                }
+
+                @Override
+                public void firstByteTime(long time) {
+
+                }
+
+                @Override
+                public void lastByteTime(long time) {
+
+                }
+
+                @Override
+                public void onRequest(RequestOne res) {
+
+                }
+            };
+        }
+
         @Override
         protected Row doInBackground(Request... params) {
             Request req = params[0];
             HTTPCode res = HTTPCode.UNDEFINED;
-            Response response = null;
+            response = null;
             do {
                 if (res.getType() == HTTPCode.Type.REDIRECTION) {
                     Request.Builder builder = new Request.Builder();
@@ -478,7 +507,8 @@ public class ResultActivity extends AppCompatActivity implements
                 }
                 Call callback = client.newCall(req);
                 try {
-                    response = callback.execute();
+                    resp = callback.execute();
+                    response = resp.newBuilder().body(new ProgressResponseBody(resp.body(),listener)).build();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -550,5 +580,4 @@ public class ResultActivity extends AppCompatActivity implements
             }
         }
     }
-
 }

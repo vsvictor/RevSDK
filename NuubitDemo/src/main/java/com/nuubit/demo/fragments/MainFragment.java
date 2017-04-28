@@ -57,7 +57,6 @@ public class MainFragment extends Fragment {
     private WebView wvMain;
     private RelativeLayout rlRun;
 
-
     public MainFragment() {
     }
 
@@ -80,8 +79,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setTexpb.getFirstByteTime()t("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        //edQuery.setText("google.com.ua");
-        edQuery.setText("youtube.com");
+        edQuery.setText("google.com.ua");
+        //edQuery.setText("youtube.com");
         //edQuery.setText("https://monitor.revsw.net/1M.jpg");
         //edQuery.setText("mail.ru");
         //edQuery.setText("http://httpbin.org/status/500");
@@ -144,6 +143,15 @@ public class MainFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             final String url = params[0];
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    HttpUrl eURL = HttpUrl.parse(url);
+                    if(eURL != null) {
+                        edQuery.setText(eURL.toString());
+                    }
+                }
+            });
             currURL = url;
             Response response = null;
             String body = null;
@@ -193,7 +201,6 @@ public class MainFragment extends Fragment {
         @Override
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
-            edQuery.setText(currURL);
             //edQuery.setText("http://httpbin.org/status/500");
         }
     }

@@ -184,10 +184,10 @@ public class NuubitApplication extends Application implements
             version = "1.0";
         }
         sdkKey = getKeyFromManifest();
-        requestCounter.load(share);
-        configCounters.load(share);
-        lmMonitorCounters.load(share);
-        statsCounters.load(share);
+        //requestCounter.load(share);
+        //configCounters.load(share);
+        //lmMonitorCounters.load(share);
+        //statsCounters.load(share);
         config = Config.load(NuubitSDK.gsonCreate(), share);
         if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();

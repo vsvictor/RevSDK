@@ -22,8 +22,10 @@ package com.nuubit.sdk.web;
  * /
  */
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
@@ -59,6 +61,8 @@ public class NuubitWebViewClient extends WebViewClient {
     private OkHttpClient client;
 
     private String sData;
+
+    private OnURLChanged listener;
 /*
     private class JavaScriptInterface {
         private final String TAG = JavaScriptInterface.class.getSimpleName();
@@ -90,35 +94,43 @@ public class NuubitWebViewClient extends WebViewClient {
     public NuubitWebViewClient() {
         this(NuubitSDK.OkHttpCreate());
     }
-/*
     @Override
-    public void onPageFinished(WebView view, String url) {
-        try {
-            view.loadUrl("javascript:" + buildInjection());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void onPageFinished(WebView view, String url)
+    {
+        super.onPageFinished(view, url);
+        String url_new = view.getUrl();
+        if(listener != null && url_new != null){
+            listener.onURLChanged(url_new);
         }
-
     }
 
     @Override
-    public void onFormResubmission(WebView view, Message dontResend, Message resend){
-        Log.i("FormResubmission",dontResend.toString());
-        Log.i("FormResubmission", resend.toString());
+    public void onPageStarted(WebView view, String url, Bitmap favicon)
+    {
+        super.onPageStarted(view, url, favicon);
+        String url_new = view.getUrl();
+        if(listener != null && url_new != null){
+            listener.onURLChanged(url_new);
+        }
     }
-*/
+
+    public void setOnURLChangeListener(OnURLChanged listener){
+        this.listener = listener;
+    }
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
         WebResourсeRequestDefault request = new WebResourсeRequestDefault(Uri.parse(url));
         return handleRequest(request);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    //@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
         return handleRequest(request);
     }
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    //@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     @NonNull
     private WebResourceResponse handleRequest(WebResourceRequest aRequest) {
         int redirectCounter = 0;
@@ -199,56 +211,20 @@ public class NuubitWebViewClient extends WebViewClient {
             e.printStackTrace();
         }
 
-
         try {
-            //String ss = new String(response.body().bytes());
             result = new WebResourceResponse(
                     response.header("content-type", ct),
                     response.header("content-encoding", cp),
                     response.body().byteStream());
         } catch (NullPointerException ex) {
             result = null;
-        } /*catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        }
         result.setMimeType(ct);
         result.setEncoding(cp);
         return result;
     }
 
-/*
-    private String buildInjection() throws IOException {
-        String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
-                "    var objPWD, objAccount, objSave;\n" +
-                "    var str = '';\n" +
-                "    var inputs = document.querySelectorAll('form input[type=\"text\"], form input[type=\"password\"], form input[type=\"email\"]');\n" +
-                "    for (var i = 0; i < inputs.length; i++) {\n" +
-                "       str += inputs[i].name+'='+inputs[i].value; \n"+
-                "       if(i!=inputs.length-1) str+='&'"+
-                "    }\n" +
-                "    AndroidInterface.processHTML(str);\n" +
-                "    return true;\n" +
-                "};\n";
-        return sBuf;
-    }
-*/
-    private String buildInjection() throws IOException {
-        String sBuf = "document.getElementsByTagName('form')[0].onsubmit = function () {\n" +
-                "    var objPWD, objAccount, objSave;\n" +
-                "    var str = '';\n" +
-                "    var inputs = document.querySelectorAll('form input[type=\"text\"], form input[type=\"password\"], form input[type=\"email\"], form input[type=\"hidden\"]');\n" +
-                "    for (var i = 0; i < inputs.length; i++) {\n" +
-                "       str += inputs[i].name+'='+inputs[i].value; \n"+
-                "       if(i!=inputs.length-1) str+='&'"+
-                "    }\n" +
-                "    AndroidInterface.processHTML(str);\n" +
-                "    return true;\n" +
-                "};\n";
-        return sBuf;
-    }
-
     public interface OnURLChanged {
-        void onURLChanged(HttpUrl url);
         void onURLChanged(String url);
     }
 

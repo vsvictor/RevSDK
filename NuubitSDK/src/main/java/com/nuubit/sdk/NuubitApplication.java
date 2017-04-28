@@ -84,6 +84,7 @@ public class NuubitApplication extends Application implements
     private Protocol best = new StandardProtocol();
 
     //private boolean configuratorRunning = false;
+    private Activity currentActivity;
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
@@ -201,6 +202,7 @@ public class NuubitApplication extends Application implements
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                currentActivity = activity;
                 RequestUserPermission.verifyPermissionsInternet(activity);
                 RequestUserPermission.verifyPermissionsReadPhoneState(activity);
                 RequestUserPermission.verifyPermissionsAccessNetworkState(activity);
@@ -209,11 +211,13 @@ public class NuubitApplication extends Application implements
 
             @Override
             public void onActivityStarted(Activity activity) {
+                currentActivity = activity;
                 googleClient.connect();
             }
 
             @Override
             public void onActivityResumed(Activity activity) {
+                currentActivity = activity;
                 registration();
                 configuratorRunner(true);
                 //testerRunner();
@@ -235,22 +239,23 @@ public class NuubitApplication extends Application implements
 
             @Override
             public void onActivityPaused(Activity activity) {
+                currentActivity = activity;
                 shutdown();
             }
 
             @Override
             public void onActivityStopped(Activity activity) {
-
+                currentActivity = activity;
             }
 
             @Override
             public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
+                currentActivity = activity;
             }
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-
+                currentActivity = activity;
             }
         });
 
@@ -308,6 +313,10 @@ public class NuubitApplication extends Application implements
 
     public DBHelper getDatabase() {
         return dbHelper;
+    }
+
+    public Activity getCurrentActivity() {
+        return currentActivity;
     }
 
     public synchronized void removeProtocol(Protocol protocol) {

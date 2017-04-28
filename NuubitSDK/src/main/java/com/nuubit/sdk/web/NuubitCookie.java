@@ -1,5 +1,6 @@
 package com.nuubit.sdk.web;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.webkit.CookieManager;
@@ -71,7 +72,8 @@ public class NuubitCookie implements CookieJar {
 
         return Collections.emptyList();
     }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     public void setAcceptThirdPartyCookies(WebView view, boolean isEnable){
         webviewCookieManager.setAcceptThirdPartyCookies(view, isEnable);
     }

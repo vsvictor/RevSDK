@@ -13,10 +13,12 @@ import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.nuubit.demo.R;
+import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.protocols.HTTPException;
 import com.nuubit.sdk.types.HTTPCode;
+import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import java.io.IOException;
 
@@ -85,7 +87,22 @@ public class MainFragment extends Fragment {
         //edQuery.setText("mail.ru");
         //edQuery.setText("http://httpbin.org/status/500");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
-        wvMain.setWebViewClient(NuubitSDK.createWebViewClient(getActivity(), wvMain, client));
+        final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(getActivity(), wvMain, client);
+
+        webClient.setOnURLChangeListener(new NuubitWebViewClient.OnURLChanged() {
+            @Override
+            public void onURLChanged(final String url) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        edQuery.setText(url);
+                    }
+                });
+            }
+        });
+
+        wvMain.setWebViewClient(webClient);
         wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
 
         rlRun = (RelativeLayout) view.findViewById(R.id.rlRun);
@@ -101,7 +118,7 @@ public class MainFragment extends Fragment {
 
                     } catch (NullPointerException ex) {
                         newURL = "http://" + url;
-                        edQuery.setText(newURL);
+                        //edQuery.setText(newURL);
                     }
 
                     new Reader().execute(newURL);
@@ -143,15 +160,6 @@ public class MainFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             final String url = params[0];
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    HttpUrl eURL = HttpUrl.parse(url);
-                    if(eURL != null) {
-                        edQuery.setText(eURL.toString());
-                    }
-                }
-            });
             currURL = url;
             Response response = null;
             String body = null;
@@ -178,6 +186,7 @@ public class MainFragment extends Fragment {
 
                     body = response.body().string();
                     final String endURL = location == null ? url : location;
+/*
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -187,6 +196,7 @@ public class MainFragment extends Fragment {
                             }
                         }
                     });
+*/
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ex) {

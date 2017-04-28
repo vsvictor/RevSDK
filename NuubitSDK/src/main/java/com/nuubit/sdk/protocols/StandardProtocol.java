@@ -168,6 +168,9 @@ public class StandardProtocol extends Protocol {
         @Override
         public void onRequest(RequestOne req){
             if (!isSystem(original) && isStatistic()) {
+                if(req.getFirstByteTime() == 0){
+                    req.setFirstByteTime(req.getEndTS());
+                }
                 save(req);
                 //Log.i("REQESTONE", req.toString());
             }

@@ -61,7 +61,7 @@ public class StandardProtocol extends Protocol {
     private long beginTime;
     private long endTime;
     public StandardProtocol() {
-        this.descroption = EnumProtocol.STANDART;
+        this.descroption = EnumProtocol.STANDARD;
         counter = new ProtocolCounters(this.descroption);
     }
 
@@ -87,10 +87,12 @@ public class StandardProtocol extends Protocol {
             beginTime = System.currentTimeMillis();
             Response resp = chain.proceed(result);
             RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
+            req.setStatusCode(resp.code());
             response = resp.newBuilder()
                     .body(new ProgressResponseBody(resp.body(), listener, req))
                     .build();
 
+            //RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
             endTime = System.currentTimeMillis();
             if (response == null) {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
@@ -104,7 +106,7 @@ public class StandardProtocol extends Protocol {
                 this.zeroing();
             }
         } catch (IOException ex){
-            NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
             ex.printStackTrace();
             Log.i("Timeout", ex.getMessage()+" my timeout");
         } catch (HTTPException ex) {
@@ -115,22 +117,19 @@ public class StandardProtocol extends Protocol {
                 NuubitApplication.getInstance().sendBroadcast(new Intent(NuubitActions.RETEST));
                 this.zeroing();
             }
-            NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
             ex.printStackTrace();
         }
-        //Log.i(TAG, "Response:" + response.toString());
-        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDART);
-        NuubitApplication.getInstance().getProtocolCounters().get("standart").addSuccessRequest();
-        NuubitApplication.getInstance().getProtocolCounters().get("standart").addSent(reqBodySize);
+        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
+        NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
+        NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
 
-        //long respSize = response.body().source().buffer().clone().size();
-        //NuubitApplication.getInstance().getProtocolCounters().get("standart").addReceive(respSize);
         return response;
     }
 
     @Override
     public TestOneProtocol test(String url) {
-        TestOneProtocol res = new TestOneProtocol(EnumProtocol.STANDART);
+        TestOneProtocol res = new TestOneProtocol(EnumProtocol.STANDARD);
         Request.Builder builder = new Request.Builder();
         builder.url(url).tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true));
         builder.url(url);
@@ -162,11 +161,6 @@ public class StandardProtocol extends Protocol {
 
         @Override
         public void firstByteTime(long time) {
-/*
-            if (!isSystem(original) && isStatistic()) {
-                save(original, result, response, EnumProtocol.STANDART, beginTime, endTime, time);
-            }
-*/
         }
 
         @Override
@@ -176,15 +170,14 @@ public class StandardProtocol extends Protocol {
 
         @Override
         public void onRequest(RequestOne req){
-            NuubitApplication.getInstance().getProtocolCounters().get("standart").addSent(req.getSentBytes());
-            NuubitApplication.getInstance().getProtocolCounters().get("standart").addReceive(req.getReceivedBytes());
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(req.getSentBytes());
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addReceive(req.getReceivedBytes());
             Log.i("ZERROFBT","Request");
             if(req.getFirstByteTime() == 0){
                 Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
                 req.setFirstByteTime(req.getEndTS());
                 Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
             }
-
             save(req);
 /*
             if (!isSystem(original) && isStatistic()) {

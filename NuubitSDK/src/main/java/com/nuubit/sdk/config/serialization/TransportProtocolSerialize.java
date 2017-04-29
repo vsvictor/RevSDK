@@ -38,7 +38,7 @@ public class TransportProtocolSerialize implements JsonSerializer<ListProtocol> 
         for (EnumProtocol enumProtocol : src) {
             String s = null;
             switch (enumProtocol) {
-                case  STANDART: {s="standard";break;}
+                case  STANDARD: {s="standard";break;}
                 case  QUIC: {s="quic";break;}
                 case RMP: {
                     s = "rmp";

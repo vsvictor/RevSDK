@@ -104,7 +104,7 @@
     <string name="with_sdk">with SDK</string>
     <string name="body">Body query...</string>
     <string name="headers">Headers query\n(name=value, space seperate</string>
-    <string name="add_headers">Add standart headers</string>
+    <string name="add_headers">Add standard headers</string>
     <string name="host">Host</string>
     <string name="x_rev_host">X-Rev-Host</string>
     <string name="x_rev_proto">X-Rev-Proto</string>

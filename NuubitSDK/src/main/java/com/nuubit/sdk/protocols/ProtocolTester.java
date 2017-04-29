@@ -49,6 +49,6 @@ public class ProtocolTester extends Thread {
     }
 
     public EnumProtocol getBest() {
-        return EnumProtocol.STANDART;
+        return EnumProtocol.STANDARD;
     }
 }

@@ -65,8 +65,8 @@ public class ConfigParamenetrs {
         edge_host = NuubitConstants.DEFAULT_EDGE_HOST;
         operation_mode = OperationMode.off;
         allowed_transport_protocols = new ListProtocol();
-        allowed_transport_protocols.add(EnumProtocol.STANDART);
-        initial_transport_protocol = EnumProtocol.STANDART.toString();
+        allowed_transport_protocols.add(EnumProtocol.STANDARD);
+        initial_transport_protocol = EnumProtocol.STANDARD.toString();
         transport_monitoring_url = NuubitConstants.DEFAULT_TRANSPORT_MONITORING_URL;
         stats_reporting_url = NuubitConstants.DEFAULT_STATS_REPORTING_URL;
         stats_reporting_interval_sec = NuubitConstants.DEFAULT_STATS_REPORTING_INTERVAL;

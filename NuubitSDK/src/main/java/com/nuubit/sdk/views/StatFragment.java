@@ -85,22 +85,6 @@ public class StatFragment extends Fragment {
         RecyclerView rvWiFi = (RecyclerView) view.findViewById(R.id.rvWiFi);
         rvWiFi.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvWiFi.setAdapter(new PairAdapter(getActivity(), stat.getWifi().toArray(), PairAdapter.listener));
-/*
-        ProtocolCounters standart = NuubitApplication.getInstance().getProtocolCounters().get("standart");
-        RecyclerView rvProtocolStandart = (RecyclerView) view.findViewById(R.id.rvProtocolStandart);
-        rvProtocolStandart.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvProtocolStandart.setAdapter(new PairAdapter(getActivity(), standart.toArray(), PairAdapter.listener));
-
-        ProtocolCounters quic = NuubitApplication.getInstance().getProtocolCounters().get("quic");
-        RecyclerView rvProtocolQUIC = (RecyclerView) view.findViewById(R.id.rvProtocolQUIC);
-        rvProtocolQUIC.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvProtocolQUIC.setAdapter(new PairAdapter(getActivity(), quic.toArray(), PairAdapter.listener));
-
-        ProtocolCounters rmp = NuubitApplication.getInstance().getProtocolCounters().get("rmp");
-        RecyclerView rvProtocolRMP = (RecyclerView) view.findViewById(R.id.rvProtocolRMP);
-        rvProtocolRMP.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvProtocolRMP.setAdapter(new PairAdapter(getActivity(), rmp.toArray(), PairAdapter.listener));
-*/
     }
 
 

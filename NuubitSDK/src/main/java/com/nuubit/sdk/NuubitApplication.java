@@ -128,7 +128,7 @@ public class NuubitApplication extends Application implements
         lmMonitorCounters = new LMMonitorCounters();
         statsCounters = new StatsCounters();
         protocolCounters = new HashMap<String, ProtocolCounters>();
-        protocolCounters.put("standart", new ProtocolCounters(EnumProtocol.STANDART));
+        protocolCounters.put("standard", new ProtocolCounters(EnumProtocol.STANDARD));
         protocolCounters.put("quic", new ProtocolCounters(EnumProtocol.QUIC));
         protocolCounters.put("rmp", new ProtocolCounters(EnumProtocol.RMP));
 

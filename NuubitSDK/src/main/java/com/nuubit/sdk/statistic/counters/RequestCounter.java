@@ -39,7 +39,7 @@ public class RequestCounter extends Counters {
     private long revRequests;
     private long originRequests;
     private long systemRequests;
-    private long standartProtocol;
+    private long standardProtocol;
     private long quicProtocol;
     private long revProtocol;
 
@@ -50,8 +50,8 @@ public class RequestCounter extends Counters {
         if (!NuubitSDK.isSystem(req) && host.contains(key)) revRequests++;
         else if (!NuubitSDK.isSystem(req)) originRequests++;
         switch (enumProtocol) {
-            case STANDART: {
-                standartProtocol++;
+            case STANDARD: {
+                standardProtocol++;
                 break;
             }
             case QUIC: {
@@ -71,7 +71,7 @@ public class RequestCounter extends Counters {
         editor.putLong(NuubitConstants.REV, getRevRequestsCount());
         editor.putLong(NuubitConstants.ORIGIN, getOriginRequestsCount());
         editor.putLong(NuubitConstants.SYSTEM, getSystemRequestsCount());
-        editor.putLong(EnumProtocol.STANDART.toString(), standartProtocol);
+        editor.putLong(EnumProtocol.STANDARD.toString(), standardProtocol);
         editor.putLong(EnumProtocol.QUIC.toString(), quicProtocol);
         editor.putLong(EnumProtocol.RMP.toString(), revProtocol);
         editor.commit();
@@ -82,7 +82,7 @@ public class RequestCounter extends Counters {
         revRequests = share.getLong(NuubitConstants.REV, 0);
         originRequests = share.getLong(NuubitConstants.ORIGIN, 0);
         systemRequests = share.getLong(NuubitConstants.SYSTEM, 0);
-        standartProtocol = share.getLong(EnumProtocol.STANDART.toString(), 0);
+        standardProtocol = share.getLong(EnumProtocol.STANDARD.toString(), 0);
         quicProtocol = share.getLong(EnumProtocol.QUIC.toString(), 0);
         revProtocol = share.getLong(EnumProtocol.RMP.toString(), 0);
     }
@@ -130,8 +130,8 @@ public class RequestCounter extends Counters {
     public long getRequestsOver(EnumProtocol enumProtocol) {
         long result = 0;
         switch (enumProtocol) {
-            case STANDART: {
-                result = getRequestsOverStandart();
+            case STANDARD: {
+                result = getRequestsOverStandard();
                 break;
             }
             case QUIC: {
@@ -146,8 +146,8 @@ public class RequestCounter extends Counters {
         return result;
     }
 
-    private long getRequestsOverStandart() {
-        return standartProtocol;
+    private long getRequestsOverStandard() {
+        return standardProtocol;
     }
 
     private long getRequestsOverQUIC() {
@@ -165,7 +165,7 @@ public class RequestCounter extends Counters {
         result.add(new Pair("revRequests", String.valueOf(getRevRequestsCount())));
         result.add(new Pair("originRequests", String.valueOf(getOriginRequestsCount())));
         result.add(new Pair("systemRequests", String.valueOf(getSystemRequestsCount())));
-        result.add(new Pair("standartProtocol", String.valueOf(getRequestsOverStandart())));
+        result.add(new Pair("standardProtocol", String.valueOf(getRequestsOverStandard())));
         result.add(new Pair("quicProtocol", String.valueOf(getRequestsOverQUIC())));
         result.add(new Pair("rpmProtocol", String.valueOf(getRequestsOverRPM())));
         return result;

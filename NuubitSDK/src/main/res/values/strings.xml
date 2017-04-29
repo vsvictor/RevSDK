@@ -24,10 +24,10 @@
     <string name="counter_config">Config counter:</string>
     <string name="lm_monitoring">LM Monitoring</string>
     <string name="stat_stat">Stats</string>
-    <string name="stat_standart">Standart</string>
+    <string name="stat_standard">Standard</string>
     <string name="stat_quic">QUIC</string>
     <string name="stat_rmp">RMP</string>
-    <string name="protocol_standart">Standard</string>
+    <string name="protocol_standard">Standard</string>
     <string name="protocol_quic">QUIC</string>
     <string name="protocol_rmp">RMP</string>
 

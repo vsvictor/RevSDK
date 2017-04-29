@@ -83,7 +83,7 @@ public abstract class Protocol implements OnFuncProtocol {
             //counter.addReceive(getResponseSize(response));
         } catch (NullPointerException ex) {
             //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
-            Log.i("database", "Standart exception Database error!!!");
+            Log.i("database", "Standard exception Database error!!!");
             counter.addFailRequest();
             ex.printStackTrace();
         }
@@ -99,7 +99,7 @@ public abstract class Protocol implements OnFuncProtocol {
             //counter.addReceive(getResponseSize(response));
         } catch (NullPointerException ex) {
             //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
-            Log.i("database", "Standart exception Database error!!!");
+            Log.i("database", "Standard exception Database error!!!");
             counter.addFailRequest();
             ex.printStackTrace();
         }

@@ -23,7 +23,7 @@ package com.nuubit.sdk.protocols;
  */
 
 public enum EnumProtocol {
-    STANDART,
+    STANDARD,
     QUIC,
     RMP,
     HTTP,
@@ -33,7 +33,7 @@ public enum EnumProtocol {
     @Override
     public String toString() {
         switch (this) {
-            case STANDART:
+            case STANDARD:
                 return "standard";
             case QUIC:
                 return "quic";
@@ -51,7 +51,7 @@ public enum EnumProtocol {
     public static EnumProtocol fromString(String name) {
         switch (name.toLowerCase()) {
             case "standard":
-                return STANDART;
+                return STANDARD;
             case "quic":
                 return QUIC;
             case "rmp":
@@ -67,7 +67,7 @@ public enum EnumProtocol {
 
     public static Protocol createInstance(EnumProtocol inst) {
         switch (inst) {
-            case STANDART:
+            case STANDARD:
                 return new StandardProtocol();
             case QUIC:
                 return new QUICProtocol();

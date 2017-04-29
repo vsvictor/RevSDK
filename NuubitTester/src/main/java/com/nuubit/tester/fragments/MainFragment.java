@@ -268,7 +268,7 @@ public class MainFragment extends Fragment {
         edHeaders.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                final View view = LayoutInflater.from(getActivity()).inflate(R.layout.standart_header_layout, null, false);
+                final View view = LayoutInflater.from(getActivity()).inflate(R.layout.standard_header_layout, null, false);
                 final AppCompatCheckBox cbHost = (AppCompatCheckBox) view.findViewById(R.id.cbHost);
                 final AppCompatCheckBox cbXRevHost = (AppCompatCheckBox) view.findViewById(R.id.cbXRevHost);
                 final AppCompatCheckBox cbXRevProto = (AppCompatCheckBox) view.findViewById(R.id.cbXRevProto);

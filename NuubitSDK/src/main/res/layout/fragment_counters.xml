@@ -67,14 +67,14 @@
             </android.support.v7.widget.RecyclerView>
 
             <TextView
-                android:id="@+id/tvStandart"
+                android:id="@+id/tvStandard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/stat_standart" />
+                android:text="@string/stat_standard" />
 
             <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/rvStandart"
+                android:id="@+id/rvStandard"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

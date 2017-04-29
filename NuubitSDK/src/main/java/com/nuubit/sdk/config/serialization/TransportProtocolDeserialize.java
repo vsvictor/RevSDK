@@ -38,7 +38,7 @@ public class TransportProtocolDeserialize implements JsonDeserializer<ListProtoc
         ListProtocol result = new ListProtocol();
         JsonArray arr = json.getAsJsonArray();
         for(JsonElement el : arr){
-            if (el.getAsString().equalsIgnoreCase("standard")) result.add(EnumProtocol.STANDART);
+            if (el.getAsString().equalsIgnoreCase("standard")) result.add(EnumProtocol.STANDARD);
             else if (el.getAsString().equalsIgnoreCase("quic")) result.add(EnumProtocol.QUIC);
             else if (el.getAsString().equalsIgnoreCase("rmp")) result.add(EnumProtocol.RMP);
         }

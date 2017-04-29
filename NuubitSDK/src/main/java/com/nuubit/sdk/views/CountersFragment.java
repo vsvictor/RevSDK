@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.R;
 import com.nuubit.sdk.statistic.Statistic;
+import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.types.Pair;
 
 import java.util.ArrayList;
@@ -47,7 +48,6 @@ public class CountersFragment extends Fragment {
         CountersFragment fragment = new CountersFragment();
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,17 +79,22 @@ public class CountersFragment extends Fragment {
         rvStats.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvStats.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getStatsCounters().toArray(), PairAdapter.listener));
 
+        ProtocolCounters standart = NuubitApplication.getInstance().getProtocolCounters().get("standart");
         RecyclerView rvStandart = (RecyclerView) view.findViewById(R.id.rvStandart);
-        rvStandart.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvStandart.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
+        CounterLayoutManager sManager = new CounterLayoutManager(getActivity());
+        sManager.setAutoMeasureEnabled(true);
+        rvStandart.setLayoutManager(sManager);
+        rvStandart.setAdapter(new PairAdapter(getActivity(), standart.toArray(), PairAdapter.listener));
 
+        ProtocolCounters quic = NuubitApplication.getInstance().getProtocolCounters().get("quic");
         RecyclerView rvQUIC = (RecyclerView) view.findViewById(R.id.rvQUIC);
-        rvQUIC.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvQUIC.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
+        rvQUIC.setLayoutManager(new CounterLayoutManager(getActivity()));
+        rvQUIC.setAdapter(new PairAdapter(getActivity(), quic.toArray(), PairAdapter.listener));
 
+        ProtocolCounters rmp = NuubitApplication.getInstance().getProtocolCounters().get("rmp");
         RecyclerView rvRMP = (RecyclerView) view.findViewById(R.id.rvRTM);
-        rvRMP.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvRMP.setAdapter(new PairAdapter(getActivity(), new ArrayList<Pair>(), PairAdapter.listener));
+        rvRMP.setLayoutManager(new CounterLayoutManager(getActivity()));
+        rvRMP.setAdapter(new PairAdapter(getActivity(), rmp.toArray(), PairAdapter.listener));
     }
 
 

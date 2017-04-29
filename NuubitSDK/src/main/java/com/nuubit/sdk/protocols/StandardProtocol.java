@@ -21,7 +21,10 @@ import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
 
 import static com.nuubit.sdk.NuubitSDK.isFree;
 import static com.nuubit.sdk.NuubitSDK.isStatistic;
@@ -66,6 +69,8 @@ public class StandardProtocol extends Protocol {
     public synchronized Response send(Interceptor.Chain chain) throws IOException {
         result = null;
         original = chain.request();
+        RequestBody reqBody = original.body();
+        long reqBodySize = reqBody == null? 0:reqBody.contentLength();
         boolean systemRequest = isSystem(original);
         boolean freeRequest = isFree(original);
         if (!systemRequest && !freeRequest) {
@@ -98,12 +103,11 @@ public class StandardProtocol extends Protocol {
             if (!isSystem(original)) {
                 this.zeroing();
             }
-        }
-        catch (IOException ex){
+        } catch (IOException ex){
+            NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
             ex.printStackTrace();
             Log.i("Timeout", ex.getMessage()+" my timeout");
-        }
-        catch (HTTPException ex) {
+        } catch (HTTPException ex) {
             response = chain.proceed(original);
             this.errorIncrement();
             if (this.isOverflow()) {
@@ -111,11 +115,16 @@ public class StandardProtocol extends Protocol {
                 NuubitApplication.getInstance().sendBroadcast(new Intent(NuubitActions.RETEST));
                 this.zeroing();
             }
+            NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
             ex.printStackTrace();
         }
         //Log.i(TAG, "Response:" + response.toString());
         NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDART);
+        NuubitApplication.getInstance().getProtocolCounters().get("standart").addSuccessRequest();
+        NuubitApplication.getInstance().getProtocolCounters().get("standart").addSent(reqBodySize);
 
+        //long respSize = response.body().source().buffer().clone().size();
+        //NuubitApplication.getInstance().getProtocolCounters().get("standart").addReceive(respSize);
         return response;
     }
 
@@ -167,6 +176,8 @@ public class StandardProtocol extends Protocol {
 
         @Override
         public void onRequest(RequestOne req){
+            NuubitApplication.getInstance().getProtocolCounters().get("standart").addSent(req.getSentBytes());
+            NuubitApplication.getInstance().getProtocolCounters().get("standart").addReceive(req.getReceivedBytes());
             if (!isSystem(original) && isStatistic()) {
                 if(req.getFirstByteTime() == 0){
                     req.setFirstByteTime(req.getEndTS());

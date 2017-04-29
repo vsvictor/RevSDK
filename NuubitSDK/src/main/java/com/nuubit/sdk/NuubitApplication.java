@@ -36,6 +36,7 @@ import com.nuubit.sdk.services.Statist;
 import com.nuubit.sdk.services.Tester;
 import com.nuubit.sdk.statistic.counters.ConfigCounters;
 import com.nuubit.sdk.statistic.counters.LMMonitorCounters;
+import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.statistic.counters.RequestCounter;
 import com.nuubit.sdk.statistic.counters.StatsCounters;
 import com.nuubit.sdk.statistic.sections.Carrier;
@@ -44,6 +45,8 @@ import com.nuubit.sdk.utils.ABTester;
 import com.nuubit.sdk.utils.DateTimeUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -96,6 +99,7 @@ public class NuubitApplication extends Application implements
     private ConfigCounters configCounters;
     private LMMonitorCounters lmMonitorCounters;
     private StatsCounters statsCounters;
+    private Map<String, ProtocolCounters> protocolCounters;
 
     private Timer configTimer = new Timer();
     private Timer staleTimer = new Timer();
@@ -123,6 +127,11 @@ public class NuubitApplication extends Application implements
         configCounters = new ConfigCounters();
         lmMonitorCounters = new LMMonitorCounters();
         statsCounters = new StatsCounters();
+        protocolCounters = new HashMap<String, ProtocolCounters>();
+        protocolCounters.put("standart", new ProtocolCounters(EnumProtocol.STANDART));
+        protocolCounters.put("quic", new ProtocolCounters(EnumProtocol.QUIC));
+        protocolCounters.put("rmp", new ProtocolCounters(EnumProtocol.RMP));
+
         if (googleClient == null) {
             googleClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -305,6 +314,10 @@ public class NuubitApplication extends Application implements
 
     public StatsCounters getStatsCounters() {
         return statsCounters;
+    }
+
+    public Map<String, ProtocolCounters> getProtocolCounters(){
+        return protocolCounters;
     }
 
     public ABTester getABTester() {

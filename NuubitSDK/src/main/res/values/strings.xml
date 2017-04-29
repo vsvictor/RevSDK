@@ -27,5 +27,8 @@
     <string name="stat_standart">Standart</string>
     <string name="stat_quic">QUIC</string>
     <string name="stat_rmp">RMP</string>
+    <string name="protocol_standart">Standard</string>
+    <string name="protocol_quic">QUIC</string>
+    <string name="protocol_rmp">RMP</string>
 
 </resources>

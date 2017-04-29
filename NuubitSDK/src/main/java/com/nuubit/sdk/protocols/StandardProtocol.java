@@ -178,14 +178,22 @@ public class StandardProtocol extends Protocol {
         public void onRequest(RequestOne req){
             NuubitApplication.getInstance().getProtocolCounters().get("standart").addSent(req.getSentBytes());
             NuubitApplication.getInstance().getProtocolCounters().get("standart").addReceive(req.getReceivedBytes());
+            Log.i("ZERROFBT","Request");
+            if(req.getFirstByteTime() == 0){
+                Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
+                req.setFirstByteTime(req.getEndTS());
+                Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
+            }
+
+            save(req);
+/*
             if (!isSystem(original) && isStatistic()) {
                 if(req.getFirstByteTime() == 0){
                     req.setFirstByteTime(req.getEndTS());
                 }
                 save(req);
-                //Log.i("REQESTONE", req.toString());
             }
-
+*/
         }
     };
 }

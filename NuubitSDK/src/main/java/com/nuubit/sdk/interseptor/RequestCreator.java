@@ -6,6 +6,7 @@ import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.config.Config;
 import com.nuubit.sdk.config.OperationMode;
+import com.nuubit.sdk.protocols.EnumProtocol;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
@@ -101,6 +102,9 @@ public class RequestCreator {
         for(String sName : oldHeaders.names()){
             String sValue = oldHeaders.get(sName);
             builder.add(sName, sValue);
+        }
+        if(NuubitApplication.getInstance().getBest().getDescription() == EnumProtocol.QUIC){
+            builder.add("alt-svc", "quic=\":443\", ma=2592000");
         }
 
         if (NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() != OperationMode.off) {

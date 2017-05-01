@@ -77,6 +77,7 @@ public abstract class Protocol implements OnFuncProtocol {
         RequestOne statRequest = null;
         try {
             statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, firsByteTime);
+            if(statRequest.getFirstByteTime() == 0) statRequest.setFirstByteTime(statRequest.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
             Log.i("database", statRequest.toString());
             counter.addSuccessRequest();
@@ -93,6 +94,7 @@ public abstract class Protocol implements OnFuncProtocol {
         //RequestOne statRequest = null;
         try {
             //statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, firsByteTime);
+            if(req.getFirstByteTime() == 0) req.setFirstByteTime(req.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), req));
             Log.i("database", req.toString());
             counter.addSuccessRequest();

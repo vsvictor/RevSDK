@@ -3,6 +3,7 @@ package com.nuubit.racer;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,14 +11,17 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,10 +32,15 @@ import com.nuubit.racer.model.Table;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.views.CountersFragment;
+import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import okhttp3.OkHttpClient;
 
-public class ParalellyWebActivity extends AppCompatActivity {
+public class ParalellyWebActivity extends AppCompatActivity implements
+        SeriesFragment.OnSeriesListener,
+        SummaryFragment.OnSummaryListener {
+    private static final String TAG = ResultActivity.class.getSimpleName();
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private TextView tvMethodMode;
@@ -54,11 +63,15 @@ public class ParalellyWebActivity extends AppCompatActivity {
     private ProgressDialog pd;
     private RelativeLayout rlSendMail;
 
+    private boolean isStop;
+    private TextView tvCounter;
+    private AlertDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
-
+        setContentView(R.layout.activity_consistently_web);
+        isStop = false;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,7 +113,7 @@ public class ParalellyWebActivity extends AppCompatActivity {
         rlSendMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sData = Table.toTable(ParalellyWebActivity.this, getTable(), getTableOriginal(), Const.MODE_PARALELLY, url, method);
+                String sData = Table.toTable(ParalellyWebActivity.this, getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY, url, method);
                 ShareCompat.IntentBuilder.from(ParalellyWebActivity.this)
                         .setType("message/rfc822")
                         .addEmailTo(NuubitApp.getInstance().getEMail())
@@ -113,12 +126,30 @@ public class ParalellyWebActivity extends AppCompatActivity {
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-        //tvMethodMode.setText(method + " , " + getResources().getString(R.string.parallel));
-
     }
-
-    public String getMethodMode() {
-        return method + " , " + getResources().getString(R.string.parallel);
+    public void start(){
+        WebView[] webs = new WebView[steps];
+        for(int i = 0; i<steps; i++){
+            webs[i] = new WebView(this);
+            final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, webs[i], client);
+            webs[i].setWebViewClient(webClient);
+            webs[i].setWebChromeClient(NuubitSDK.createWebChromeClient());
+            webClient.setOnTimeListener(new NuubitWebViewClient.OnTimes() {
+                @Override
+                public void onStart(String url, long start) {
+                    Log.i("WEBVIEWTIME", "Start:"+start+" : "+url);
+                }
+                @Override
+                public void onStop(String url, long stop) {
+                    Log.i("WEBVIEWTIME", "Stop :"+stop+" : "+url);
+                }
+                @Override
+                public void onStartStop(String url, long start, long stop) {
+                    Log.i("WEBVIEWTIME", "Result: "+(stop-start)+" : "+url);
+                }
+            });
+            webs[i].loadUrl(url);
+        }
     }
 
     public Table getTable() {
@@ -128,30 +159,54 @@ public class ParalellyWebActivity extends AppCompatActivity {
     public Table getTableOriginal() {
         return tableOriginal;
     }
+    public String getMethodMode() {
+        return method + " , Web " + getResources().getString(R.string.parallel);
+    }
 
     public ResultAdapter getAdapter() {
         return adapter;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onSeries(Uri uri) {
 
+    }
+
+    @Override
+    public void onSummary(Uri uri) {
+
+    }
+
+    @Override
+    public void onStopRequests() {
+
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private SummaryFragment first;
+        private SeriesFragment second;
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            first = SummaryFragment.newInstance(Const.MODE_WEB_PARALELLY);
+            second = SeriesFragment.newInstance(Const.MODE_WEB_PARALELLY);
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: {
-                    return SummaryFragment.newInstance(Const.MODE_PARALELLY);
+                    return first;
                 }
                 case 1: {
-                    return SeriesFragment.newInstance(Const.MODE_PARALELLY);
+                    return second;
                 }
                 default:
-                    return SummaryFragment.newInstance(Const.MODE_PARALELLY);
+                    return first;
             }
         }
+
+        public SummaryFragment getSummary(){return first;}
+        public SeriesFragment getSeries(){return second;}
 
         @Override
         public int getCount() {
@@ -182,10 +237,10 @@ public class ParalellyWebActivity extends AppCompatActivity {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ResultAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_result, parent, false);
-            return new ViewHolder(view);
+            return new ResultAdapter.ViewHolder(view);
 
         }
 
@@ -254,5 +309,4 @@ public class ParalellyWebActivity extends AppCompatActivity {
             }
         }
     }
-
 }

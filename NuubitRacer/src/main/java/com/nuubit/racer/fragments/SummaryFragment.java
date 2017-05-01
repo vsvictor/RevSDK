@@ -16,8 +16,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nuubit.racer.ConsistentlyWebActivity;
 import com.nuubit.racer.Const;
 import com.nuubit.racer.ParalellyActivity;
+import com.nuubit.racer.ParalellyWebActivity;
 import com.nuubit.racer.R;
 import com.nuubit.racer.ResultActivity;
 
@@ -102,9 +104,14 @@ public class SummaryFragment extends Fragment {
         tvMethodMode = (TextView) view.findViewById(R.id.tvRequestsValue);
         if (mode == Const.MODE_CONSISTENTLY) {
             tvMethodMode.setText(((ResultActivity) getActivity()).getMethodMode());
-        } else {
+        } else if(mode == Const.MODE_PARALELLY) {
             tvMethodMode.setText(((ParalellyActivity) getActivity()).getMethodMode());
+        } else if(mode == Const.MODE_WEB_CONSISTENTLY){
+            tvMethodMode.setText(((ConsistentlyWebActivity) getActivity()).getMethodMode());
+        } else if(mode == Const.MODE_WEB_PARALELLY){
+            tvMethodMode.setText(((ParalellyWebActivity) getActivity()).getMethodMode());
         }
+
         llContainer.startAnimation(racer);
 
     }

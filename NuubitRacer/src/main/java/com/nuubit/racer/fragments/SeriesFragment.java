@@ -13,8 +13,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import com.nuubit.racer.ConsistentlyWebActivity;
 import com.nuubit.racer.Const;
 import com.nuubit.racer.ParalellyActivity;
+import com.nuubit.racer.ParalellyWebActivity;
 import com.nuubit.racer.R;
 import com.nuubit.racer.ResultActivity;
 
@@ -84,16 +86,22 @@ public class SeriesFragment extends Fragment {
             rvResult.setAdapter(((ResultActivity) getActivity()).getAdapter());
         } else if(mode == Const.MODE_UNLIM){
             rvResult.setAdapter(((ResultActivity) getActivity()).getAdapter());
-        } else {
+        } else if(mode == Const.MODE_PARALELLY){
             rvResult.setAdapter(((ParalellyActivity) getActivity()).getAdapter());
+        }else if(mode == Const.MODE_WEB_CONSISTENTLY){
+            rvResult.setAdapter(((ConsistentlyWebActivity) getActivity()).getAdapter());
+        }else if(mode == Const.MODE_WEB_PARALELLY){
+            rvResult.setAdapter(((ParalellyWebActivity) getActivity()).getAdapter());
         }
         rvResult.setNestedScrollingEnabled(false);
         if (mode == Const.MODE_CONSISTENTLY) {
             ((ResultActivity) getActivity()).startTask();
         } else if(mode == Const.MODE_UNLIM){
             ((ResultActivity) getActivity()).startTask();
-        } else {
-            ((ParalellyActivity) getActivity()).startTask();
+        } else if(mode == Const.MODE_WEB_PARALELLY){
+            ((ParalellyWebActivity) getActivity()).start();
+        } else if(mode == Const.MODE_WEB_CONSISTENTLY){
+            ((ConsistentlyWebActivity) getActivity()).start();
         }
         llContainer.startAnimation(racer);
     }

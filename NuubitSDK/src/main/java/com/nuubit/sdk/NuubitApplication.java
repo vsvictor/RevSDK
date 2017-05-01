@@ -142,12 +142,13 @@ public class NuubitApplication extends Application implements
 
         init();
     }
+/*
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
+*/
     public static String getMainPackage() {
         return instance.getPackage();
     }

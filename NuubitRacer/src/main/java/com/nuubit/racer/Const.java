@@ -37,6 +37,8 @@ public class Const {
     public static int MODE_CONSISTENTLY = 1;
     public static int MODE_PARALELLY = 2;
     public static int MODE_UNLIM = 3;
+    public static int MODE_WEB_CONSISTENTLY = 4;
+    public static int MODE_WEB_PARALELLY = 5;
 
     public static String UPDATE_DATA = "com.nuubit.sdk.UPDATE_DATA";
 }

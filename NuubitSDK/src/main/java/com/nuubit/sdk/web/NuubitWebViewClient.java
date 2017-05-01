@@ -63,6 +63,10 @@ public class NuubitWebViewClient extends WebViewClient {
     private String sData;
 
     private OnURLChanged listener;
+    private OnTimes timeListener;
+
+    private long startLoad;
+    private long finishLoad;
 /*
     private class JavaScriptInterface {
         private final String TAG = JavaScriptInterface.class.getSimpleName();
@@ -94,23 +98,30 @@ public class NuubitWebViewClient extends WebViewClient {
     public NuubitWebViewClient() {
         this(NuubitSDK.OkHttpCreate());
     }
+
     @Override
-    public void onPageFinished(WebView view, String url)
-    {
+    public void onPageStarted(WebView view, String url, Bitmap favicon){
+        super.onPageStarted(view, url, favicon);
+        String url_new = view.getUrl();
+        if(listener != null && url_new != null){
+            listener.onURLChanged(url_new);
+        }
+        startLoad = System.currentTimeMillis();
+        if(timeListener != null) {
+            timeListener.onStart(url, startLoad);
+        }
+    }
+    @Override
+    public void onPageFinished(WebView view, String url){
         super.onPageFinished(view, url);
         String url_new = view.getUrl();
         if(listener != null && url_new != null){
             listener.onURLChanged(url_new);
         }
-    }
-
-    @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon)
-    {
-        super.onPageStarted(view, url, favicon);
-        String url_new = view.getUrl();
-        if(listener != null && url_new != null){
-            listener.onURLChanged(url_new);
+        finishLoad = System.currentTimeMillis();
+        if(timeListener != null){
+            timeListener.onStop(url, finishLoad);
+            timeListener.onStartStop(url, startLoad, finishLoad);
         }
     }
 
@@ -224,9 +235,17 @@ public class NuubitWebViewClient extends WebViewClient {
         return result;
     }
 
+    public void setOnTimeListener(OnTimes listener){
+        this.timeListener = listener;
+    }
+
     public interface OnURLChanged {
         void onURLChanged(String url);
     }
-
+    public interface OnTimes{
+        void onStart(String url, long start);
+        void onStop(String url, long stop);
+        void onStartStop(String url, long start, long stop);
+    }
 }
 

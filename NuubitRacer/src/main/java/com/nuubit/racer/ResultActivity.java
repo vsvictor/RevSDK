@@ -482,6 +482,11 @@ public class ResultActivity extends AppCompatActivity implements
                 public void onRequest(RequestOne res) {
 
                 }
+
+                @Override
+                public void onResponse(Response response, boolean serv, long lastByteTime) {
+
+                }
             };
         }
 
@@ -552,7 +557,7 @@ public class ResultActivity extends AppCompatActivity implements
                 getTableOriginal().add(row);
             }
             adapter.dataUpdated();
-            Log.i(TAG, getTable().toString());
+            Log.i(TAG, row.toString());
             counter++;
             if(steps > 0) {
                 if ((counter) < (steps * 2)) {

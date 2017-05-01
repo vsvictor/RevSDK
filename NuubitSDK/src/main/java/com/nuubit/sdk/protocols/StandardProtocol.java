@@ -188,5 +188,10 @@ public class StandardProtocol extends Protocol {
             }
 */
         }
+
+        @Override
+        public void onResponse(Response response, boolean serv, long lastByteTime) {
+
+        }
     };
 }

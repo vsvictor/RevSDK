@@ -7,6 +7,7 @@ import com.nuubit.sdk.statistic.sections.RequestOne;
 import java.io.IOException;
 
 import okhttp3.MediaType;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
@@ -28,6 +29,8 @@ public class ProgressResponseBody extends ResponseBody {
     private long firstByteTime;
     private long lastByteTime;
     private RequestOne req;
+    private Response response;
+    private boolean isServ = false;
     public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
         this.responseBody = responseBody;
         this.progressListener = progressListener;
@@ -37,6 +40,15 @@ public class ProgressResponseBody extends ResponseBody {
         this.responseBody = responseBody;
         this.progressListener = listener;
         this.req = req;
+        //Log.i("REQESTONE", "Response body created");
+    }
+
+    public ProgressResponseBody(ResponseBody responseBody, ProgressListener listener, Response response, boolean serv) {
+        this.responseBody = responseBody;
+        this.progressListener = listener;
+        this.req = null;
+        this.response = response;
+        this.isServ = serv;
         //Log.i("REQESTONE", "Response body created");
     }
 
@@ -89,12 +101,13 @@ public class ProgressResponseBody extends ResponseBody {
                 if(progressListener != null) {
                     progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
                 }
-                if(req != null && progressListener != null && bytesRead == -1 && !firstStep && !lastStep){
+                if((req != null || response != null) && progressListener != null && bytesRead == -1 && !firstStep && !lastStep){
                     lastByteTime = System.currentTimeMillis();
                     req.setEndTS(lastByteTime);
                     req.setReceivedBytes(totalBytesRead);
                     progressListener.onRequest(req);
                     progressListener.lastByteTime(lastByteTime);
+                    progressListener.onResponse(response,isServ, lastByteTime);
                     //Log.i("REQESTONE", "Read "+String.valueOf(bytesRead));
                     lastStep = true;
                 }
@@ -110,5 +123,6 @@ public class ProgressResponseBody extends ResponseBody {
         void firstByteTime(long time);
         void lastByteTime(long time);
         void onRequest(RequestOne res);
+        void onResponse(Response response, boolean serv, long lastByteTime);
     }
 }

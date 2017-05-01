@@ -16,5 +16,6 @@
     <dimen name="tiny">4dp</dimen>
     <dimen name="small_font">12sp</dimen>
     <dimen name="big_large">64dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
 </resources>

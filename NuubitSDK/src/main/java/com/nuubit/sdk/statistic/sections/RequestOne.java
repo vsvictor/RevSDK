@@ -143,8 +143,8 @@ public class RequestOne extends Data implements Parcelable {
 
         result.setStartTS(begTime);
         result.setSentTS(response == null ? -1 : response.sentRequestAtMillis());
-        //result.setFirstByteTime(response == null ? -1 : response.receivedResponseAtMillis());
-        result.setFirstByteTime(firstByte);
+        result.setFirstByteTime(response == null ? endTime : response.receivedResponseAtMillis());
+        //result.setFirstByteTime(firstByte);
         result.setEndTS(endTime);
 
         //Log.i("FIRSTBYTETIME", "ST: "+String.valueOf(result.getStartTS()));

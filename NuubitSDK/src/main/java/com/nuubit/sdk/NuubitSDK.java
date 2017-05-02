@@ -19,7 +19,6 @@ import com.nuubit.sdk.config.serialization.OperationModeDeserialize;
 import com.nuubit.sdk.config.serialization.OperationModeSerialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolDeserialize;
 import com.nuubit.sdk.config.serialization.TransportProtocolSerialize;
-import com.nuubit.sdk.database.RequestTable;
 import com.nuubit.sdk.interseptor.NuubitInterceptor;
 import com.nuubit.sdk.interseptor.RequestCreator;
 import com.nuubit.sdk.protocols.ListProtocol;
@@ -58,19 +57,11 @@ import com.nuubit.sdk.web.NuubitCookie;
 import com.nuubit.sdk.web.NuubitWebChromeClient;
 import com.nuubit.sdk.web.NuubitWebViewClient;
 
-import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.UnknownHostException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.internal.connection.ConnectInterceptor;
 
 /*
  * ************************************************************************

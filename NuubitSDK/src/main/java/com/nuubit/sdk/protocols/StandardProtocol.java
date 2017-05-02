@@ -85,15 +85,17 @@ public class StandardProtocol extends Protocol {
         //ProgressResponseBody pb = null;
         try {
             beginTime = System.currentTimeMillis();
-            Response resp = chain.proceed(result);
-            RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
-            req.setStatusCode(resp.code());
+            response = chain.proceed(result);
+            RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, response.receivedResponseAtMillis());
+            req.setStatusCode(response.code());
+/*
             response = resp.newBuilder()
                     .body(new ProgressResponseBody(resp.body(), listener, req))
                     .build();
-
+*/
             //RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
             endTime = System.currentTimeMillis();
+            req.setEndTS(endTime);
             if (response == null) {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
@@ -101,10 +103,12 @@ public class StandardProtocol extends Protocol {
             if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
             }
-
             if (!isSystem(original)) {
                 this.zeroing();
             }
+            boolean r = (code.getType() == HTTPCode.Type.INFORMATIONAL) || (code.getType() == HTTPCode.Type.SUCCESSFULL) || (code.getType() == HTTPCode.Type.REDIRECTION);
+            req.setSuccessStatus(r?1:0);
+            save(req);
         } catch (IOException ex){
             NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
             ex.printStackTrace();
@@ -152,7 +156,7 @@ public class StandardProtocol extends Protocol {
         }
         return res;
     }
-
+/*
     private ProgressResponseBody.ProgressListener listener = new ProgressResponseBody.ProgressListener() {
         @Override
         public void update(long bytesRead, long contentLength, boolean done) {
@@ -179,14 +183,6 @@ public class StandardProtocol extends Protocol {
                 Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
             }
             save(req);
-/*
-            if (!isSystem(original) && isStatistic()) {
-                if(req.getFirstByteTime() == 0){
-                    req.setFirstByteTime(req.getEndTS());
-                }
-                save(req);
-            }
-*/
         }
 
         @Override
@@ -194,4 +190,5 @@ public class StandardProtocol extends Protocol {
 
         }
     };
+*/
 }

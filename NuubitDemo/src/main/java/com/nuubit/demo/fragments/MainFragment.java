@@ -57,8 +57,9 @@ public class MainFragment extends Fragment {
     private OkHttpClient client = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false);
     private TextInputEditText edQuery;
     private WebView wvMain;
+    private NuubitWebViewClient webClient;
     private RelativeLayout rlRun;
-
+    private RelativeLayout rlClear;
     public MainFragment() {
     }
 
@@ -87,7 +88,7 @@ public class MainFragment extends Fragment {
         //edQuery.setText("mail.ru");
         //edQuery.setText("http://httpbin.org/status/500");
         wvMain = (WebView) view.findViewById(R.id.wvMain);
-        final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(getActivity(), wvMain, client);
+        webClient = NuubitSDK.createWebViewClient(getActivity(), wvMain, client);
 
         webClient.setOnURLChangeListener(new NuubitWebViewClient.OnURLChanged() {
             @Override
@@ -95,8 +96,9 @@ public class MainFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
-                        edQuery.setText(url);
+                        if(url != null && !url.isEmpty() && !url.equalsIgnoreCase("about:blank")) {
+                            edQuery.setText(url);
+                        }
                     }
                 });
             }
@@ -119,10 +121,18 @@ public class MainFragment extends Fragment {
                     } catch (NullPointerException ex) {
                         newURL = "http://" + url;
                         //edQuery.setText(newURL);
+                        webClient.onURLChanged(newURL);
                     }
 
                     new Reader().execute(newURL);
                 }
+            }
+        });
+        rlClear = (RelativeLayout) view.findViewById(R.id.rlClear);
+        rlClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edQuery.setText("");
             }
         });
     }
@@ -175,8 +185,15 @@ public class MainFragment extends Fragment {
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");
                         response = runRequest(client, location, response.request().method(), null);
+                        currURL = location;
+                        webClient.onURLChanged(currURL);
                     }
-
+/*
+                    if((response.request().url().toString() != null)) {
+                        currURL = response.request().url().toString();
+                        webClient.onURLChanged(currURL);
+                    }
+*/
                     HTTPCode code = HTTPCode.create(response.code());
 
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
@@ -185,7 +202,14 @@ public class MainFragment extends Fragment {
                     }
 
                     body = response.body().string();
-                    final String endURL = location == null ? url : location;
+                    int i = 0;
+                    final String endURL = (location == null ? url : location);
+
+                    if(endURL != null && !endURL.isEmpty()) {
+                        currURL = endURL;
+                        webClient.onURLChanged(endURL);
+                    }
+
 /*
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -198,6 +222,7 @@ public class MainFragment extends Fragment {
                     });
 */
                 } catch (IOException e) {
+                    //webClient.onURLChanged(currURL);
                     e.printStackTrace();
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
@@ -212,6 +237,7 @@ public class MainFragment extends Fragment {
         protected void onPostExecute(String body) {
             wvMain.loadDataWithBaseURL(null, body, contentType, codePage, null);
             //edQuery.setText("http://httpbin.org/status/500");
+            webClient.onURLChanged(currURL);
         }
     }
 }

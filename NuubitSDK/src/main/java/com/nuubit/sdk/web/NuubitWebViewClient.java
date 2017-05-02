@@ -103,7 +103,7 @@ public class NuubitWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon){
         super.onPageStarted(view, url, favicon);
         String url_new = view.getUrl();
-        if(listener != null && url_new != null){
+        if(listener != null && url_new != null && !url_new.isEmpty()){
             listener.onURLChanged(url_new);
         }
         startLoad = System.currentTimeMillis();
@@ -115,7 +115,7 @@ public class NuubitWebViewClient extends WebViewClient {
     public void onPageFinished(WebView view, String url){
         super.onPageFinished(view, url);
         String url_new = view.getUrl();
-        if(listener != null && url_new != null){
+        if(listener != null && url_new != null && !url_new.isEmpty()){
             listener.onURLChanged(url_new);
         }
         finishLoad = System.currentTimeMillis();
@@ -127,6 +127,11 @@ public class NuubitWebViewClient extends WebViewClient {
 
     public void setOnURLChangeListener(OnURLChanged listener){
         this.listener = listener;
+    }
+    public void onURLChanged(String newURL){
+        if(listener != null && !newURL.isEmpty()){
+            listener.onURLChanged(newURL);
+        }
     }
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {

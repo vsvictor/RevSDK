@@ -67,6 +67,23 @@
             </android.support.v7.widget.RecyclerView>
 
             <TextView
+                android:id="@+id/tvOrigin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stat_origin" />
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rvOrigin"
+                android:nestedScrollingEnabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager">
+
+            </android.support.v7.widget.RecyclerView>
+
+
+            <TextView
                 android:id="@+id/tvStandard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

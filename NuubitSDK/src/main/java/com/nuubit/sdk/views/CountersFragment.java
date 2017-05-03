@@ -79,6 +79,14 @@ public class CountersFragment extends Fragment {
         rvStats.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvStats.setAdapter(new PairAdapter(getActivity(), NuubitApplication.getInstance().getStatsCounters().toArray(), PairAdapter.listener));
 
+        ProtocolCounters origin = NuubitApplication.getInstance().getProtocolCounters().get("origin");
+        RecyclerView rvOrigin = (RecyclerView) view.findViewById(R.id.rvOrigin);
+        CounterLayoutManager sManagerOrigin = new CounterLayoutManager(getActivity());
+        sManagerOrigin.setAutoMeasureEnabled(true);
+        rvOrigin.setLayoutManager(sManagerOrigin);
+        rvOrigin.setAdapter(new PairAdapter(getActivity(), origin.toArray(), PairAdapter.listener));
+
+
         ProtocolCounters standard = NuubitApplication.getInstance().getProtocolCounters().get("standard");
         RecyclerView rvStandard = (RecyclerView) view.findViewById(R.id.rvStandard);
         CounterLayoutManager sManager = new CounterLayoutManager(getActivity());

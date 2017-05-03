@@ -30,5 +30,6 @@
     <string name="protocol_standard">Standard</string>
     <string name="protocol_quic">QUIC</string>
     <string name="protocol_rmp">RMP</string>
+    <string name="stat_origin">Origin</string>
 
 </resources>

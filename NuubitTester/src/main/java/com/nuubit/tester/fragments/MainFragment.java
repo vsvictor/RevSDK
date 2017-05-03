@@ -23,6 +23,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nuubit.sdk.NuubitActions;
+import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.config.OperationMode;
@@ -97,6 +99,10 @@ public class MainFragment extends Fragment {
     private WebView wvMain;
     private TextView tvMain;
     private TextView tvHeader;
+
+    private Button bUpdateConfig;
+    private Button bSendStat;
+
     public MainFragment() {
     }
 
@@ -350,6 +356,21 @@ public class MainFragment extends Fragment {
                     wvMain.setWebViewClient(new WebViewClient());
                     wvMain.setWebChromeClient(new WebChromeClient());
                 }
+            }
+        });
+
+        bUpdateConfig = (Button) view.findViewById(R.id.bUpdateConfig);
+        bUpdateConfig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NuubitApplication.getInstance().configuratorRunner(true);
+            }
+        });
+        bSendStat = (Button) view.findViewById(R.id.bSendReports);
+        bSendStat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NuubitApplication.getInstance().statRunner();
             }
         });
     }

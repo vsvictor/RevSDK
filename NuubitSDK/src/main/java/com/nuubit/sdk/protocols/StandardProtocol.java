@@ -7,6 +7,7 @@ import com.nuubit.sdk.NuubitActions;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.config.OperationMode;
 import com.nuubit.sdk.database.RequestTable;
 import com.nuubit.sdk.interseptor.ProgressResponseBody;
 import com.nuubit.sdk.statistic.counters.ProtocolCounters;
@@ -60,9 +61,14 @@ public class StandardProtocol extends Protocol {
     private Response response;
     private long beginTime;
     private long endTime;
+
+    //private ProtocolCounters standartCounter;
+    //private ProtocolCounters originCounter;
     public StandardProtocol() {
+        super();
         this.descroption = EnumProtocol.STANDARD;
-        counter = new ProtocolCounters(this.descroption);
+        //standartCounter = NuubitApplication.getInstance().getProtocolCounters().get("standart");
+        //originCounter = NuubitApplication.getInstance().getProtocolCounters().get("origin");
     }
 
     @Override
@@ -121,13 +127,22 @@ public class StandardProtocol extends Protocol {
                 NuubitApplication.getInstance().sendBroadcast(new Intent(NuubitActions.RETEST));
                 this.zeroing();
             }
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
+            if(!isOrigin()) {
+                NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
+            }
+            else {
+                NuubitApplication.getInstance().getProtocolCounters().get("origin").addFailRequest();
+            }
             ex.printStackTrace();
         }
         NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
-        NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
-        NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
-
+        if(!isOrigin()) {
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
+        } else{
+            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
+        }
         return response;
     }
 
@@ -139,14 +154,16 @@ public class StandardProtocol extends Protocol {
         builder.url(url);
         Call callback = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
         try {
+            long begTime = System.currentTimeMillis();
             Response response = callback.execute();
+            long endTime = System.currentTimeMillis();
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() != HTTPCode.Type.SUCCESSFULL) {
                 res.setTime(-1);
             } else {
-                res.setTime(response.receivedResponseAtMillis() - response.sentRequestAtMillis());
+                res.setTime(endTime-begTime);
             }
-            res.setTimeEnded(System.currentTimeMillis());
+            res.setTimeEnded(endTime);
             res.setReason(code.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

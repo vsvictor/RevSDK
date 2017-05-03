@@ -113,4 +113,6 @@
     <string name="empty">(Empty)</string>
     <string name="with_client">with client</string>
     <string name="open_drawer">Open drawer</string>
+    <string name="update_config">Config</string>
+    <string name="send_stat">Stat</string>
 </resources>

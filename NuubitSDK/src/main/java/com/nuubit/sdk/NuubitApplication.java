@@ -128,6 +128,7 @@ public class NuubitApplication extends Application implements
         lmMonitorCounters = new LMMonitorCounters();
         statsCounters = new StatsCounters();
         protocolCounters = new HashMap<String, ProtocolCounters>();
+        protocolCounters.put("origin", new ProtocolCounters(EnumProtocol.ALL));
         protocolCounters.put("standard", new ProtocolCounters(EnumProtocol.STANDARD));
         protocolCounters.put("quic", new ProtocolCounters(EnumProtocol.QUIC));
         protocolCounters.put("rmp", new ProtocolCounters(EnumProtocol.RMP));
@@ -625,7 +626,7 @@ public class NuubitApplication extends Application implements
         };
     }
 
-    private void configuratorRunner(boolean now) {
+    public void configuratorRunner(boolean now) {
         final Intent updateIntent = new Intent(NuubitApplication.this, Configurator.class);
         updateIntent.putExtra(NuubitConstants.CONFIG, config == null ?
                 NuubitConstants.DEFAULT_CONFIG_URL : config.getParam().get(0).getConfigurationApiUrl());
@@ -635,7 +636,7 @@ public class NuubitApplication extends Application implements
         if (now) {
             startService(updateIntent);
             Log.i(TAG, updateIntent.getExtras().toString());
-        } else {
+        } //else {
             while (configTimer != null) {
                 configTimer.cancel();
                 configTimer.purge();
@@ -652,10 +653,10 @@ public class NuubitApplication extends Application implements
             }, NuubitApplication.getInstance().getConfig() == null ?
                     NuubitConstants.DEFAULT_CONFIG_INTERVAL
                     : NuubitApplication.getInstance().getConfig().getParam().get(0).getConfigurationRefreshIntervalSec() * 1000);
-        }
+        //}
     }
 
-    private void statRunner() {
+    public void statRunner() {
         String isStatistic = "Statistic is off";
         Log.i(TAG, String.valueOf(NuubitSDK.isStatistic()));
         if (config != null && NuubitSDK.isStatistic()) {

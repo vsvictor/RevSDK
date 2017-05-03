@@ -31,7 +31,7 @@ public class QUICProtocol extends Protocol {
 
     public QUICProtocol() {
         this.descroption = EnumProtocol.QUIC;
-        counter = new ProtocolCounters(descroption);
+        //counter = new ProtocolCounters(descroption);
     }
     @Override
     public Response send(Interceptor.Chain chain) {

@@ -158,34 +158,48 @@
 
     <LinearLayout
         android:id="@+id/llClient"
-        android:orientation="horizontal"
-        android:layout_below="@+id/llRequest"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <android.support.v7.widget.AppCompatCheckBox
-        android:id="@+id/cbView"
-        android:text="Text / Web"
-        android:checked="false"
-        android:layout_below="@id/llRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llRequest"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cbView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/llRequest"
+            android:checked="false"
+            android:text="Text / Web" />
 
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/cbClient"
-            android:text="@string/with_client"
-            android:checked="false"
-            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/llRequest"
+            android:checked="false"
+            android:text="@string/with_client"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/bUpdateConfig"
+            android:text="@string/update_config"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/bSendReports"
+            android:text="@string/send_stat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/svWeb"
-        android:visibility="invisible"
-        android:layout_below="@id/llClient"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/llClient"
+        android:visibility="invisible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -196,17 +210,17 @@
                 android:id="@+id/wvMain"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/middle"
-                android:layout_below="@id/llQuery" />
+                android:layout_below="@id/llQuery"
+                android:layout_marginTop="@dimen/middle" />
 
         </LinearLayout>
     </ScrollView>
 
     <ScrollView
         android:id="@+id/svText"
-        android:layout_below="@id/llClient"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/llClient">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -217,20 +231,20 @@
                 android:id="@+id/tvMain"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/middle"
                 android:layout_weight="2"
-                android:text="@string/empty"
                 android:background="@drawable/background_shadow"
-                android:layout_marginTop="@dimen/middle" />
+                android:text="@string/empty" />
 
             <TextView
                 android:id="@+id/tvHeaders"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:text="@string/empty"
-                android:background="@drawable/background_shadow"
                 android:layout_marginLeft="@dimen/small"
-                android:layout_marginTop="@dimen/middle" />
+                android:layout_marginTop="@dimen/middle"
+                android:layout_weight="3"
+                android:background="@drawable/background_shadow"
+                android:text="@string/empty" />
 
         </LinearLayout>
     </ScrollView>

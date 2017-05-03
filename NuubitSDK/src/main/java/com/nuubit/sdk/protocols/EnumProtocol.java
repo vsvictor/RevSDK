@@ -28,6 +28,7 @@ public enum EnumProtocol {
     RMP,
     HTTP,
     HTTPS,
+    ALL,
     UNDEFINED;
 
     @Override
@@ -43,8 +44,10 @@ public enum EnumProtocol {
                 return "http";
             case HTTPS:
                 return "https";
+            case ALL:
+                return "all";
             default:
-                return "UNDEFINED";
+                return "undefined";
         }
     }
 
@@ -60,6 +63,8 @@ public enum EnumProtocol {
                 return HTTP;
             case "https":
                 return HTTPS;
+            case "all":
+                return ALL;
             default:
                 return UNDEFINED;
         }

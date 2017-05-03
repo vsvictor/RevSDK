@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
+import com.nuubit.sdk.config.OperationMode;
 import com.nuubit.sdk.database.RequestTable;
 import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.statistic.sections.RequestOne;
@@ -40,11 +41,13 @@ import okio.Buffer;
  */
 
 public abstract class Protocol implements OnFuncProtocol {
+    //protected NuubitApplication app;// = NuubitApplication.getInstance();
     protected static int errorCounter;
     protected EnumProtocol descroption;
-    protected ProtocolCounters counter;
+    //protected ProtocolCounters counter;
 
     public Protocol() {
+        //app = NuubitApplication.getInstance();
     }
 
     public static Protocol fromString(@NonNull String proto) {
@@ -68,11 +71,11 @@ public abstract class Protocol implements OnFuncProtocol {
     public void zeroing() {
         errorCounter = 0;
     }
-
+/*
     public ProtocolCounters getCounter() {
         return counter;
     }
-
+*/
     public void save(Request original, Request result, Response response, EnumProtocol protocol, long beginTime, long endTime, long firsByteTime){
         RequestOne statRequest = null;
         try {
@@ -80,12 +83,12 @@ public abstract class Protocol implements OnFuncProtocol {
             if(statRequest.getFirstByteTime() == 0) statRequest.setFirstByteTime(statRequest.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
             Log.i("database", statRequest.toString());
-            counter.addSuccessRequest();
+            //counter.addSuccessRequest();
             //counter.addReceive(getResponseSize(response));
         } catch (NullPointerException ex) {
             //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
             Log.i("database", "Standard exception Database error!!!");
-            counter.addFailRequest();
+            //counter.addFailRequest();
             ex.printStackTrace();
         }
     }
@@ -97,14 +100,17 @@ public abstract class Protocol implements OnFuncProtocol {
             if(req.getFirstByteTime() == 0) req.setFirstByteTime(req.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), req));
             Log.i("database", req.toString());
-            counter.addSuccessRequest();
+            //counter.addSuccessRequest();
             //counter.addReceive(getResponseSize(response));
         } catch (NullPointerException ex) {
             //NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
             Log.i("database", "Standard exception Database error!!!");
-            counter.addFailRequest();
+            //counter.addFailRequest();
             ex.printStackTrace();
         }
     }
-
+    protected boolean isOrigin(){
+        return ((NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() == OperationMode.report_only)||
+                (NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() == OperationMode.off));
+    }
 }

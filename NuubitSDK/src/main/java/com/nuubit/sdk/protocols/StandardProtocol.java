@@ -94,6 +94,9 @@ public class StandardProtocol extends Protocol {
             response = chain.proceed(result);
             RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, response.receivedResponseAtMillis());
             req.setStatusCode(response.code());
+            String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
+            req.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
+
 /*
             response = resp.newBuilder()
                     .body(new ProgressResponseBody(resp.body(), listener, req))
@@ -102,6 +105,7 @@ public class StandardProtocol extends Protocol {
             //RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
             endTime = System.currentTimeMillis();
             req.setEndTS(endTime);
+
             if (response == null) {
                 throw new HTTPException(original, result, response, this, beginTime, endTime);
             }

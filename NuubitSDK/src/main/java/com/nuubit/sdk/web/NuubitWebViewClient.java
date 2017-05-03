@@ -23,15 +23,11 @@ package com.nuubit.sdk.web;
  */
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -42,11 +38,8 @@ import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.types.HTTPCode;
 
-import java.io.IOException;
-
 import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -135,7 +128,7 @@ public class NuubitWebViewClient extends WebViewClient {
     }
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
-        WebResourсeRequestDefault request = new WebResourсeRequestDefault(Uri.parse(url));
+        WebResourceRequestDefault request = new WebResourceRequestDefault(Uri.parse(url));
         return handleRequest(request);
     }
 

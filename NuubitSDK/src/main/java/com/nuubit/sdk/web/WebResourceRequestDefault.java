@@ -30,11 +30,11 @@ import java.util.Map;
  */
 
 @SuppressLint("NewApi")
-public class WebResourсeRequestDefault implements WebResourceRequest {
+public class WebResourceRequestDefault implements WebResourceRequest {
     private Uri url;
     private String method = "GET";
     private Map<String, String> headers;
-    public WebResourсeRequestDefault(Uri url){
+    public WebResourceRequestDefault(Uri url){
         super();
         this.url = url;
         this.headers = new HashMap<String, String>();

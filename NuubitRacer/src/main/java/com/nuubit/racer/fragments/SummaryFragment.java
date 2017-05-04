@@ -102,6 +102,7 @@ public class SummaryFragment extends Fragment {
         tvMedianeOrigin = (TextView) view.findViewById(R.id.tvMedianeOriginValue);
         tvStandDeviationOrigin = (TextView) view.findViewById(R.id.tvStandDeviationOriginValue);
         tvMethodMode = (TextView) view.findViewById(R.id.tvRequestsValue);
+
         if (mode == Const.MODE_CONSISTENTLY) {
             tvMethodMode.setText(((ResultActivity) getActivity()).getMethodMode());
         } else if(mode == Const.MODE_PARALELLY) {

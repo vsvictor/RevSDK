@@ -98,6 +98,8 @@ public class SeriesFragment extends Fragment {
             ((ResultActivity) getActivity()).startTask();
         } else if(mode == Const.MODE_UNLIM){
             ((ResultActivity) getActivity()).startTask();
+        } else if(mode == Const.MODE_PARALELLY){
+            ((ParalellyActivity) getActivity()).startTask();
         } else if(mode == Const.MODE_WEB_PARALELLY){
             ((ParalellyWebActivity) getActivity()).start();
         } else if(mode == Const.MODE_WEB_CONSISTENTLY){

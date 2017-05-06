@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onStartTaskInSeries(int steps, long body, String url, String method, String type) {
-        Intent intent = new Intent(this, ResultActivity.class);
+        Intent intent = new Intent(this, ConsistentlyActivity.class);
         intent.putExtra(Const.STEPS, steps);
         intent.putExtra(Const.SIZE, body);
         intent.putExtra(Const.URL, url);
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     }
     @Override
     public void onStartUnlimTaskSeries(long body, String url, String method, String type) {
-        Intent intent = new Intent(this, ResultActivity.class);
+        Intent intent = new Intent(this, ConsistentlyActivity.class);
         intent.putExtra(Const.STEPS, -1);
         intent.putExtra(Const.SIZE, body);
         intent.putExtra(Const.URL, url);
@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     public void onWebStartTaskParelelly(int steps, long body, String url, String method, String type) {
         Intent intent = new Intent(this, ParalellyWebActivity.class);
         intent.putExtra(Const.STEPS, steps);
+        //intent.putExtra(Const.STEPS, 1);
         intent.putExtra(Const.SIZE, body);
         intent.putExtra(Const.URL, url);
         intent.putExtra(Const.METHOD, method);

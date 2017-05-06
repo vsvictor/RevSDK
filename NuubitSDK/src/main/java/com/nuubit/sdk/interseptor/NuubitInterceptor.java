@@ -28,7 +28,7 @@ public class NuubitInterceptor implements Interceptor {
             begTime = System.currentTimeMillis();
             response = NuubitApplication.getInstance().getBest().send(chain);
             endTime = System.currentTimeMillis();
-        } catch (UnknownHostException ex) {
+        } catch (IOException ex) {
             response = null;
             endTime = System.currentTimeMillis();
             final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, 0);

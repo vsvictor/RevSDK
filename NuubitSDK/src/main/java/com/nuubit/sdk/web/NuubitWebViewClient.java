@@ -36,7 +36,19 @@ import android.webkit.WebViewClient;
 
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.interseptor.ProgressResponseBody;
 import com.nuubit.sdk.types.HTTPCode;
+import com.nuubit.sdk.types.Tag;
+
+import org.acra.util.IOUtils;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -45,6 +57,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.internal.http2.Header;
+import okio.BufferedSource;
+
+import static com.nuubit.sdk.utils.IOUtils.requestSize;
+//import static com.nuubit.sdk.utils.IOUtils.responseSize;
 
 public class NuubitWebViewClient extends WebViewClient {
 
@@ -57,9 +75,13 @@ public class NuubitWebViewClient extends WebViewClient {
 
     private OnURLChanged listener;
     private OnTimes timeListener;
-
+    private OnLoaded loaded;
     private long startLoad;
     private long finishLoad;
+    private long sentBytes;
+    private long receivedBytes;
+
+    private boolean isOrigin = false;
 /*
     private class JavaScriptInterface {
         private final String TAG = JavaScriptInterface.class.getSimpleName();
@@ -93,39 +115,54 @@ public class NuubitWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon){
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
         String url_new = view.getUrl();
-        if(listener != null && url_new != null && !url_new.isEmpty()){
+        if (listener != null && url_new != null && !url_new.isEmpty()) {
             listener.onURLChanged(url_new);
         }
         startLoad = System.currentTimeMillis();
-        if(timeListener != null) {
+        if (timeListener != null) {
             timeListener.onStart(url, startLoad);
         }
+        this.receivedBytes = 0;
     }
+
     @Override
-    public void onPageFinished(WebView view, String url){
+    public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
         String url_new = view.getUrl();
-        if(listener != null && url_new != null && !url_new.isEmpty()){
+        if (listener != null && url_new != null && !url_new.isEmpty()) {
             listener.onURLChanged(url_new);
         }
         finishLoad = System.currentTimeMillis();
-        if(timeListener != null){
+/*
+        if (timeListener != null) {
             timeListener.onStop(url, finishLoad);
             timeListener.onStartStop(url, startLoad, finishLoad);
         }
+*/
+        if (loaded != null && view.getProgress()==100) {
+            loaded.onLoaded(startLoad, finishLoad, sentBytes, receivedBytes);
+            //Log.i("WEBVIEWDATA", url_new);
+        }
+        //Log.i("WEBVIEWDATA", "Load page completed");
     }
 
-    public void setOnURLChangeListener(OnURLChanged listener){
+    public void setOnLoadedPage(OnLoaded loaded) {
+        this.loaded = loaded;
+    }
+
+    public void setOnURLChangeListener(OnURLChanged listener) {
         this.listener = listener;
     }
-    public void onURLChanged(String newURL){
-        if(listener != null && !newURL.isEmpty()){
+
+    public void onURLChanged(String newURL) {
+        if (listener != null && !newURL.isEmpty()) {
             listener.onURLChanged(newURL);
         }
     }
+
     @Override
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull String url) {
         WebResourceRequestDefault request = new WebResourceRequestDefault(Uri.parse(url));
@@ -138,6 +175,7 @@ public class NuubitWebViewClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
         return handleRequest(request);
     }
+
     //@TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("NewApi")
     @NonNull
@@ -146,7 +184,7 @@ public class NuubitWebViewClient extends WebViewClient {
         String url = aRequest.getUrl().toString();
         String method = aRequest.getMethod();
         Headers.Builder hBuilder = new Headers.Builder();
-        for(String key : aRequest.getRequestHeaders().keySet()){
+        for (String key : aRequest.getRequestHeaders().keySet()) {
             hBuilder.add(key, aRequest.getRequestHeaders().get(key));
         }
         RequestBody body = null;
@@ -154,53 +192,86 @@ public class NuubitWebViewClient extends WebViewClient {
         Response response = null;
         WebResourceResponse result = null;
 
-        String ct = aRequest.getRequestHeaders().get("content-type")==null?"text/html":
+        String ct = aRequest.getRequestHeaders().get("content-type") == null ? "text/html" :
                 aRequest.getRequestHeaders().get("content-type");
         String cp = "utf-8";
 
         final String fct = ct;
         if (body == null && method.equalsIgnoreCase("POST")) {
-            body = RequestBody.create(MediaType.parse(ct), sData==null?"":sData);
+            body = RequestBody.create(MediaType.parse(ct), sData == null ? "" : sData);
         }
         try {
             HTTPCode code = HTTPCode.UNDEFINED;
-            Request request = new Request.Builder()
-                    .url(url)
-                    .headers(hBuilder.build())
-                    .method(method, body)
-                    .build();
-
+            Request request;
+            if(isOrigin()) {
+                request = new Request.Builder()
+                        .url(url)
+                        .headers(hBuilder.build())
+                        .method(method, body)
+                        .build();
+            }else{
+                request = new Request.Builder()
+                        .url(url)
+                        .headers(hBuilder.build())
+                        .method(method, body)
+                        .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
+                        .url(url)
+                        .build();
+            }
+            this.sentBytes += requestSize(request.newBuilder().build());
+            Response resp = null;
             while (code.getType() != HTTPCode.Type.SUCCESSFULL && redirectCounter < NuubitConstants.MAX_REDIRECT) {
                 final Call call = client.newCall(request);
-                response = call.execute();
-                code = HTTPCode.create(response.code());
+                resp = call.execute();
+                code = HTTPCode.create(resp.code());
+                if(loaded != null && code.getType() == HTTPCode.Type.SUCCESSFULL) {
+                    response = resp.newBuilder().body(new ProgressResponseBody(resp.body(), pb, resp)).build();
+                    long headersSize = com.nuubit.sdk.utils.IOUtils.responseHeadersSize(response);
+                    this.receivedBytes += headersSize;
+                    //Log.i("WEBVIEWDATA", "Headers size: "+headersSize);
+
+                } else{
+                    response = resp;
+                }
+
+
                 if ((code == HTTPCode.MOVED_PERMANENTLY) || (code == HTTPCode.FOUND)) {
                     url = response.header("location");
                     code = HTTPCode.create(response.code());
-                    request = new Request.Builder()
-                            .url(url)
-                            .headers(hBuilder.build())
-                            .method(method, body)
-                            .build();
+                    if(isOrigin()) {
+                        request = new Request.Builder()
+                                .url(url)
+                                .headers(hBuilder.build())
+                                .method(method, body)
+                                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
+                                .url(url)
+                                .build();
+                    }
+                    else{
+                        request = new Request.Builder()
+                                .url(url)
+                                .headers(hBuilder.build())
+                                .method(method, body)
+                                .build();
+                    }
                     redirectCounter++;
                 }
-                if(code.getType() == HTTPCode.Type.CLIENT_ERROR) break;
+                if (code.getType() == HTTPCode.Type.CLIENT_ERROR) break;
 
-                if(code.getType() == HTTPCode.Type.SUCCESSFULL)
+                if (code.getType() == HTTPCode.Type.SUCCESSFULL)
                     Log.i("Code", "In cycle: " + code.toString());
                 else
                     Log.i("Error", "In cycle: " + code.toString());
 
             }
-
-            if(code.getType() == HTTPCode.Type.SUCCESSFULL)
-                Log.i("Code", "Cycle out: "+code.toString());
+            if (code.getType() == HTTPCode.Type.SUCCESSFULL)
+                Log.i("Code", "Cycle out: " + code.toString());
             else
-                Log.i("Error", "Cycle out: "+code.toString());
+                Log.i("Error", "Cycle out: " + code.toString());
 
-            if(response != null) {
+            if (response != null) {
                 String header = response.header("content-type");
-                if(header != null) {
+                if (header != null) {
                     String[] ss = header.split(";");
                     switch (ss.length) {
                         case 1: {
@@ -226,24 +297,53 @@ public class NuubitWebViewClient extends WebViewClient {
                     response.header("content-encoding", cp),
                     response.body().byteStream());
         } catch (NullPointerException ex) {
-            result = null;
+            String s = "<html><body>" + ex.getMessage() + "</body></html>";
+            InputStream stream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+            result = new WebResourceResponse(ct, cp, stream);
         }
+        //long queryResponse = responseSize(response);
+        //Log.i("WEBVIEWDATA", "Query response size: "+queryResponse);
+        //this.receivedBytes += queryResponse;
         result.setMimeType(ct);
         result.setEncoding(cp);
+        ///result.getData().
         return result;
     }
 
-    public void setOnTimeListener(OnTimes listener){
+    public void setOrigin(boolean origin){
+        this.isOrigin = origin;
+    }
+    public boolean isOrigin(){
+        return isOrigin;
+    }
+
+    private ProgressResponseBody.OnLoadedBody pb = new ProgressResponseBody.OnLoadedBody() {
+        @Override
+        public void onLoaded(long size) {
+            Log.i("WEBVIEW", "Size body: "+size);
+            NuubitWebViewClient.this.receivedBytes += size;
+        }
+    };
+
+    public void setOnTimeListener(OnTimes listener) {
         this.timeListener = listener;
     }
 
     public interface OnURLChanged {
         void onURLChanged(String url);
     }
-    public interface OnTimes{
+
+    public interface OnTimes {
         void onStart(String url, long start);
+
         void onStop(String url, long stop);
+
         void onStartStop(String url, long start, long stop);
     }
+
+    public interface OnLoaded {
+        void onLoaded(long startTime, long finishTime, long sent, long received);
+    }
+
 }
 

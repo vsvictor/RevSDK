@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import com.nuubit.racer.Const;
 import com.nuubit.racer.ParalellyActivity;
 import com.nuubit.racer.ParalellyWebActivity;
 import com.nuubit.racer.R;
-import com.nuubit.racer.ResultActivity;
+import com.nuubit.racer.ConsistentlyActivity;
 
 /*
  * ************************************************************************
@@ -104,7 +103,7 @@ public class SummaryFragment extends Fragment {
         tvMethodMode = (TextView) view.findViewById(R.id.tvRequestsValue);
 
         if (mode == Const.MODE_CONSISTENTLY) {
-            tvMethodMode.setText(((ResultActivity) getActivity()).getMethodMode());
+            tvMethodMode.setText(((ConsistentlyActivity) getActivity()).getMethodMode());
         } else if(mode == Const.MODE_PARALELLY) {
             tvMethodMode.setText(((ParalellyActivity) getActivity()).getMethodMode());
         } else if(mode == Const.MODE_WEB_CONSISTENTLY){
@@ -153,17 +152,17 @@ public class SummaryFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (mode == Const.MODE_CONSISTENTLY) {
-                tvMin.setText(String.valueOf(((ResultActivity) getActivity()).getTable().min()));
-                tvMax.setText(String.valueOf(((ResultActivity) getActivity()).getTable().max()));
-                tvAverage.setText(String.valueOf(((ResultActivity) getActivity()).getTable().average()));
-                tvMediane.setText(String.valueOf(((ResultActivity) getActivity()).getTable().median()));
-                tvStandDeviation.setText(String.valueOf(((ResultActivity) getActivity()).getTable().standDeviation()));
-                tvMinOrigin.setText(String.valueOf(((ResultActivity) getActivity()).getTableOriginal().min()));
-                tvMaxOrigin.setText(String.valueOf(((ResultActivity) getActivity()).getTableOriginal().max()));
-                tvAverageOrigin.setText(String.valueOf(((ResultActivity) getActivity()).getTableOriginal().average()));
-                tvMedianeOrigin.setText(String.valueOf(((ResultActivity) getActivity()).getTableOriginal().median()));
-                tvStandDeviationOrigin.setText(String.valueOf(((ResultActivity) getActivity()).getTableOriginal().standDeviation()));
-            } else {
+                tvMin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTable().min()));
+                tvMax.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTable().max()));
+                tvAverage.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTable().average()));
+                tvMediane.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTable().median()));
+                tvStandDeviation.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTable().standDeviation()));
+                tvMinOrigin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTableOriginal().min()));
+                tvMaxOrigin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTableOriginal().max()));
+                tvAverageOrigin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTableOriginal().average()));
+                tvMedianeOrigin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTableOriginal().median()));
+                tvStandDeviationOrigin.setText(String.valueOf(((ConsistentlyActivity) getActivity()).getTableOriginal().standDeviation()));
+            } else if(mode == Const.MODE_PARALELLY){
                 tvMin.setText(String.valueOf(((ParalellyActivity) getActivity()).getTable().min()));
                 tvMax.setText(String.valueOf(((ParalellyActivity) getActivity()).getTable().max()));
                 tvAverage.setText(String.valueOf(((ParalellyActivity) getActivity()).getTable().average()));
@@ -174,6 +173,28 @@ public class SummaryFragment extends Fragment {
                 tvAverageOrigin.setText(String.valueOf(((ParalellyActivity) getActivity()).getTableOriginal().average()));
                 tvMedianeOrigin.setText(String.valueOf(((ParalellyActivity) getActivity()).getTableOriginal().median()));
                 tvStandDeviationOrigin.setText(String.valueOf(((ParalellyActivity) getActivity()).getTableOriginal().standDeviation()));
+            }else if(mode == Const.MODE_WEB_CONSISTENTLY){
+                tvMin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTable().min()));
+                tvMax.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTable().max()));
+                tvAverage.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTable().average()));
+                tvMediane.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTable().median()));
+                tvStandDeviation.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTable().standDeviation()));
+                tvMinOrigin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTableOriginal().min()));
+                tvMaxOrigin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTableOriginal().max()));
+                tvAverageOrigin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTableOriginal().average()));
+                tvMedianeOrigin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTableOriginal().median()));
+                tvStandDeviationOrigin.setText(String.valueOf(((ConsistentlyWebActivity) getActivity()).getTableOriginal().standDeviation()));
+            }else if(mode == Const.MODE_WEB_PARALELLY){
+                tvMin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTable().min()));
+                tvMax.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTable().max()));
+                tvAverage.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTable().average()));
+                tvMediane.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTable().median()));
+                tvStandDeviation.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTable().standDeviation()));
+                tvMinOrigin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTableOriginal().min()));
+                tvMaxOrigin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTableOriginal().max()));
+                tvAverageOrigin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTableOriginal().average()));
+                tvMedianeOrigin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTableOriginal().median()));
+                tvStandDeviationOrigin.setText(String.valueOf(((ParalellyWebActivity) getActivity()).getTableOriginal().standDeviation()));
             }
         }
     };

@@ -3,6 +3,8 @@ package com.nuubit.sdk.interseptor;
 import android.util.Log;
 
 import com.nuubit.sdk.statistic.sections.RequestOne;
+import com.nuubit.sdk.types.HTTPCode;
+import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import java.io.IOException;
 
@@ -23,6 +25,7 @@ public class ProgressResponseBody extends ResponseBody {
 
     private final ResponseBody responseBody;
     private ProgressListener progressListener;
+    private OnLoadedBody loaded;
     private BufferedSource bufferedSource;
     private boolean firstStep = true;
     private boolean lastStep = false;
@@ -36,6 +39,14 @@ public class ProgressResponseBody extends ResponseBody {
         this.progressListener = progressListener;
         this.req = null;
     }
+    public ProgressResponseBody(ResponseBody responseBody, OnLoadedBody loaded, Response response) {
+        this.response = response;
+        this.responseBody = responseBody;
+        this.progressListener = null;
+        this.req = null;
+        this.loaded = loaded;
+    }
+
     public ProgressResponseBody(ResponseBody responseBody, ProgressListener listener, RequestOne req) {
         this.responseBody = responseBody;
         this.progressListener = listener;
@@ -109,7 +120,18 @@ public class ProgressResponseBody extends ResponseBody {
                     progressListener.lastByteTime(lastByteTime);
                     progressListener.onResponse(response,isServ, lastByteTime);
                     //Log.i("REQESTONE", "Read "+String.valueOf(bytesRead));
+
                     lastStep = true;
+                }
+                if(response != null && loaded != null && bytesRead == -1 && !firstStep && !lastStep){
+                    if(loaded != null){
+                        HTTPCode code = HTTPCode.create(response.code());
+                        if(code.getType() == HTTPCode.Type.SUCCESSFULL) {
+                            loaded.onLoaded(totalBytesRead);
+                            //Log.i("WEBVIEWDATA", "ProgressResponseBody size: " + totalBytesRead);
+                        }
+                        lastStep = true;
+                    }
                 }
                 return bytesRead;
             }
@@ -124,5 +146,8 @@ public class ProgressResponseBody extends ResponseBody {
         void lastByteTime(long time);
         void onRequest(RequestOne res);
         void onResponse(Response response, boolean serv, long lastByteTime);
+    }
+    public interface OnLoadedBody{
+        void onLoaded(long size);
     }
 }

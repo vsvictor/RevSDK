@@ -73,11 +73,11 @@ import okhttp3.Response;
  */
 
 
-public class ResultActivity extends AppCompatActivity implements
+public class ConsistentlyActivity extends AppCompatActivity implements
         SeriesFragment.OnSeriesListener,
         SummaryFragment.OnSummaryListener {
 
-    private static final String TAG = ResultActivity.class.getSimpleName();
+    private static final String TAG = ConsistentlyActivity.class.getSimpleName();
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -151,8 +151,8 @@ public class ResultActivity extends AppCompatActivity implements
         rlSendMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sData = Table.toTable(ResultActivity.this, getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY, url, method);
-                ShareCompat.IntentBuilder.from(ResultActivity.this)
+                String sData = Table.toTable(ConsistentlyActivity.this, getTable(), getTableOriginal(), Const.MODE_CONSISTENTLY, url, method);
+                ShareCompat.IntentBuilder.from(ConsistentlyActivity.this)
                         .setType("message/rfc822")
                         .addEmailTo(NuubitApp.getInstance().getEMail())
                         .setSubject("Racer: " + url)

@@ -39,7 +39,7 @@ import okhttp3.OkHttpClient;
 public class ParalellyWebActivity extends AppCompatActivity implements
         SeriesFragment.OnSeriesListener,
         SummaryFragment.OnSummaryListener {
-    private static final String TAG = ResultActivity.class.getSimpleName();
+    private static final String TAG = ConsistentlyActivity.class.getSimpleName();
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -129,27 +129,25 @@ public class ParalellyWebActivity extends AppCompatActivity implements
     }
     public void start(){
         WebView[] webs = new WebView[steps];
+        WebView[] orig = new WebView[steps];
+        pd = new ProgressDialog(this);
+        pd.setTitle("");
+        pd.setMessage(this.getResources().getString(R.string.please_wait));
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgress(0);
+        pd.setMax(steps);
+        pd.setIndeterminate(false);
+        pd.show();
+
         for(int i = 0; i<steps; i++){
-            webs[i] = new WebView(this);
-            final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, webs[i], client);
-            webs[i].setWebViewClient(webClient);
-            webs[i].setWebChromeClient(NuubitSDK.createWebChromeClient());
-            webClient.setOnTimeListener(new NuubitWebViewClient.OnTimes() {
-                @Override
-                public void onStart(String url, long start) {
-                    Log.i("WEBVIEWTIME", "Start:"+start+" : "+url);
-                }
-                @Override
-                public void onStop(String url, long stop) {
-                    Log.i("WEBVIEWTIME", "Stop :"+stop+" : "+url);
-                }
-                @Override
-                public void onStartStop(String url, long start, long stop) {
-                    Log.i("WEBVIEWTIME", "Result: "+(stop-start)+" : "+url);
-                }
-            });
-            webs[i].loadUrl(url);
+            WebTask task = new WebTask(this,url,"R",client,getTable(),adapter,false);
+            task.start();
+            WebTask origin = new WebTask(this,url,"O",client,getTableOriginal(), adapter, true, pd);
+            origin.start();
+            //adapter.dataUpdated();
         }
+        //pd.dismiss();
+        //adapter.dataUpdated();
     }
 
     public Table getTable() {
@@ -253,16 +251,20 @@ public class ParalellyWebActivity extends AppCompatActivity implements
             else
                 holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
 
-            holder.tvNumber.setText(String.valueOf(pos + 1));
-            holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
-            holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
-            holder.tvBody.setText(String.valueOf(data.get(pos).getBody()));
-            holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
-            holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
-            holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
-            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()));
-            holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
+            try {
 
+                holder.tvNumber.setText(String.valueOf(pos + 1));
+                holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
+                holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
+                holder.tvBody.setText(String.valueOf(data.get(pos).getBody()/1024));
+                holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
+                holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
+                holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
+                holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()/1024));
+                holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
+            } catch (IndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
         }
 
         @Override

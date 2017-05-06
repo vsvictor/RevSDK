@@ -119,6 +119,16 @@ public class StandardProtocol extends Protocol {
             boolean r = (code.getType() == HTTPCode.Type.INFORMATIONAL) || (code.getType() == HTTPCode.Type.SUCCESSFULL) || (code.getType() == HTTPCode.Type.REDIRECTION);
             req.setSuccessStatus(r?1:0);
             save(req);
+
+            NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
+            if(!isOrigin()) {
+                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
+                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
+            } else{
+                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
+                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
+            }
+
         } catch (IOException ex){
             NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
             ex.printStackTrace();
@@ -138,14 +148,6 @@ public class StandardProtocol extends Protocol {
                 NuubitApplication.getInstance().getProtocolCounters().get("origin").addFailRequest();
             }
             ex.printStackTrace();
-        }
-        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
-        if(!isOrigin()) {
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
-        } else{
-            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
-            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
         }
         return response;
     }

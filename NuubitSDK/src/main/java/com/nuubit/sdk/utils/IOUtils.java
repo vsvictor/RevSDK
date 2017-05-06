@@ -1,5 +1,7 @@
 package com.nuubit.sdk.utils;
 
+import android.util.Log;
+
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.protocols.HTTPException;
 
@@ -35,6 +37,8 @@ import okhttp3.Response;
  */
 
 public class IOUtils {
+    private static final String TAG = IOUtils.class.getSimpleName();
+
     public static byte[] readFully(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -67,5 +71,50 @@ public class IOUtils {
             e.printStackTrace();
         }
         return response;
+    }
+
+    public static long responseHeadersSize(Response response) {
+        long result = 0;
+        if (response != null) {
+
+            for (String sName : response.headers().names()) {
+                String sVal = response.header(sName);
+                result += sName.getBytes().length;
+                result += sVal.getBytes().length;
+            }
+
+            long bodySize = 0;
+/*
+            try {
+                bodySize = response.body().string().getBytes().length;
+                result += bodySize;
+                Log.i(TAG, "Loaded response, size: "+ bodySize);
+            } catch (IOException e) {
+                Log.i(TAG, "Exception response, size: "+ 0);
+                e.printStackTrace();
+            }
+*/
+        }
+        return result;
+    }
+
+    public static long requestSize(Request request) {
+        long result = 0;
+        if (request != null) {
+            for (String sName : request.headers().names()) {
+                String sVal = request.header(sName);
+                result += sName.getBytes().length;
+                result += sVal.getBytes().length;
+            }
+            try {
+                long bodySize = request.body().contentLength();
+                result += bodySize;
+                Log.i(TAG, "Loaded request, size: "+ bodySize);
+            } catch (Exception e) {
+                Log.i(TAG, "Exception request, size: "+ 0);
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 }

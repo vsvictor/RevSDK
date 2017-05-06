@@ -196,7 +196,7 @@ public class NuubitSDK {
             sHeaders.append(":");
             sHeaders.append(original.headers().get(name)+"\n");
         }
-        Log.i(TAG, "Original:" + original.toString()+"\n Headers: "+sHeaders);
+        Log.i("AFTER", "Original:" + original.toString());//+"\n Headers: "+sHeaders);
 
         RequestCreator creator = new RequestCreator(NuubitApplication.getInstance().getConfig());
         Request result = creator.create(original);
@@ -217,7 +217,7 @@ public class NuubitSDK {
             sHeaders.append(result.headers().get(name)+"\n");
         }
 
-        Log.i(TAG, "Transfered: \n" + result.toString()+"\n Headers: "+sHeaders.toString());
+        Log.i("TRANSFER", "Transfered: \n" + result.toString());//+"\n Headers: "+sHeaders.toString());
         return result; //creator.create(original);
     }
 

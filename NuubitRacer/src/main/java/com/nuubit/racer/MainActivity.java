@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     public void onWebStartTaskInSeries(int steps, long body, String url, String method, String type) {
         Intent intent = new Intent(this, ConsistentlyWebActivity.class);
         intent.putExtra(Const.STEPS, steps);
+        //intent.putExtra(Const.STEPS, 1);
         intent.putExtra(Const.SIZE, body);
         intent.putExtra(Const.URL, url);
         intent.putExtra(Const.METHOD, method);

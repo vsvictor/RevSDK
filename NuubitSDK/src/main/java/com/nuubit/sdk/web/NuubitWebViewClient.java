@@ -82,6 +82,10 @@ public class NuubitWebViewClient extends WebViewClient {
     private long receivedBytes;
 
     private boolean isOrigin = false;
+    private boolean isFirst = true;
+
+    private String firstURL;
+    private int firstCode;
 /*
     private class JavaScriptInterface {
         private final String TAG = JavaScriptInterface.class.getSimpleName();
@@ -98,12 +102,13 @@ public class NuubitWebViewClient extends WebViewClient {
         this.context = context;
         this.view = view;
         this.client = client;
+        this.sentBytes = 0;
+        this.receivedBytes = 0;
 
         view.getSettings().setJavaScriptEnabled(true);
         view.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
         view.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         view.getSettings().setPluginState(WebSettings.PluginState.ON);
-//        view.addJavascriptInterface(new JavaScriptInterface(), "AndroidInterface");
     }
 
     public NuubitWebViewClient(OkHttpClient client) {
@@ -117,6 +122,9 @@ public class NuubitWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
+        this.sentBytes = 0;
+        this.receivedBytes = 0;
+        this.firstURL = url;
         String url_new = view.getUrl();
         if (listener != null && url_new != null && !url_new.isEmpty()) {
             listener.onURLChanged(url_new);
@@ -125,7 +133,7 @@ public class NuubitWebViewClient extends WebViewClient {
         if (timeListener != null) {
             timeListener.onStart(url, startLoad);
         }
-        this.receivedBytes = 0;
+        this.isFirst = true;
     }
 
     @Override
@@ -143,8 +151,10 @@ public class NuubitWebViewClient extends WebViewClient {
         }
 */
         if (loaded != null && view.getProgress()==100) {
-            loaded.onLoaded(startLoad, finishLoad, sentBytes, receivedBytes);
+            loaded.onLoaded(firstCode, url, startLoad, finishLoad, sentBytes, receivedBytes);
             //Log.i("WEBVIEWDATA", url_new);
+            this.sentBytes = 0;
+            this.receivedBytes = 0;
         }
         //Log.i("WEBVIEWDATA", "Load page completed");
     }
@@ -215,7 +225,6 @@ public class NuubitWebViewClient extends WebViewClient {
                         .headers(hBuilder.build())
                         .method(method, body)
                         .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
-                        .url(url)
                         .build();
             }
             this.sentBytes += requestSize(request.newBuilder().build());
@@ -228,7 +237,7 @@ public class NuubitWebViewClient extends WebViewClient {
                     response = resp.newBuilder().body(new ProgressResponseBody(resp.body(), pb, resp)).build();
                     long headersSize = com.nuubit.sdk.utils.IOUtils.responseHeadersSize(response);
                     this.receivedBytes += headersSize;
-                    //Log.i("WEBVIEWDATA", "Headers size: "+headersSize);
+                    Log.i("WEBVIEWDATA", "Headers size: "+headersSize);
 
                 } else{
                     response = resp;
@@ -238,24 +247,23 @@ public class NuubitWebViewClient extends WebViewClient {
                 if ((code == HTTPCode.MOVED_PERMANENTLY) || (code == HTTPCode.FOUND)) {
                     url = response.header("location");
                     code = HTTPCode.create(response.code());
-                    if(isOrigin()) {
-                        request = new Request.Builder()
-                                .url(url)
-                                .headers(hBuilder.build())
-                                .method(method, body)
-                                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
-                                .url(url)
-                                .build();
-                    }
+                    if(isOrigin())
+                    request = new Request.Builder()
+                            .url(url)
+                            .headers(hBuilder.build())
+                            .method(method, body)
+                            .build();
                     else{
                         request = new Request.Builder()
                                 .url(url)
                                 .headers(hBuilder.build())
+                                .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
                                 .method(method, body)
                                 .build();
                     }
                     redirectCounter++;
                 }
+
                 if (code.getType() == HTTPCode.Type.CLIENT_ERROR) break;
 
                 if (code.getType() == HTTPCode.Type.SUCCESSFULL)
@@ -270,6 +278,12 @@ public class NuubitWebViewClient extends WebViewClient {
                 Log.i("Error", "Cycle out: " + code.toString());
 
             if (response != null) {
+                if(isFirst){
+                    firstCode = code.getCode();
+                    firstURL = response.request().url().toString();
+                    isFirst = false;
+                }
+
                 String header = response.header("content-type");
                 if (header != null) {
                     String[] ss = header.split(";");
@@ -320,7 +334,7 @@ public class NuubitWebViewClient extends WebViewClient {
     private ProgressResponseBody.OnLoadedBody pb = new ProgressResponseBody.OnLoadedBody() {
         @Override
         public void onLoaded(long size) {
-            Log.i("WEBVIEW", "Size body: "+size);
+            Log.i("WEBVIEWDATA", "Size body: "+size);
             NuubitWebViewClient.this.receivedBytes += size;
         }
     };
@@ -342,7 +356,7 @@ public class NuubitWebViewClient extends WebViewClient {
     }
 
     public interface OnLoaded {
-        void onLoaded(long startTime, long finishTime, long sent, long received);
+        void onLoaded(int httpCode, String url, long startTime, long finishTime, long sent, long received);
     }
 
 }

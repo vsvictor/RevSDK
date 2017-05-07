@@ -128,6 +128,7 @@ public class ParalellyWebActivity extends AppCompatActivity implements
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
     }
     public void start(){
+/*
         WebView[] webs = new WebView[steps];
         WebView[] orig = new WebView[steps];
         pd = new ProgressDialog(this);
@@ -146,8 +147,7 @@ public class ParalellyWebActivity extends AppCompatActivity implements
             origin.start();
             //adapter.dataUpdated();
         }
-        //pd.dismiss();
-        //adapter.dataUpdated();
+*/
     }
 
     public Table getTable() {

@@ -3,6 +3,7 @@ package com.nuubit.racer;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,9 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,10 +33,13 @@ import com.nuubit.racer.model.Table;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.views.CountersFragment;
+import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import okhttp3.OkHttpClient;
 
-public class ConsistentlyWebActivity extends AppCompatActivity {
+public class ConsistentlyWebActivity extends AppCompatActivity implements
+        SeriesFragment.OnSeriesListener,
+        SummaryFragment.OnSummaryListener {
     private static final String TAG = ConsistentlyActivity.class.getSimpleName();
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -52,6 +59,7 @@ public class ConsistentlyWebActivity extends AppCompatActivity {
     private ResultAdapter adapter;
 
     private int counter;
+    private int counterOrigin;
     private String textBody = null;
     private String stype;
     private ProgressDialog pd;
@@ -60,6 +68,8 @@ public class ConsistentlyWebActivity extends AppCompatActivity {
     private boolean isStop;
     private TextView tvCounter;
     private AlertDialog dialog;
+    private WebView wvMain;
+    private WebView wvOrigin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +130,84 @@ public class ConsistentlyWebActivity extends AppCompatActivity {
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-
+        wvMain = (WebView) findViewById(R.id.wvMain);
+        wvOrigin = (WebView) findViewById(R.id.wvOrigin);
     }
     public void start(){
+        counter = 0;
+        pd = new ProgressDialog(this);
+        pd.setTitle("");
+        pd.setMessage(this.getResources().getString(R.string.please_wait));
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgress(0);
+        pd.setMax(steps);
+        pd.setIndeterminate(false);
+        pd.show();
+
+        final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, wvMain, client);
+        webClient.setOrigin(false);
+        wvMain.setWebViewClient(webClient);
+        wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
+        webClient.setOnLoadedPage(new NuubitWebViewClient.OnLoaded() {
+            @Override
+            public void onLoaded(int code, String url, long startTime, long finishTime, long sent, long received) {
+                Log.i("WEBVIEWDATA", "Code: "+code+" Start: "+startTime+" stop: "+finishTime+" sent: "+sent+" received: "+received+" Time: "+(finishTime-startTime));
+                Log.i("WEBVIEWDATA", url);
+                Log.i("WEBVIEWDATA", "Counter: "+counter+" Origin: "+webClient.isOrigin());
+
+                Row row = new Row();
+                row.setCodeResult(200);
+                row.setUrl(url);
+                row.setBody(sent);
+                row.setFinish(finishTime);
+                row.setPayload(received);
+                row.setSource("R");
+                row.setStart(startTime);
+                getTable().add(row);
+                counter++;
+                adapter.dataUpdated();
+                if(counter < (steps)){
+                    wvMain.loadUrl(url);
+                }
+            }
+        });
+        wvMain.loadUrl(url);
+
+
+        counterOrigin = 0;
+        final NuubitWebViewClient webOrigin = NuubitSDK.createWebViewClient(this, wvOrigin, client);
+        webOrigin.setOrigin(true);
+        wvOrigin.setWebViewClient(webOrigin);
+        wvOrigin.setWebChromeClient(NuubitSDK.createWebChromeClient());
+        webOrigin.setOnLoadedPage(new NuubitWebViewClient.OnLoaded() {
+            @Override
+            public void onLoaded(int code, String url, long startTime, long finishTime, long sent, long received) {
+                Log.i("WEBVIEWDATA", "Code: "+code+" Start: "+startTime+" stop: "+finishTime+" sent: "+sent+" received: "+received+" Time: "+(finishTime-startTime));
+                Log.i("WEBVIEWDATA", url);
+                Log.i("WEBVIEWDATA", "Counter: "+counter+" Origin: "+webOrigin.isOrigin());
+
+                Row row = new Row();
+                row.setCodeResult(200);
+                row.setUrl(url);
+                row.setBody(sent);
+                row.setFinish(finishTime);
+                row.setPayload(received);
+                row.setSource("O");
+                row.setStart(startTime);
+                getTableOriginal().add(row);
+                pd.incrementProgressBy(1);
+                counterOrigin++;
+                adapter.dataUpdated();
+                if(counterOrigin < (steps)){
+                    wvOrigin.loadUrl(url);
+                }else {
+                    pd.dismiss();
+                }
+            }
+        });
+        wvOrigin.loadUrl(url);
     }
+
     public Table getTable() {
         return table;
     }
@@ -140,13 +224,28 @@ public class ConsistentlyWebActivity extends AppCompatActivity {
         return adapter;
     }
 
+    @Override
+    public void onSeries(Uri uri) {
+
+    }
+
+    @Override
+    public void onSummary(Uri uri) {
+
+    }
+
+    @Override
+    public void onStopRequests() {
+
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         private SummaryFragment first;
         private SeriesFragment second;
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-            first = SummaryFragment.newInstance(Const.MODE_CONSISTENTLY);
-            second = SeriesFragment.newInstance(Const.MODE_CONSISTENTLY);
+            first = SummaryFragment.newInstance(Const.MODE_WEB_CONSISTENTLY);
+            second = SeriesFragment.newInstance(Const.MODE_WEB_CONSISTENTLY);
         }
 
         @Override
@@ -204,23 +303,33 @@ public class ConsistentlyWebActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ResultAdapter.ViewHolder holder, int pos) {
+            try {
+                holder.mItem = data.get(pos);
+                if ((pos) % 2 == 0)
+                    holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGray));
+                else
+                    holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
+            } catch (IndexOutOfBoundsException ex){
+                ex.printStackTrace();
+            }
+            try{
 
-            holder.mItem = data.get(pos);
-            if ((pos) % 2 == 0)
-                holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGray));
-            else
-                holder.cvMain.setCardBackgroundColor(context.getResources().getColor(R.color.colorGrayLight));
-
-            holder.tvNumber.setText(String.valueOf(pos + 1));
-            holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
-            holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
-            holder.tvBody.setText(String.valueOf(data.get(pos).getBody()));
-            holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
-            holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
-            holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
-            holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()));
-            holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
-
+                holder.tvNumber.setText(String.valueOf(pos + 1));
+                holder.tvTime.setText(String.valueOf(data.get(pos).getTimeInMillis()));
+                holder.tvCode.setText(String.valueOf(data.get(pos).getCodeResult()));
+                holder.tvBody.setText(String.valueOf(data.get(pos).getBody()/1024));
+                holder.tvPayload.setText(String.valueOf(data.get(pos).getPayload() / 1024));
+            } catch (IndexOutOfBoundsException ex){
+                ex.printStackTrace();
+            }
+            try {
+                holder.tvTimeOrigin.setText(String.valueOf(original.get(pos).getTimeInMillis()));
+                holder.tvCodeOrigin.setText(String.valueOf(original.get(pos).getCodeResult()));
+                holder.tvBodyOrigin.setText(String.valueOf(original.get(pos).getBody()/1024));
+                holder.tvPayloadOrigin.setText(String.valueOf(original.get(pos).getPayload() / 1024));
+            } catch (IndexOutOfBoundsException ex){
+                ex.printStackTrace();
+            }
         }
 
         @Override

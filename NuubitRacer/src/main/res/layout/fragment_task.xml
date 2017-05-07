@@ -265,6 +265,7 @@
                     android:layout_height="match_parent" />
 
                 <TextView
+                    android:id="@+id/tvParallel"
                     android:text="@string/parallel"
                     android:textSize="@dimen/button_font"
                     android:layout_centerInParent="true"

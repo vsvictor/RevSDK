@@ -64,6 +64,7 @@ public class WebTaskFragment extends Fragment {
     private RelativeLayout rlHistory;
     private RelativeLayout rlStart;
     private RelativeLayout rlParalelly;
+    private TextView tvParalelly;
     private RelativeLayout rlUnlim;
     private HttpUrl url;
     private OnWebTaskListener listener;
@@ -234,6 +235,9 @@ public class WebTaskFragment extends Fragment {
                 listener.onWebStartTaskParelelly(sbSteps.getProgress(), sbSize.getProgress(), url.toString(), spMethod.getSelectedItem().toString(), spMime.getSelectedItem().toString());
             }
         });
+        rlParalelly.setVisibility(View.INVISIBLE);
+        tvParalelly = (TextView) view.findViewById(R.id.tvParallel);
+        tvParalelly.setVisibility(View.INVISIBLE);
         rlUnlim = (RelativeLayout) view.findViewById(R.id.rlUnlimit);
         rlUnlim.setOnClickListener(new View.OnClickListener() {
             @Override

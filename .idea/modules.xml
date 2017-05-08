@@ -3,18 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NuubitABGenerator/NuubitABGenerator.iml" filepath="$PROJECT_DIR$/NuubitABGenerator/NuubitABGenerator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitABGenerator/NuubitABGenerator.iml" filepath="$PROJECT_DIR$/NuubitABGenerator/NuubitABGenerator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" filepath="$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" filepath="$PROJECT_DIR$/NuubitCompatible/NuubitCompatible.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" filepath="$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" filepath="$PROJECT_DIR$/NuubitDemo/NuubitDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" filepath="$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" filepath="$PROJECT_DIR$/NuubitRacer/NuubitRacer.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" filepath="$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" filepath="$PROJECT_DIR$/NuubitSDK/NuubitSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/NuubitTester/NuubitTester.iml" filepath="$PROJECT_DIR$/NuubitTester/NuubitTester.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NuubitTester/NuubitTester.iml" filepath="$PROJECT_DIR$/NuubitTester/NuubitTester.iml" />
-      <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/revsw-sdk-android.iml" filepath="$PROJECT_DIR$/revsw-sdk-android.iml" />
     </modules>
   </component>

@@ -160,6 +160,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     public void onWebStartUnlimTaskSeries(long body, String url, String method, String type) {
-
+        Intent intent = new Intent(this, ConsistentlyWebActivity.class);
+        intent.putExtra(Const.STEPS, -1);
+        intent.putExtra(Const.SIZE, body);
+        intent.putExtra(Const.URL, url);
+        intent.putExtra(Const.METHOD, method);
+        intent.putExtra(Const.TYPE, type);
+        startActivity(intent);
     }
 }

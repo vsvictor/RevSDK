@@ -24,18 +24,18 @@
             android:id="@+id/llLeftDrawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <WebView
-                android:id="@+id/wvMain"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"/>
-            <WebView
-                android:id="@+id/wvOrigin"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"/>
-
+            <!--
+                        <WebView
+                            android:id="@+id/wvMain"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="invisible"/>
+                        <WebView
+                            android:id="@+id/wvOrigin"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="invisible"/>
+            -->
         </LinearLayout>
 
     </android.support.design.widget.NavigationView>

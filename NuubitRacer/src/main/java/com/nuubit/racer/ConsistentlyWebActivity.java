@@ -2,6 +2,7 @@ package com.nuubit.racer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -65,12 +66,11 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
     private ProgressDialog pd;
     private RelativeLayout rlSendMail;
 
-    private boolean isStop;
     private TextView tvCounter;
     private AlertDialog dialog;
     private WebView wvMain;
     private WebView wvOrigin;
-
+    private boolean isStop = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,19 +130,45 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
             }
         });
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
-        wvMain = (WebView) findViewById(R.id.wvMain);
-        wvOrigin = (WebView) findViewById(R.id.wvOrigin);
+        //wvMain = (WebView) findViewById(R.id.wvMain);
+        //wvOrigin = (WebView) findViewById(R.id.wvOrigin);
+        wvMain = new WebView(this);
+        wvOrigin = new WebView(this);
     }
     public void start(){
         counter = 0;
-        pd = new ProgressDialog(this);
-        pd.setTitle("");
-        pd.setMessage(this.getResources().getString(R.string.please_wait));
-        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        pd.setProgress(0);
-        pd.setMax(steps);
-        pd.setIndeterminate(false);
-        pd.show();
+        if (steps > 0) {
+            pd = new ProgressDialog(this);
+            pd.setTitle("");
+            pd.setMessage(this.getResources().getString(R.string.please_wait));
+            pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pd.setProgress(0);
+            pd.setMax(steps);
+            pd.setIndeterminate(false);
+            pd.show();
+        } else {
+            AlertDialog.Builder alb = new AlertDialog.Builder(this);
+            alb.setTitle("");
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.counter, null);
+            tvCounter = (TextView) view.findViewById(R.id.tvCounter);
+            RelativeLayout rlStop = (RelativeLayout) view.findViewById(R.id.rlStop);
+            rlStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.cancel();
+                    isStop = true;
+                }
+            });
+            alb.setView(view);
+            alb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    isStop = true;
+                }
+            });
+            dialog = alb.show();
+        }
 
         final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, wvMain, client);
         webClient.setOrigin(false);
@@ -166,8 +192,15 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
                 getTable().add(row);
                 counter++;
                 adapter.dataUpdated();
-                if(counter < (steps)){
-                    wvMain.loadUrl(url);
+                if (steps == -1) {
+                    if (!isStop) {
+                        tvCounter.setText(String.valueOf(counter));
+                        wvMain.loadUrl(url);
+                    }
+                } else {
+                    if (counter < (steps)) {
+                        wvMain.loadUrl(url);
+                    }
                 }
             }
         });
@@ -195,13 +228,22 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
                 row.setSource("O");
                 row.setStart(startTime);
                 getTableOriginal().add(row);
-                pd.incrementProgressBy(1);
+                if (steps > 0) {
+                    pd.incrementProgressBy(1);
+                }
                 counterOrigin++;
                 adapter.dataUpdated();
-                if(counterOrigin < (steps)){
-                    wvOrigin.loadUrl(url);
+                if (steps == -1) {
+                    if (!isStop) {
+                        //tvCounter.setText(String.valueOf(counter));
+                        wvOrigin.loadUrl(url);
+                    }
                 }else {
-                    pd.dismiss();
+                    if (counterOrigin < (steps)) {
+                        wvOrigin.loadUrl(url);
+                    } else {
+                        pd.dismiss();
+                    }
                 }
             }
         });

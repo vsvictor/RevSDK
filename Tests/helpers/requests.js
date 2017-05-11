@@ -60,7 +60,7 @@ exports.putConfig = function(appId, portalAPIKey, accountId, statsReportingInter
             "comment":"dsfs"
         }
     }, function (error, response, body){
-        console.log(body);
+    //    console.log(body);
     });
 };
 
@@ -102,7 +102,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "comment":"dsfs"
         }
     }, function (error, response, body){
-        console.log(body);
+  //      console.log(body);
     });
 };
 

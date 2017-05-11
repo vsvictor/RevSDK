@@ -34,6 +34,7 @@ import com.nuubit.racer.model.Table;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.views.CountersFragment;
+import com.nuubit.sdk.web.NuubitWebView;
 import com.nuubit.sdk.web.NuubitWebViewClient;
 
 import okhttp3.OkHttpClient;
@@ -68,8 +69,7 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
 
     private TextView tvCounter;
     private AlertDialog dialog;
-    private WebView wvMain;
-    private WebView wvOrigin;
+    private NuubitWebView wvMain;
     private boolean isStop = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +132,11 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
         //wvMain = (WebView) findViewById(R.id.wvMain);
         //wvOrigin = (WebView) findViewById(R.id.wvOrigin);
-        wvMain = new WebView(this);
-        wvOrigin = new WebView(this);
+        wvMain = new NuubitWebView(this);
     }
     public void start(){
         counter = 0;
+        final boolean isOrigin = false;
         if (steps > 0) {
             pd = new ProgressDialog(this);
             pd.setTitle("");
@@ -171,14 +171,16 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
         }
 
         final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, wvMain, client);
-        webClient.setOrigin(false);
+        webClient.setOrigin(counter%2==1);
+        webClient.setFullResponse(true);
         wvMain.setWebViewClient(webClient);
         wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
-        webClient.setOnLoadedPage(new NuubitWebViewClient.OnLoaded() {
+
+        wvMain.setOnLoadedPage(new NuubitWebView.OnLoaded() {
             @Override
             public void onLoaded(int code, String url, long startTime, long finishTime, long sent, long received) {
                 Log.i("WEBVIEWDATA", "Code: "+code+" Start: "+startTime+" stop: "+finishTime+" sent: "+sent+" received: "+received+" Time: "+(finishTime-startTime));
-                Log.i("WEBVIEWDATA", url);
+                //Log.i("WEBVIEWDATA", url);
                 Log.i("WEBVIEWDATA", "Counter: "+counter+" Origin: "+webClient.isOrigin());
 
                 Row row = new Row();
@@ -187,67 +189,27 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
                 row.setBody(sent);
                 row.setFinish(finishTime);
                 row.setPayload(received);
-                row.setSource("R");
+                row.setSource(counter%2==0?"R":"O");
                 row.setStart(startTime);
-                getTable().add(row);
+                if(counter%2==0) getTable().add(row);
+                else getTableOriginal().add(row);
                 counter++;
                 adapter.dataUpdated();
                 if (steps == -1) {
                     if (!isStop) {
-                        tvCounter.setText(String.valueOf(counter));
+                        webClient.setOrigin(counter%2==1);
+                        tvCounter.setText(String.valueOf((int)(Math.floor(counter/2))));
                         wvMain.loadUrl(url);
                     }
                 } else {
-                    if (counter < (steps)) {
+                    if (counter < (steps*2)) {
+                        webClient.setOrigin(counter%2==1);
                         wvMain.loadUrl(url);
                     }
                 }
             }
         });
         wvMain.loadUrl(url);
-
-
-        counterOrigin = 0;
-        final NuubitWebViewClient webOrigin = NuubitSDK.createWebViewClient(this, wvOrigin, client);
-        webOrigin.setOrigin(true);
-        wvOrigin.setWebViewClient(webOrigin);
-        wvOrigin.setWebChromeClient(NuubitSDK.createWebChromeClient());
-        webOrigin.setOnLoadedPage(new NuubitWebViewClient.OnLoaded() {
-            @Override
-            public void onLoaded(int code, String url, long startTime, long finishTime, long sent, long received) {
-                Log.i("WEBVIEWDATA", "Code: "+code+" Start: "+startTime+" stop: "+finishTime+" sent: "+sent+" received: "+received+" Time: "+(finishTime-startTime));
-                Log.i("WEBVIEWDATA", url);
-                Log.i("WEBVIEWDATA", "Counter: "+counter+" Origin: "+webOrigin.isOrigin());
-
-                Row row = new Row();
-                row.setCodeResult(200);
-                row.setUrl(url);
-                row.setBody(sent);
-                row.setFinish(finishTime);
-                row.setPayload(received);
-                row.setSource("O");
-                row.setStart(startTime);
-                getTableOriginal().add(row);
-                if (steps > 0) {
-                    pd.incrementProgressBy(1);
-                }
-                counterOrigin++;
-                adapter.dataUpdated();
-                if (steps == -1) {
-                    if (!isStop) {
-                        //tvCounter.setText(String.valueOf(counter));
-                        wvOrigin.loadUrl(url);
-                    }
-                }else {
-                    if (counterOrigin < (steps)) {
-                        wvOrigin.loadUrl(url);
-                    } else {
-                        pd.dismiss();
-                    }
-                }
-            }
-        });
-        wvOrigin.loadUrl(url);
     }
 
     public Table getTable() {

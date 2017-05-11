@@ -62,7 +62,7 @@ import okhttp3.internal.http2.Header;
 import okio.BufferedSource;
 
 import static com.nuubit.sdk.utils.IOUtils.requestSize;
-//import static com.nuubit.sdk.utils.IOUtils.responseSize;
+
 
 public class NuubitWebViewClient extends WebViewClient {
 
@@ -70,38 +70,23 @@ public class NuubitWebViewClient extends WebViewClient {
     private Context context;
     private WebView view;
     private OkHttpClient client;
+    private boolean isFullResponse;
 
     private String sData;
 
     private OnURLChanged listener;
-    private OnTimes timeListener;
-    private OnLoaded loaded;
-    private long startLoad;
-    private long finishLoad;
+    //private long startLoad;
+    //private long finishLoad;
     private long sentBytes;
     private long receivedBytes;
 
     private boolean isOrigin = false;
-    private boolean isFirst = true;
-
-    private String firstURL;
-    private int firstCode;
-/*
-    private class JavaScriptInterface {
-        private final String TAG = JavaScriptInterface.class.getSimpleName();
-        @JavascriptInterface
-        public void processHTML(String formData) {
-            Log.d(TAG, "form data: " + formData);
-            sData = formData;
-        }
-    }
-*/
-
     public NuubitWebViewClient(Context context, WebView view, OkHttpClient client) {
         super();
         this.context = context;
         this.view = view;
         this.client = client;
+        this.isFullResponse = false;
         this.sentBytes = 0;
         this.receivedBytes = 0;
 
@@ -124,16 +109,12 @@ public class NuubitWebViewClient extends WebViewClient {
         super.onPageStarted(view, url, favicon);
         this.sentBytes = 0;
         this.receivedBytes = 0;
-        this.firstURL = url;
         String url_new = view.getUrl();
         if (listener != null && url_new != null && !url_new.isEmpty()) {
             listener.onURLChanged(url_new);
         }
-        startLoad = System.currentTimeMillis();
-        if (timeListener != null) {
-            timeListener.onStart(url, startLoad);
-        }
-        this.isFirst = true;
+        //startLoad = System.currentTimeMillis();
+        Log.d("WEBVIEWDATA","Started: "+url+"  "+view.getUrl());
     }
 
     @Override
@@ -143,26 +124,19 @@ public class NuubitWebViewClient extends WebViewClient {
         if (listener != null && url_new != null && !url_new.isEmpty()) {
             listener.onURLChanged(url_new);
         }
-        finishLoad = System.currentTimeMillis();
-/*
-        if (timeListener != null) {
-            timeListener.onStop(url, finishLoad);
-            timeListener.onStartStop(url, startLoad, finishLoad);
-        }
-*/
-        if (loaded != null && view.getProgress()==100) {
-            loaded.onLoaded(firstCode, url, startLoad, finishLoad, sentBytes, receivedBytes);
-            //Log.i("WEBVIEWDATA", url_new);
-            this.sentBytes = 0;
-            this.receivedBytes = 0;
-        }
-        //Log.i("WEBVIEWDATA", "Load page completed");
+        //finishLoad = System.currentTimeMillis();
+        Log.d("WEBVIEWDATA","Finshed: "+url+"  "+view.getUrl());
     }
 
+    @Override
+    public void onPageCommitVisible(WebView view, String url){
+        super.onPageCommitVisible(view,url);
+    }
+/*
     public void setOnLoadedPage(OnLoaded loaded) {
         this.loaded = loaded;
     }
-
+*/
     public void setOnURLChangeListener(OnURLChanged listener) {
         this.listener = listener;
     }
@@ -229,11 +203,14 @@ public class NuubitWebViewClient extends WebViewClient {
             }
             this.sentBytes += requestSize(request.newBuilder().build());
             Response resp = null;
+
+            //this.startLoad = System.currentTimeMillis();
+
             while (code.getType() != HTTPCode.Type.SUCCESSFULL && redirectCounter < NuubitConstants.MAX_REDIRECT) {
                 final Call call = client.newCall(request);
                 resp = call.execute();
                 code = HTTPCode.create(resp.code());
-                if(loaded != null && code.getType() == HTTPCode.Type.SUCCESSFULL) {
+                if(isFullResponse && code.getType() == HTTPCode.Type.SUCCESSFULL) {
                     response = resp.newBuilder().body(new ProgressResponseBody(resp.body(), pb, resp)).build();
                     long headersSize = com.nuubit.sdk.utils.IOUtils.responseHeadersSize(response);
                     this.receivedBytes += headersSize;
@@ -278,12 +255,6 @@ public class NuubitWebViewClient extends WebViewClient {
                 Log.i("Error", "Cycle out: " + code.toString());
 
             if (response != null) {
-                if(isFirst){
-                    firstCode = code.getCode();
-                    firstURL = response.request().url().toString();
-                    isFirst = false;
-                }
-
                 String header = response.header("content-type");
                 if (header != null) {
                     String[] ss = header.split(";");
@@ -315,12 +286,8 @@ public class NuubitWebViewClient extends WebViewClient {
             InputStream stream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
             result = new WebResourceResponse(ct, cp, stream);
         }
-        //long queryResponse = responseSize(response);
-        //Log.i("WEBVIEWDATA", "Query response size: "+queryResponse);
-        //this.receivedBytes += queryResponse;
         result.setMimeType(ct);
         result.setEncoding(cp);
-        ///result.getData().
         return result;
     }
 
@@ -329,6 +296,24 @@ public class NuubitWebViewClient extends WebViewClient {
     }
     public boolean isOrigin(){
         return isOrigin;
+    }
+    public void setFullResponse(boolean full){this.isFullResponse = full;}
+    public boolean isFullResponse(){return this.isFullResponse;}
+/*
+    public long getStartLoad() {
+        return startLoad;
+    }
+
+    public long getFinishLoad() {
+        return finishLoad;
+    }
+*/
+    public long getSentBytes() {
+        return sentBytes;
+    }
+
+    public long getReceivedBytes() {
+        return receivedBytes;
     }
 
     private ProgressResponseBody.OnLoadedBody pb = new ProgressResponseBody.OnLoadedBody() {
@@ -339,25 +324,8 @@ public class NuubitWebViewClient extends WebViewClient {
         }
     };
 
-    public void setOnTimeListener(OnTimes listener) {
-        this.timeListener = listener;
-    }
-
     public interface OnURLChanged {
         void onURLChanged(String url);
     }
-
-    public interface OnTimes {
-        void onStart(String url, long start);
-
-        void onStop(String url, long stop);
-
-        void onStartStop(String url, long start, long stop);
-    }
-
-    public interface OnLoaded {
-        void onLoaded(int httpCode, String url, long startTime, long finishTime, long sent, long received);
-    }
-
 }
 

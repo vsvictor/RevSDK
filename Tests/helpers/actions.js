@@ -1,7 +1,8 @@
 "use strict";
 
 var wd = require('wd'),
-    Q = require('q');
+    Q = require('q'),
+    Settings = require("./../page_objects/RevTester/settings");
 
 exports.swipe = function (opts) {
   var action = new wd.TouchAction();
@@ -87,3 +88,21 @@ exports.scrollDown = function () {
         .release()
     return this.performTouchAction(action);
 };
+
+exports.toggleNetwork = function (driver) {
+    wd.addPromiseChainMethod('closeSettings', this.closeSettings);
+    wd.addPromiseChainMethod('openSettings', this.openSettings);
+    return driver
+     .openSettings()
+     .elementByXPath(Settings.button.networkImage)
+     .click()
+     .elementByClassName(Settings.checkBox.switchNetwork)
+     .click()
+     .closeSettings();
+};
+
+
+
+
+
+

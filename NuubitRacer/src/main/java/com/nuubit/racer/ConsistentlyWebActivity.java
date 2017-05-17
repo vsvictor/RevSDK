@@ -1,11 +1,13 @@
 package com.nuubit.racer;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -22,6 +24,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.DownloadListener;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -31,11 +38,15 @@ import com.nuubit.racer.fragments.SeriesFragment;
 import com.nuubit.racer.fragments.SummaryFragment;
 import com.nuubit.racer.model.Row;
 import com.nuubit.racer.model.Table;
+import com.nuubit.racer.web.WebViewClientCounter;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
+import com.nuubit.sdk.interseptor.ProgressResponseBody;
 import com.nuubit.sdk.views.CountersFragment;
-import com.nuubit.sdk.web.NuubitWebView;
 import com.nuubit.sdk.web.NuubitWebViewClient;
+import com.nuubit.sdk.web.WebResourceRequestDefault;
+
+import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 
@@ -69,7 +80,7 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
 
     private TextView tvCounter;
     private AlertDialog dialog;
-    private NuubitWebView wvMain;
+    private WebView wvMain;
     private boolean isStop = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +143,12 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
         tvMethodMode = (TextView) findViewById(R.id.tvMethodMode);
         //wvMain = (WebView) findViewById(R.id.wvMain);
         //wvOrigin = (WebView) findViewById(R.id.wvOrigin);
-        wvMain = new NuubitWebView(this);
+        wvMain = new WebView(this);
+        wvMain.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
     }
     public void start(){
         counter = 0;
-        final boolean isOrigin = false;
+        boolean isOrigin = false;
         if (steps > 0) {
             pd = new ProgressDialog(this);
             pd.setTitle("");
@@ -169,13 +181,27 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
             });
             dialog = alb.show();
         }
-
         final NuubitWebViewClient webClient = NuubitSDK.createWebViewClient(this, wvMain, client);
+
         webClient.setOrigin(counter%2==1);
-        webClient.setFullResponse(true);
+        webClient.setOnPageLoaded(new NuubitWebViewClient.OnPageLoaded() {
+            @Override
+            public void onLoaded(long size) {
+                Log.i("BODY","Body: "+size);
+            }
+        });
+
         wvMain.setWebViewClient(webClient);
         wvMain.setWebChromeClient(NuubitSDK.createWebChromeClient());
-
+/*
+        wvMain.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Log.i("WEBVIEWDATA", "Started");
+            }
+        });
+*/
+/*
         wvMain.setOnLoadedPage(new NuubitWebView.OnLoaded() {
             @Override
             public void onLoaded(int code, String url, long startTime, long finishTime, long sent, long received) {
@@ -194,6 +220,7 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
                 if(counter%2==0) getTable().add(row);
                 else getTableOriginal().add(row);
                 counter++;
+                //isOrigin = !isOrigin;
                 adapter.dataUpdated();
                 if (steps == -1) {
                     if (!isStop) {
@@ -209,6 +236,7 @@ public class ConsistentlyWebActivity extends AppCompatActivity implements
                 }
             }
         });
+*/
         wvMain.loadUrl(url);
     }
 

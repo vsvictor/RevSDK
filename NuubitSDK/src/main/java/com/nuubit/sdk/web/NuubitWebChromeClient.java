@@ -1,5 +1,6 @@
 package com.nuubit.sdk.web;
 
+import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -26,11 +27,4 @@ import android.webkit.WebView;
  */
 
 public class NuubitWebChromeClient extends WebChromeClient {
-    @Override
-    public void onProgressChanged(WebView view, int newProgress) {
-
-        if(newProgress == 100){
-            ((NuubitWebView) view).loaded();
-        }
-    }
 }

@@ -46,7 +46,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.google.android.gms:play-services:10.2.1'
     testCompile 'junit:junit:4.12'
@@ -62,6 +61,12 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'org.jsoup:jsoup:1.10.1'
     compile 'ch.acra:acra:4.9.0'
+
+    compile files('libs/cronet_api.jar')
+    compile files('libs/cronet_impl_common_java.jar')
+    compile files('libs/cronet_impl_native_java.jar')
+    compile files('libs/cronet_impl_platform_java.jar')
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

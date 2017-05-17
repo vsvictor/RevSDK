@@ -139,6 +139,11 @@ public class SummaryFragment extends Fragment {
         ifa.addAction(Const.UPDATE_DATA);
         getActivity().registerReceiver(receiver, ifa);
     }
+    @Override
+    public void onPause(){
+        getActivity().unregisterReceiver(receiver);
+        super.onPause();
+    }
 
     public interface OnSummaryListener {
         void onSummary(Uri uri);

@@ -6,6 +6,7 @@ package com.nuubit.sdk.protocols;
 
 public class TestOneProtocol {
     private EnumProtocol protocol;
+    private long startTime;
     private long time;
     private long timeEnded;
     private String reason;
@@ -27,6 +28,14 @@ public class TestOneProtocol {
 
     public void setProtocol(EnumProtocol protocol) {
         this.protocol = protocol;
+    }
+
+    public void setStartTime(long startTime){
+        this.startTime = startTime;
+    }
+
+    public long getStartTime(){
+        return this.startTime;
     }
 
     public long getTime() {
@@ -51,6 +60,15 @@ public class TestOneProtocol {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Start request: "+getStartTime());
+        builder.append(" Finish request: "+getTimeEnded());
+        builder.append(" Result: "+getTime());
+        builder.append(" Reason: "+getReason());
+        return builder.toString();
     }
 
 }

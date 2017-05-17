@@ -15,10 +15,13 @@ import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
 
+import org.chromium.net.UrlRequest;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -55,15 +58,7 @@ import static com.nuubit.sdk.NuubitSDK.isSystem;
 
 public class StandardProtocol extends Protocol {
     private static final String TAG = StandardProtocol.class.getSimpleName();
-    private HTTPException prevException;
-    private Request original;
-    private Request result;
-    private Response response;
-    private long beginTime;
-    private long endTime;
 
-    //private ProtocolCounters standartCounter;
-    //private ProtocolCounters originCounter;
     public StandardProtocol() {
         super();
         this.descroption = EnumProtocol.STANDARD;
@@ -73,83 +68,16 @@ public class StandardProtocol extends Protocol {
 
     @Override
     public synchronized Response send(Interceptor.Chain chain) throws IOException {
-        result = null;
-        original = chain.request();
-        RequestBody reqBody = original.body();
-        long reqBodySize = reqBody == null? 0:reqBody.contentLength();
-        boolean systemRequest = isSystem(original);
-        boolean freeRequest = isFree(original);
-        if (!systemRequest && !freeRequest) {
-            result = NuubitSDK.processingRequest(original, true);
-        } else {
-            Log.i("System", original.toString());
-            result = original;
-        }
-        response = null;
-        beginTime = 0;
-        endTime = 0;
-        //ProgressResponseBody pb = null;
-        try {
-            beginTime = System.currentTimeMillis();
-            response = chain.proceed(result);
-            RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, response.receivedResponseAtMillis());
-            req.setStatusCode(response.code());
-            String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
-            req.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
+        result = preHandler(chain);
 
-/*
-            response = resp.newBuilder()
-                    .body(new ProgressResponseBody(resp.body(), listener, req))
-                    .build();
-*/
-            //RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, 0);
-            endTime = System.currentTimeMillis();
-            req.setEndTS(endTime);
-
-            if (response == null) {
-                throw new HTTPException(original, result, response, this, beginTime, endTime);
-            }
-            HTTPCode code = HTTPCode.create(response.code());
-            if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
-                throw new HTTPException(original, result, response, this, beginTime, endTime);
-            }
-            if (!isSystem(original)) {
-                this.zeroing();
-            }
-            boolean r = (code.getType() == HTTPCode.Type.INFORMATIONAL) || (code.getType() == HTTPCode.Type.SUCCESSFULL) || (code.getType() == HTTPCode.Type.REDIRECTION);
-            req.setSuccessStatus(r?1:0);
-            save(req);
-
-            NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
-            if(!isOrigin()) {
-                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
-                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
-            } else{
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
-            }
-
-        } catch (IOException ex){
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
-            ex.printStackTrace();
-            Log.i("Timeout", ex.getMessage()+" my timeout");
-        } catch (HTTPException ex) {
+        response = chain.proceed(result);
+        if(response == null){
             response = chain.proceed(original);
-            this.errorIncrement();
-            if (this.isOverflow()) {
-                NuubitApplication.getInstance().removeProtocol(EnumProtocol.createInstance(this.getDescription()));
-                NuubitApplication.getInstance().sendBroadcast(new Intent(NuubitActions.RETEST));
-                this.zeroing();
-            }
-            if(!isOrigin()) {
-                NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
-            }
-            else {
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addFailRequest();
-            }
-            ex.printStackTrace();
         }
-        return response;
+
+
+        Response r = postHandler(response);
+        return r;
     }
 
     @Override
@@ -161,13 +89,19 @@ public class StandardProtocol extends Protocol {
         Call callback = NuubitSDK.OkHttpCreate(NuubitConstants.DEFAULT_TIMEOUT_SEC, false, false).newCall(builder.build());
         try {
             long begTime = System.currentTimeMillis();
-            Response response = callback.execute();
+            res.setStartTime(begTime);
+
+            //Response response = callback.execute();
+            synchronized (mutex) {
+                callback.enqueue(new RealStandartCallback());
+                mutex.wait();
+            }
             long endTime = System.currentTimeMillis();
             HTTPCode code = HTTPCode.create(response.code());
             if (code.getType() != HTTPCode.Type.SUCCESSFULL) {
                 res.setTime(-1);
             } else {
-                res.setTime(endTime-begTime);
+                res.setTime(endTime - begTime);
             }
             res.setTimeEnded(endTime);
             res.setReason(code.getMessage());
@@ -177,41 +111,26 @@ public class StandardProtocol extends Protocol {
             res.setTimeEnded(System.currentTimeMillis());
             res.setReason(NuubitConstants.UNDEFINED);
         }
+        Log.i("TESTPROTOCOL",EnumProtocol.STANDARD.toString()+" "+res.toString());
+        Log.i("TESTPROTOCOL",url);
         return res;
     }
-/*
-    private ProgressResponseBody.ProgressListener listener = new ProgressResponseBody.ProgressListener() {
-        @Override
-        public void update(long bytesRead, long contentLength, boolean done) {
 
-        }
+    private class RealStandartCallback implements Callback {
 
         @Override
-        public void firstByteTime(long time) {
-        }
-
-        @Override
-        public void lastByteTime(long time) {
-
-        }
-
-        @Override
-        public void onRequest(RequestOne req){
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(req.getSentBytes());
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addReceive(req.getReceivedBytes());
-            Log.i("ZERROFBT","Request");
-            if(req.getFirstByteTime() == 0){
-                Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
-                req.setFirstByteTime(req.getEndTS());
-                Log.i("ZERROFBT",String.valueOf(req.getFirstByteTime()));
+        public void onFailure(Call call, IOException e) {
+            synchronized (mutex){
+                mutex.notifyAll();
             }
-            save(req);
         }
 
         @Override
-        public void onResponse(Response response, boolean serv, long lastByteTime) {
-
+        public void onResponse(Call call, Response response) throws IOException {
+            synchronized (mutex){
+                StandardProtocol.this.response = response;
+                mutex.notifyAll();
+            }
         }
-    };
-*/
+    }
 }

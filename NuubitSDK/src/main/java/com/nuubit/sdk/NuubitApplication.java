@@ -15,7 +15,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.multidex.MultiDex;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -206,10 +205,11 @@ public class NuubitApplication extends Application implements
         //configCounters.load(share);
         //lmMonitorCounters.load(share);
         //statsCounters.load(share);
-        config = Config.load(NuubitSDK.gsonCreate(), share);
+        //config = Config.load(NuubitSDK.gsonCreate(), share);
         if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();
         best = EnumProtocol.createInstance(EnumProtocol.fromString(transport));
+        //best = EnumProtocol.createInstance(EnumProtocol.QUIC);
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

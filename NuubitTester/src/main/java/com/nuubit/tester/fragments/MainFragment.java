@@ -94,6 +94,7 @@ public class MainFragment extends Fragment {
     private String headers;
     private AppCompatCheckBox cbView;
     private AppCompatCheckBox cbClient;
+    private TextView tvHTTPCode;
     private ScrollView svText;
     private ScrollView svWeb;
     private WebView wvMain;
@@ -359,6 +360,8 @@ public class MainFragment extends Fragment {
             }
         });
 
+        tvHTTPCode = (TextView) view.findViewById(R.id.tvHTTPCode);
+
         bUpdateConfig = (Button) view.findViewById(R.id.bUpdateConfig);
         bUpdateConfig.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -433,7 +436,7 @@ public class MainFragment extends Fragment {
                         }
                     }
 
-                    HTTPCode code = HTTPCode.create(response.code());
+                    final HTTPCode code = HTTPCode.create(response.code());
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
                         try {
                             response = runRequest(client, response.request().url().toString(), response.request().method(), null);
@@ -448,6 +451,7 @@ public class MainFragment extends Fragment {
                         @Override
                         public void run() {
                             edQuery.setText(endURL);
+                            tvHTTPCode.setText("HTTP: "+String.valueOf(code.getCode()));
                         }
                     });
                 } catch (IOException e) {

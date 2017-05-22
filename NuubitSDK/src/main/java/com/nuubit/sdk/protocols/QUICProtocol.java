@@ -9,20 +9,28 @@ import com.nuubit.sdk.types.HTTPCode;
 import org.chromium.net.CronetEngine;
 import org.chromium.net.CronetException;
 import org.chromium.net.UploadDataProvider;
+import org.chromium.net.UploadDataProviders;
 import org.chromium.net.UploadDataSink;
 import org.chromium.net.UrlRequest;
 import org.chromium.net.UrlResponseInfo;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import okhttp3.Headers;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import static org.chromium.net.UrlRequest.Builder.REQUEST_PRIORITY_HIGHEST;
 
 /*
  * ************************************************************************
@@ -66,9 +74,15 @@ public class QUICProtocol extends Protocol {
     public Response send(Interceptor.Chain chain) {
         result = preHandler(chain);
         UrlRequest req = OkHTTPRequest2CronetRequest(result);
-
-
-        return null;
+        synchronized (mutex) {
+            req.start();
+            try {
+                mutex.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return response;
     }
 
     @Override
@@ -95,9 +109,10 @@ public class QUICProtocol extends Protocol {
     }
 
     private UrlRequest OkHTTPRequest2CronetRequest(Request req){
-        UrlRequest.Callback callback = new RealQUICRequestCallback();
+        UrlRequest.Callback callback = new RealQUICRequestCallback(System.currentTimeMillis());
         UrlRequest.Builder builder = engine.newUrlRequestBuilder(req.url().toString(), callback, executor);
         Headers headers = req.headers();
+        RequestBody body = req.body();
         Set<String> names = headers.names();
         for(String name : names){
             String value = headers.get(name);
@@ -106,29 +121,17 @@ public class QUICProtocol extends Protocol {
         String sMethod = req.method();
         builder.setHttpMethod(sMethod);
         if(sMethod.equalsIgnoreCase("POST")){
-
+            if(body != null) {
+                String sBody = body.toString();
+                builder.setUploadDataProvider(
+                        UploadDataProviders.create(sBody.getBytes()), executor);
+            }
         }
-        builder.build();
+        builder.setPriority(REQUEST_PRIORITY_HIGHEST);
+        return builder.addHeader("Alternate-Protocol","443:quic")
+                .addHeader("User-Agent",userAgent)
+                .build();
     }
-
-    private class MyUploadProvider extends UploadDataProvider{
-
-        @Override
-        public long getLength() throws IOException {
-            return 0;
-        }
-
-        @Override
-        public void read(UploadDataSink uploadDataSink, ByteBuffer byteBuffer) throws IOException {
-
-        }
-
-        @Override
-        public void rewind(UploadDataSink uploadDataSink) throws IOException {
-
-        }
-    }
-
     private class SimpleUrlRequestCallback extends UrlRequest.Callback {
         private TestOneProtocol test;
 
@@ -154,7 +157,7 @@ public class QUICProtocol extends Protocol {
                 test.setTimeEnded(endTime);
                 test.setTime(endTime - test.getStartTime());
                 test.setReason(HTTPCode.create(info.getHttpStatusCode()).getMessage());
-                mutex.notifyAll();
+                //mutex.notifyAll();
             }
 
         }
@@ -190,30 +193,71 @@ public class QUICProtocol extends Protocol {
     }
 
     private class RealQUICRequestCallback extends UrlRequest.Callback{
+        private long startTime;
+        private long firstByteTime;
+        private Response.Builder builder;
+        public RealQUICRequestCallback(long startTime){
+            this.startTime = startTime;
+            builder = new Response.Builder();
+        }
 
         @Override
         public void onRedirectReceived(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, String s) throws Exception {
-            urlRequest.followRedirect();
+            synchronized (mutex) {
+                Log.i(TAG, "---Redirect---");
+                urlRequest.followRedirect();
+            }
         }
 
         @Override
         public void onResponseStarted(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo) throws Exception {
+            synchronized (mutex) {
+            Log.i(TAG,"---ResponseStarted---");
 
+                String contentType = "text/html";
+                firstByteTime = System.currentTimeMillis();
+                builder.code(urlResponseInfo.getHttpStatusCode());
+                List<Map.Entry<String, String>> headers = urlResponseInfo.getAllHeadersAsList();
+                for (Map.Entry<String, String> s : headers) {
+                    String name = s.getKey();
+                    String value = s.getValue();
+                    builder.addHeader(name, value);
+                    if (name.equalsIgnoreCase("content-type")) {
+                        contentType = value;
+                    }
+                }
+                builder.request(result);
+                mutex.notifyAll();
+            }
         }
 
         @Override
         public void onReadCompleted(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, ByteBuffer byteBuffer) throws Exception {
+            synchronized (mutex) {
+            Log.i(TAG,"---ReadCompleted---");
 
+            String contentType = "text/html";
+
+                builder.body(ResponseBody.create(MediaType.parse(contentType), byteBuffer.array()));
+                builder.receivedResponseAtMillis(firstByteTime);
+                builder.sentRequestAtMillis(startTime);
+                response = builder.build();
+                //mutex.notifyAll();
+            }
         }
 
         @Override
         public void onSucceeded(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo) {
-
+            synchronized (mutex) {
+                Log.i(TAG, "---Succeeded---");
+            }
         }
 
         @Override
         public void onFailed(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, CronetException e) {
-
+            synchronized (mutex) {
+                Log.i(TAG, "---Failed---");
+            }
         }
     }
 

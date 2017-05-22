@@ -451,7 +451,7 @@ public class MainFragment extends Fragment {
                         @Override
                         public void run() {
                             edQuery.setText(endURL);
-                            tvHTTPCode.setText("HTTP: "+String.valueOf(code.getCode()));
+                            tvHTTPCode.setText(String.valueOf(code.getCode()));
                         }
                     });
                 } catch (IOException e) {

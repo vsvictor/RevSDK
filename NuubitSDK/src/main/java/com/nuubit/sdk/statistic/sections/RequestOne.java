@@ -142,8 +142,8 @@ public class RequestOne extends Data implements Parcelable {
         result.setContentType(NuubitSDK.getContentType(processed));
 
         result.setStartTS(begTime);
-        result.setSentTS(response == null ? -1 : response.sentRequestAtMillis());
-        result.setFirstByteTime(response == null ? endTime : response.receivedResponseAtMillis());
+        result.setSentTS(response.sentRequestAtMillis());
+        result.setFirstByteTime(response.receivedResponseAtMillis());
         //result.setFirstByteTime(firstByte);
         result.setEndTS(endTime);
 
@@ -160,7 +160,7 @@ public class RequestOne extends Data implements Parcelable {
         result.setNetwork("NETWORK");
 
         result.setEnumProtocol(EnumProtocol.fromString(processed.isHttps() ? "https" : "http"));
-        result.setReceivedBytes(response == null ? 0 : response.body().contentLength()+response.headers().toString().length());
+        result.setReceivedBytes(response.code() == 0 ? 0 : response.body().contentLength()+response.headers().toString().length());
 
         RequestBody body = processed.body();
 
@@ -175,15 +175,16 @@ public class RequestOne extends Data implements Parcelable {
                 bodySize = 0;
             }
         }
-        result.setSentBytes(bodySize+processed.headers().toString().length());
-        result.setStatusCode(response == null ? 0 : response.code());
-        result.setSuccessStatus(response == null ? 0 : 1);
+
+        result.setSentBytes(response.code() == 0 ? 0:bodySize+processed.headers().toString().length());
+        result.setStatusCode(response.code());
+        result.setSuccessStatus(response.code() == 0 ? 0 : 1);
         result.setTransportEnumProtocol(EnumProtocol.STANDARD);
         result.setURL(original.url().toString());
         //Log.i(TAG, getDest());
         result.setDestination(getDest());
         //Log.i(TAG, NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode().toString());
-        String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
+        String cache = (response.code() == 0 ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
         result.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
         //Log.i(TAG, original.url().host());
         result.setDomain(original.url().host());

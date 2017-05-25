@@ -20,7 +20,7 @@ public class NuubitInterceptor implements Interceptor {
   @Override
     public Response intercept(Chain chain) throws IOException {
 
-        Response response;
+        Response response = null;
 
         long begTime = System.currentTimeMillis();
         long endTime;
@@ -29,7 +29,7 @@ public class NuubitInterceptor implements Interceptor {
             response = NuubitApplication.getInstance().getBest().send(chain);
             endTime = System.currentTimeMillis();
         } catch (IOException ex) {
-            response = null;
+            //response = null;
             endTime = System.currentTimeMillis();
             final RequestOne statRequest = RequestOne.toRequestOne(chain.request(), chain.request(), response, NuubitApplication.getInstance().getBest().getDescription(), begTime, endTime, 0);
             if(statRequest.getFirstByteTime() == 0) statRequest.setFirstByteTime(statRequest.getEndTS());

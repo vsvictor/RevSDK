@@ -70,14 +70,18 @@ public class StandardProtocol extends Protocol {
     public synchronized Response send(Interceptor.Chain chain) throws IOException {
         result = preHandler(chain);
 
-        response = chain.proceed(result);
-        if(response == null){
+        try {
+            response = chain.proceed(result);
+        } catch (Exception ex){
+            beginTime = System.currentTimeMillis();
             response = chain.proceed(original);
+            Log.i(TAG, "Edge fail. Redirect to origin");
+            //ex.printStackTrace();
+        }finally {
+            Response r = postHandler();
+            response = r;
         }
-
-
-        Response r = postHandler(response);
-        return r;
+        return response;
     }
 
     @Override

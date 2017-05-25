@@ -3,7 +3,7 @@ package com.nuubit.sdk.utils;
 import android.util.Log;
 
 import com.nuubit.sdk.NuubitConstants;
-import com.nuubit.sdk.protocols.HTTPException;
+//import com.nuubit.sdk.protocols.HTTPException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class IOUtils {
         return out.toByteArray();
     }
 
-    public static Response runRequest(OkHttpClient client, String url, String method, RequestBody abody) throws HTTPException {
+    public static Response runRequest(OkHttpClient client, String url, String method, RequestBody abody){
         Response response;
         RequestBody body = abody;
         try {

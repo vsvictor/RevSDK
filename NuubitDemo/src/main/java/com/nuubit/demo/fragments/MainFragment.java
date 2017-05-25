@@ -175,11 +175,7 @@ public class MainFragment extends Fragment {
             String body = null;
             if (url != null && !url.isEmpty()) {
                 try {
-                    try {
-                        response = runRequest(client, url, "GET", null);
-                    } catch (HTTPException e) {
-                        e.printStackTrace();
-                    }
+                    response = runRequest(client, url, "GET", null);
                     String location = "";
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
@@ -226,8 +222,6 @@ public class MainFragment extends Fragment {
                     e.printStackTrace();
                 } catch (NullPointerException ex) {
                     ex.printStackTrace();
-                } catch (HTTPException e) {
-                    e.printStackTrace();
                 }
             }
             return body;

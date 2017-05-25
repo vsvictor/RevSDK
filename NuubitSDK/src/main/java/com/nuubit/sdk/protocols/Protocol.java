@@ -15,8 +15,10 @@ import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 
 import java.io.IOException;
+import java.util.Set;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -56,8 +58,8 @@ public abstract class Protocol implements OnFuncProtocol {
     protected Request original;
     protected Request result;
     protected Response response;
-    private long beginTime;
-    private long endTime;
+    protected long beginTime;
+    protected long endTime;
 
 
     public Protocol() {
@@ -86,11 +88,12 @@ public abstract class Protocol implements OnFuncProtocol {
         errorCounter = 0;
     }
 
-    public void save(Request original, Request result, Response response, EnumProtocol protocol, long beginTime, long endTime, long firsByteTime){
+    public void save(Request original, Request result, Response response, EnumProtocol protocol, long beginTime, long endTime, long firsByteTime) {
         RequestOne statRequest = null;
         try {
             statRequest = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, endTime, firsByteTime);
-            if(statRequest.getFirstByteTime() == 0) statRequest.setFirstByteTime(statRequest.getEndTS());
+            if (statRequest.getFirstByteTime() == 0)
+                statRequest.setFirstByteTime(statRequest.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), statRequest));
             Log.i("database", statRequest.toString());
         } catch (NullPointerException ex) {
@@ -99,9 +102,9 @@ public abstract class Protocol implements OnFuncProtocol {
         }
     }
 
-    public void save(RequestOne req){
+    public void save(RequestOne req) {
         try {
-            if(req.getFirstByteTime() == 0) req.setFirstByteTime(req.getEndTS());
+            if (req.getFirstByteTime() == 0) req.setFirstByteTime(req.getEndTS());
             NuubitApplication.getInstance().getDatabase().insertRequest(RequestTable.toContentValues(NuubitApplication.getInstance().getConfig().getAppName(), req));
             Log.i("database", req.toString());
         } catch (NullPointerException ex) {
@@ -109,11 +112,13 @@ public abstract class Protocol implements OnFuncProtocol {
             ex.printStackTrace();
         }
     }
-    protected boolean isOrigin(){
-        return ((NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() == OperationMode.report_only)||
+
+    protected boolean isOrigin() {
+        return ((NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() == OperationMode.report_only) ||
                 (NuubitApplication.getInstance().getConfig().getParam().get(0).getOperationMode() == OperationMode.off));
     }
-    protected Request preHandler(Interceptor.Chain chain){
+
+    protected Request preHandler(Interceptor.Chain chain) {
         result = null;
         original = chain.request();
         boolean systemRequest = isSystem(original);
@@ -129,61 +134,55 @@ public abstract class Protocol implements OnFuncProtocol {
         endTime = 0;
         return result;
     }
-    protected Response postHandler(Response response){
+
+    protected Response postHandler() {
+        endTime = System.currentTimeMillis();
+        if (response == null) {
+            response = genrate0();
+        }
+        RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, response.receivedResponseAtMillis());
+        req.setStatusCode(response.code());
+        String cache = (response.code() == 0 ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
+        req.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
+
+        req.setEndTS(endTime);
+        HTTPCode code = HTTPCode.create(response.code());
+        if (!isSystem(original)) {
+            this.zeroing();
+        }
+        boolean r = (code.getType() == HTTPCode.Type.INFORMATIONAL) || (code.getType() == HTTPCode.Type.SUCCESSFULL) || (code.getType() == HTTPCode.Type.REDIRECTION);
+        req.setSuccessStatus(r ? 1 : 0);
+        save(req);
+
+        NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), this.getDescription());
+        long reqBodySize = 0;
         try {
-            RequestOne req = RequestOne.toRequestOne(original, result, response, NuubitApplication.getInstance().getBest().getDescription(), beginTime, 0, response.receivedResponseAtMillis());
-            req.setStatusCode(response.code());
-            String cache = (response == null ? NuubitConstants.UNDEFINED : response.header("x-rev-cache"));
-            req.setXRevCache(cache == null ? NuubitConstants.UNDEFINED : cache);
-
-            endTime = System.currentTimeMillis();
-            req.setEndTS(endTime);
-
-            if (response == null) {
-                throw new HTTPException(original, result, response, this, beginTime, endTime);
-            }
-            HTTPCode code = HTTPCode.create(response.code());
-            if (code.getType() == HTTPCode.Type.SERVER_ERROR) {
-                throw new HTTPException(original, result, response, this, beginTime, endTime);
-            }
-            if (!isSystem(original)) {
-                this.zeroing();
-            }
-            boolean r = (code.getType() == HTTPCode.Type.INFORMATIONAL) || (code.getType() == HTTPCode.Type.SUCCESSFULL) || (code.getType() == HTTPCode.Type.REDIRECTION);
-            req.setSuccessStatus(r ? 1 : 0);
-            save(req);
-
-            NuubitApplication.getInstance().getRequestCounter().addRequest(response.request(), EnumProtocol.STANDARD);
-            long reqBodySize = 0;
-            try {
-                RequestBody reqBody = original.body();
-                reqBodySize = (reqBody == null? 0:reqBody.contentLength());
-            } catch (IOException ex) {
-                reqBodySize = 0;
-            }
-            if (!isOrigin()) {
-                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
-                NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
-            } else {
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
-            }
-        } catch (HTTPException ex) {
-            NuubitApplication.getInstance().getProtocolCounters().get("standard").addFailRequest();
-            this.errorIncrement();
-            if (this.isOverflow()) {
-                NuubitApplication.getInstance().removeProtocol(EnumProtocol.createInstance(this.getDescription()));
-                NuubitApplication.getInstance().sendBroadcast(new Intent(NuubitActions.RETEST));
-                this.zeroing();
-            }
-            if(!isOrigin()) {
-                NuubitApplication.getInstance().getProtocolCounters().get("standart").addFailRequest();
-            }
-            else {
-                NuubitApplication.getInstance().getProtocolCounters().get("origin").addFailRequest();
-            }
-            ex.printStackTrace();
+            RequestBody reqBody = original.body();
+            reqBodySize = (reqBody == null ? 0 : reqBody.contentLength());
+        } catch (IOException ex) {
+            reqBodySize = 0;
+        }
+        if (!isOrigin()) {
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSuccessRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("standard").addSent(reqBodySize);
+        } else {
+            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
+            NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
         }
         return response;
+    }
+
+    private Response genrate0() {
+        ResponseBody body = ResponseBody.create(MediaType.parse("text/pain"), "Response null");
+        Response.Builder builder = new Response.Builder();
+        builder.code(0).body(body).sentRequestAtMillis(beginTime).receivedResponseAtMillis(beginTime);
+        builder.protocol(okhttp3.Protocol.HTTP_2);
+        Set<String> names = result.headers().names();
+        for (String name : names) {
+            String value = result.header(name);
+            builder.addHeader(name, value);
+        }
+        builder.request(result);
+        return builder.build();
     }
 }

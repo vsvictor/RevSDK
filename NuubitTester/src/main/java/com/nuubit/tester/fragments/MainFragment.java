@@ -429,20 +429,12 @@ public class MainFragment extends Fragment {
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");
-                        try {
-                            response = runRequest(client, location, response.request().method(), null);
-                        } catch (HTTPException e) {
-                            e.printStackTrace();
-                        }
+                        response = runRequest(client, location, response.request().method(), null);
                     }
 
                     final HTTPCode code = HTTPCode.create(response.code());
                     if (code.getType() == HTTPCode.Type.CLIENT_ERROR) {
-                        try {
-                            response = runRequest(client, response.request().url().toString(), response.request().method(), null);
-                        } catch (HTTPException e) {
-                            e.printStackTrace();
-                        }
+                        response = runRequest(client, response.request().url().toString(), response.request().method(), null);
                     }
                     resHeader = response.headers();
                     body = response.body().string();

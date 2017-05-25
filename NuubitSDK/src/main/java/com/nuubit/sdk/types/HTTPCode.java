@@ -163,7 +163,7 @@ public enum HTTPCode {
     }
 
     public Type getType() {
-        if (code < 200) return Type.INFORMATIONAL;
+        if ((code > 0)&&(code < 200)) return Type.INFORMATIONAL;
         else if (code >= 200 && code < 300) return Type.SUCCESSFULL;
         else if (code >= 300 && code < 400) return Type.REDIRECTION;
         else if (code >= 400 && code < 500) return Type.CLIENT_ERROR;

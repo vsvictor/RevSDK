@@ -22,8 +22,9 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvMain"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvCarrier"
@@ -35,8 +36,9 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvCarrier"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvDevice"
@@ -48,8 +50,9 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvDevice"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvEvents"
@@ -61,8 +64,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvEvents"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -74,8 +79,9 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvLocation"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvNetwork"
@@ -87,8 +93,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvNetwork"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvRequests"
@@ -100,8 +108,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvRequests"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvWiFi"
@@ -113,8 +123,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvWiFi"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
     </ScrollView>

@@ -126,6 +126,7 @@ public class RequestCreator {
                 builder.add(NuubitConstants.PROTOCOL_REV_HEADER_NAME, original.url().scheme());
             }
         }
-        return builder.build();
+        Headers hh = builder.build();
+        return hh;
     }
 }

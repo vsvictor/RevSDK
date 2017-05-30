@@ -91,6 +91,7 @@ public class RetrofitFragment extends Fragment implements IUpdater {
 
     @Override
     public void updateData(Root r) {
+        if(r == null) return;
         Log.i("Tempos", r.toString());
         root = r;
         String header = getActivity().getResources().getString(R.string.weather) + " in " + root.getNameCity();

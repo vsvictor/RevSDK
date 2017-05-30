@@ -22,8 +22,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvConfig"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvLMMonitoring"
@@ -35,8 +37,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvLMMonitoring"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvRequests"
@@ -48,8 +52,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvRequests"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
+
+            </android.support.v7.widget.RecyclerView>
 
             <TextView
                 android:id="@+id/tvStats"
@@ -61,8 +67,8 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rvStats"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager">
+                android:layout_height="match_parent">
+<!--                app:layoutManager="LinearLayoutManager"> -->
 
             </android.support.v7.widget.RecyclerView>
 
@@ -77,8 +83,8 @@
                 android:id="@+id/rvOrigin"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager">
+                android:layout_height="match_parent">
+<!--                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager"> -->
 
             </android.support.v7.widget.RecyclerView>
 
@@ -94,8 +100,8 @@
                 android:id="@+id/rvStandard"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager">
+                android:layout_height="match_parent">
+<!--                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager"> -->
 
             </android.support.v7.widget.RecyclerView>
 
@@ -110,8 +116,8 @@
                 android:id="@+id/rvQUIC"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager">
+                android:layout_height="match_parent">
+<!--                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager"> -->
 
             </android.support.v7.widget.RecyclerView>
 
@@ -126,8 +132,8 @@
                 android:id="@+id/rvRTM"
                 android:nestedScrollingEnabled="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager">
+                android:layout_height="match_parent">
+<!--                app:layoutManager="com.nuubit.sdk.views.CounterLayoutManager"> -->
 
             </android.support.v7.widget.RecyclerView>
 

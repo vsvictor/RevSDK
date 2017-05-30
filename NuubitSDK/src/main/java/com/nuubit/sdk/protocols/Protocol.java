@@ -61,6 +61,7 @@ public abstract class Protocol implements OnFuncProtocol {
     protected long beginTime;
     protected long endTime;
 
+    private int count = 0;
 
     public Protocol() {
         //app = NuubitApplication.getInstance();
@@ -168,6 +169,20 @@ public abstract class Protocol implements OnFuncProtocol {
         } else {
             NuubitApplication.getInstance().getProtocolCounters().get("origin").addSuccessRequest();
             NuubitApplication.getInstance().getProtocolCounters().get("origin").addSent(reqBodySize);
+        }
+        count++;
+        Log.i("REDIRECT","N "+String.valueOf(count)+" code:"+response.code()+" "+response.headers().toString());
+        if(response.isRedirect()){
+            String location = response.header("location");
+            Log.i("REDIRECT", "N "+String.valueOf(count)+" Redirect from: "+response.request().url().toString()+" code:"+String.valueOf(response.code())+" to "+location);
+            original = result.newBuilder().url(location).build();
+            Log.i("REDIRECT", original.toString());
+            try {
+                NuubitSDK.getClient().newCall(original).execute();
+            } catch (IOException e) {
+                Log.i("REDIRECT", "Exception: "+e.getMessage());
+                e.printStackTrace();
+            }
         }
         return response;
     }

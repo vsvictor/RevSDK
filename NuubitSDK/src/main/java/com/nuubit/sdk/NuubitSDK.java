@@ -112,7 +112,7 @@ public class NuubitSDK {
         return OkHttpCreate(timeoutSec, false, false);
     }
 
-    public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSllRedirect) {
+    public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSslRedirect) {
         if(client != null) return client;
 
         //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
@@ -125,7 +125,8 @@ public class NuubitSDK {
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
                 .cache(null)
                 .followRedirects(followRedirect)
-                .followSslRedirects(followSllRedirect).cookieJar(cookie);
+                .followSslRedirects(followSslRedirect)
+                .cookieJar(cookie);
         client  = httpClient.build();
 /*
         List<Interceptor> inter = client.interceptors();

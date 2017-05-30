@@ -6,6 +6,5 @@
     android:name="com.rev.revdemo.fragments.PairFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutManager="LinearLayoutManager"
     tools:context="com.nuubit.sdk.views.ConfigFragment"
     tools:listitem="@layout/fragment_pair" />

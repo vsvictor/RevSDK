@@ -177,13 +177,17 @@ public class MainFragment extends Fragment {
                 try {
                     response = runRequest(client, url, "GET", null);
                     String location = "";
-                    while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
-                            (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
+                    //while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
+                    //        (HTTPCode.create(response.code()) == HTTPCode.FOUND))
+/*
+                    while(response.isRedirect())
+                    {
                         location = response.header("location");
                         response = runRequest(client, location, response.request().method(), null);
                         currURL = location;
                         webClient.onURLChanged(currURL);
                     }
+*/
 /*
                     if((response.request().url().toString() != null)) {
                         currURL = response.request().url().toString();

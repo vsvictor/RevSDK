@@ -41,7 +41,7 @@ import com.nuubit.sdk.interseptor.ProgressResponseBody;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
 
-import org.acra.util.IOUtils;
+//import org.acra.util.IOUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

@@ -23,6 +23,7 @@ import java.net.SocketTimeoutException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -72,11 +73,19 @@ public class StandardProtocol extends Protocol {
 
         try {
             response = chain.proceed(result);
+        } catch (SocketTimeoutException ex){
+            response = new Response.Builder()
+                    .code(408)
+                    .request(chain.request())
+                    .body(ResponseBody.create(MediaType.parse("text/html"), "Request Timeout"))
+                    .protocol(okhttp3.Protocol.HTTP_2)
+                    .build();
         } catch (Exception ex){
+            ex.printStackTrace();
             beginTime = System.currentTimeMillis();
             response = chain.proceed(original);
             Log.i(TAG, "Edge fail. Redirect to origin");
-            //ex.printStackTrace();
+
         }finally {
             Response r = postHandler();
             response = r;

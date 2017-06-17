@@ -63,7 +63,7 @@ public class ConfigParamenetrs {
         configuration_request_timeout_sec = NuubitConstants.DEFAULT_TIMEOUT_SEC;
         configuration_stale_timeout_sec = NuubitConstants.DEFAULT_STALE_INTERVAL;
         edge_host = NuubitConstants.DEFAULT_EDGE_HOST;
-        operation_mode = OperationMode.off;
+        operation_mode = OperationMode.report_only;
         allowed_transport_protocols = new ListProtocol();
         allowed_transport_protocols.add(EnumProtocol.STANDARD);
         initial_transport_protocol = EnumProtocol.STANDARD.toString();

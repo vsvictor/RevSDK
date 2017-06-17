@@ -18,5 +18,5 @@
 
 #-keep public class com.nuubit.sdk.RevContentProvider
 #-keepattributes InnerClasses
--dontoptimize
+
 

@@ -57,8 +57,10 @@ import com.nuubit.sdk.web.NuubitCookie;
 import com.nuubit.sdk.web.NuubitWebChromeClient;
 import com.nuubit.sdk.web.NuubitWebViewClient;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -113,6 +115,10 @@ public class NuubitSDK {
     }
 
     public static OkHttpClient OkHttpCreate(int timeoutSec, boolean followRedirect, boolean followSslRedirect) {
+        return OkHttpCreate(timeoutSec, null, 0, followRedirect, followSslRedirect);
+    }
+
+    public static OkHttpClient OkHttpCreate(int timeoutSec, File cacheFile, int cacheSize, boolean followRedirect, boolean followSslRedirect) {
         if(client != null) return client;
 
         //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
@@ -120,10 +126,12 @@ public class NuubitSDK {
         NuubitCookie cookie = new NuubitCookie();
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient
+//                .addInterceptor(new Loggin)
                 .addInterceptor(new NuubitInterceptor())
                 .connectTimeout(timeoutSec, TimeUnit.SECONDS)
+                .readTimeout(timeoutSec, TimeUnit.SECONDS)
                 //.sslSocketFactory(NuubitSecurity.getSSLSocketFactory(), NuubitSecurity.getTrustManager())
-                .cache(null)
+                .cache((cacheFile != null && cacheSize!=0)?(new Cache(cacheFile.getAbsoluteFile(),cacheSize)):null)
                 .followRedirects(followRedirect)
                 .followSslRedirects(followSslRedirect)
                 .cookieJar(cookie);
@@ -138,6 +146,10 @@ public class NuubitSDK {
     }
 
     public static OkHttpClient getClient(){return client;}
+
+    public static void OkHttpClear(){
+        client = null;
+    }
 
     public static Gson gsonCreate() {
         GsonBuilder gsonBuilder;
@@ -269,4 +281,5 @@ public class NuubitSDK {
         Log.i("System", String.valueOf(result));
         return result;
     }
+
 }

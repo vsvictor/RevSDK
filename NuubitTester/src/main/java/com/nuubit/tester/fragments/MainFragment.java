@@ -86,7 +86,7 @@ public class MainFragment extends Fragment {
     private AppCompatSpinner spMethod;
     private String method;
     private AppCompatSpinner spMode;
-    private OperationMode mode = OperationMode.transfer_and_report;
+    private OperationMode mode = OperationMode.report_only;
     private RelativeLayout rlRun;
     private TextInputEditText edBody;
     private String body;
@@ -126,8 +126,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        edQuery.setText("google.com.ua");
-
+        //edQuery.setText("google.com.ua");
+        edQuery.setText("http://httpbin.org/delay/12");
 
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(new WebViewClient());
@@ -191,6 +191,10 @@ public class MainFragment extends Fragment {
                     }
                     case 7: {
                         method = "TRACE";
+                        break;
+                    }
+                    case 8: {
+                        method = "PATCH";
                         break;
                     }
                     default: {
@@ -426,6 +430,7 @@ public class MainFragment extends Fragment {
                     if (response == null) throw new NullPointerException();
 
                     String location = "";
+
                     while ((HTTPCode.create(response.code()) == HTTPCode.MOVED_PERMANENTLY) ||
                             (HTTPCode.create(response.code()) == HTTPCode.FOUND)) {
                         location = response.header("location");

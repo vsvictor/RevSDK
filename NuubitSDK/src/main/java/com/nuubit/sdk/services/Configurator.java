@@ -66,7 +66,7 @@ public class Configurator extends IntentService {
     protected void onHandleIntent(Intent intent) {
         int timeOut = NuubitConstants.DEFAULT_TIMEOUT_SEC;
         String url = NuubitConstants.DEFAULT_CONFIG_URL;
-        String key = ((NuubitApplication) getApplicationContext()).getSDKKey();
+        String key = ((NuubitApplication) getApplication()).getSDKKey();
 
         String result = null;
 
@@ -87,8 +87,9 @@ public class Configurator extends IntentService {
                 .tag(new Tag(NuubitConstants.SYSTEM_REQUEST, true))
                 .build();
         Response response = null;
+/*
         try {
-            response = client.newCall(req).execute();
+
         } catch (IOException e) {
             response = null;
             e.printStackTrace();
@@ -96,14 +97,16 @@ public class Configurator extends IntentService {
             response = null;
             ex.printStackTrace();
         }
+*/
         try {
+            response = client.newCall(req).execute();
             if (response == null) throw new IOException("Response null");
             HTTPCode resCode = HTTPCode.create(response.code());
             if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                 result = response.body().string();
             } else {
                 result = resCode.getMessage();
-                Log.i(TAG, "Request error!!! Status code:" + String.valueOf(response.code()));
+                Log.i(TAG, "Request error!!! Status code:" + String.valueOf(response.code())+" :"+response.message());
             }
             Intent configIntent = new Intent(NuubitActions.CONFIG_UPDATE_ACTION);
             configIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
@@ -111,7 +114,7 @@ public class Configurator extends IntentService {
             Log.i(TAG, result);
             sendBroadcast(configIntent);
             Log.i(TAG, result);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             //ex.printStackTrace();
             Log.i(TAG, "((((((((((((((((((((((((((((( Error )))))))))))))))))))))))))");
             Intent configIntent = new Intent(NuubitActions.CONFIG_UPDATE_ACTION);

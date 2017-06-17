@@ -43,3 +43,7 @@ captures/
 /.idea
 
 Tests/npm-debug.log*
+
+./hs_err_pid30138.pid
+./hs_err_pid30296.pid
+./hs_err_pid30392.pid

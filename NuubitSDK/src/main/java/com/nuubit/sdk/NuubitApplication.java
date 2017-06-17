@@ -23,6 +23,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.nuubit.sdk.config.Config;
 import com.nuubit.sdk.config.OperationMode;
 import com.nuubit.sdk.database.DBHelper;
@@ -90,9 +91,11 @@ public class NuubitApplication extends Application implements
     private boolean isInternet = false;
 
     private BroadcastReceiver configReceiver;
+    private BroadcastReceiver noUpdate;
     private BroadcastReceiver configStaleReceiver;
     private BroadcastReceiver testReceiver;
     private BroadcastReceiver statReceiver;
+    private BroadcastReceiver netListener;
 
     private RequestCounter requestCounter;
     private ConfigCounters configCounters;
@@ -142,7 +145,8 @@ public class NuubitApplication extends Application implements
 
         init();
     }
-/*
+
+    /*
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -205,7 +209,7 @@ public class NuubitApplication extends Application implements
         //configCounters.load(share);
         //lmMonitorCounters.load(share);
         //statsCounters.load(share);
-        //config = Config.load(NuubitSDK.gsonCreate(), share);
+        config = Config.load(NuubitSDK.gsonCreate(), share);
         if (config == null) config = new Config();
         String transport = config.getParam().get(0).getInitialTransportProtocol();
         best = EnumProtocol.createInstance(EnumProtocol.fromString(transport));
@@ -390,17 +394,21 @@ public class NuubitApplication extends Application implements
 
     private void registration() {
         configReceiver = createConfigReceiver();
+        noUpdate = createNoUpdate();
         configStaleReceiver = createStaleConfig();
         testReceiver = createTestReceiver();
         statReceiver = createStatReceiver();
+        netListener = createNetListener();
 
         IntentFilter intentFilterConfig = new IntentFilter();
         intentFilterConfig.addAction(NuubitActions.CONFIG_UPDATE_ACTION);
         registerReceiver(configReceiver, intentFilterConfig);
 
-        IntentFilter intentFilterNoConfig = new IntentFilter();
-        intentFilterNoConfig.addAction(NuubitActions.CONFIG_NO_UPDATE_ACTION);
-        registerReceiver(noUpdate, intentFilterNoConfig);
+        if(noUpdate != null) {
+            IntentFilter intentFilterNoConfig = new IntentFilter();
+            intentFilterNoConfig.addAction(NuubitActions.CONFIG_NO_UPDATE_ACTION);
+            registerReceiver(noUpdate, intentFilterNoConfig);
+        }
 
         IntentFilter intentFilterStaleConfig = new IntentFilter();
         intentFilterStaleConfig.addAction(NuubitActions.CONFIG_LOADED);
@@ -415,10 +423,12 @@ public class NuubitApplication extends Application implements
         registerReceiver(statReceiver, intentFilterStat);
         //Log.i("PROMO", config.getAppName() + ": Start all receivers");
 
-        IntentFilter ifn = new IntentFilter();
-        ifn.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        ifn.addAction(NuubitActions.RETEST);
-        registerReceiver(netListener, ifn);
+        if(netListener != null) {
+            IntentFilter ifn = new IntentFilter();
+            ifn.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            ifn.addAction(NuubitActions.RETEST);
+            registerReceiver(netListener, ifn);
+        }
     }
 
     public void shutdown() {
@@ -437,12 +447,14 @@ public class NuubitApplication extends Application implements
             statTimer.purge();
             statTimer = null;
         }
-        unregisterReceiver(configReceiver);
-        unregisterReceiver(noUpdate);
-        unregisterReceiver(configStaleReceiver);
-        unregisterReceiver(testReceiver);
-        unregisterReceiver(statReceiver);
-        unregisterReceiver(netListener);
+
+        if(configReceiver != null ) unregisterReceiver(configReceiver);
+        if(noUpdate != null) unregisterReceiver(noUpdate);
+        if(configStaleReceiver != null) unregisterReceiver(configStaleReceiver);
+        if(testReceiver != null) unregisterReceiver(testReceiver);
+        if(statReceiver != null) unregisterReceiver(statReceiver);
+        if(netListener != null) unregisterReceiver(netListener);
+
         //requestCounter.save(share);
         //configCounters.save(share);
         //lmMonitorCounters.save(share);
@@ -465,45 +477,62 @@ public class NuubitApplication extends Application implements
                             Log.i(TAG + " configurator receiver", newConfig);
                             Gson gson = NuubitSDK.gsonCreate();
                             Log.i(TAG, "GSON created");
-                            config = gson.fromJson(newConfig, Config.class);
-                            Log.i(TAG, "Deserialized");
-                            Log.i(TAG, "Parce to POJO");
-                            //config.save(gson, share);
-                            config.save(newConfig, share);
-                            tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
+                            try {
+                                Config c = null;
+                                c = gson.fromJson(newConfig, Config.class);
+                                if (c != null) config = c;
+                                config = c;
+                                Log.i(TAG, "Deserialized");
+                                Log.i(TAG, "Parce to POJO");
+                                config.save(newConfig, share);
 
-                            if (tester.getPercent() != config.getParam().get(0).getABTestingOriginOffloadRatio()) {
-                                Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
-                                tester.setPercent(config.getParam().get(0).getABTestingOriginOffloadRatio());
-                                OperationMode mode = config.getParam().get(0).getOperationMode();
-                                tester.init();
-                                tester.generate();
-                                config.getParam().get(0).setOperationMode(tester.isAMode() ?  mode : OperationMode.report_only);
-                                Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
+                                tester.setRealOperatiomMode(config.getParam().get(0).getOperationMode());
+                                if (tester.getPercent() != config.getParam().get(0).getABTestingOriginOffloadRatio()) {
+                                    Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
+                                    tester.setPercent(config.getParam().get(0).getABTestingOriginOffloadRatio());
+                                    OperationMode mode = config.getParam().get(0).getOperationMode();
+                                    tester.init();
+                                    tester.generate();
+                                    config.getParam().get(0).setOperationMode(tester.isAMode() ? mode : OperationMode.report_only);
+                                    Log.i("ABTEST", config.getParam().get(0).getOperationMode().toString());
+                                }
+
+                                //allowed_protocols.clear();
+                                allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
+                                Log.i("ALLOWED", "" + config.getParam().get(0).getAllowedTransportProtocols().size());
+                                lmMonitorCounters.getAvailableProtocol().clear();
+                                for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {
+                                    allowed_protocols.add(EnumProtocol.createInstance(sProto));
+                                    lmMonitorCounters.getAvailableProtocol().add(sProto);
+                                }
+                                Log.i(TAG, "Save config");
+                                sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
+                                Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
+                                if (NuubitSDK.isStatistic()) {
+                                    statRunner();
+                                }
+                                configCounters.addSuccessConfig();
+                                configCounters.setTimeLastSuccess(System.currentTimeMillis());
+                            } catch (JsonSyntaxException ex){
+                                configCounters.addFailConfig();
+                                configCounters.setReasonLastFail("JSON parse error");
+                                configCounters.setTimeLastFail(System.currentTimeMillis());
+                                configCounters.setRealMode(tester.getRealOperatiomMode());
+                                configuratorRunner(false);
+                                //testerRunner();
+                                ex.printStackTrace();
                             }
 
-                            //allowed_protocols.clear();
-                            allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
-                            Log.i("ALLOWED", "" + config.getParam().get(0).getAllowedTransportProtocols().size());
-                            lmMonitorCounters.getAvailableProtocol().clear();
-                            for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {
-                                allowed_protocols.add(EnumProtocol.createInstance(sProto));
-                                lmMonitorCounters.getAvailableProtocol().add(sProto);
-                            }
-                            Log.i(TAG, "Save config");
-                            sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
-                            Log.i("System", "Config saved, mode: " + config.getParam().get(0).getOperationMode().toString());
-                            if (NuubitSDK.isStatistic()) {
-                                statRunner();
-                            }
-                            configCounters.addSuccessConfig();
-                            configCounters.setTimeLastSuccess(System.currentTimeMillis());
                         } else {
                             configCounters.addFailConfig();
                             configCounters.setReasonLastFail("Config is null");
                             configCounters.setTimeLastFail(System.currentTimeMillis());
                         }
                     } else {
+                        if((httpCode.getCode() == 503)||(httpCode.getCode() == 400)){
+                            getConfig().getParam().get(0).setOperationMode(OperationMode.off);
+                            sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
+                        }
                         configCounters.addFailConfig();
                         configCounters.setReasonLastFail("Fail receive from server");
                         configCounters.setTimeLastFail(System.currentTimeMillis());
@@ -517,12 +546,14 @@ public class NuubitApplication extends Application implements
         };
     }
 
-    private BroadcastReceiver noUpdate = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            configuratorRunner(false);
-        }
-    };
+    private BroadcastReceiver createNoUpdate(){
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                configuratorRunner(false);
+            }
+        };
+    }
 
     private BroadcastReceiver createStaleConfig() {
         return new BroadcastReceiver() {
@@ -683,12 +714,14 @@ public class NuubitApplication extends Application implements
         }
     }
 
-    private BroadcastReceiver netListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("TEST", "Best protocol: " + best.toString());
-            Toast.makeText(NuubitApplication.getInstance(), "Best protocol: " + best.toString(), Toast.LENGTH_LONG);
-            testerRunner();
-        }
-    };
+    private BroadcastReceiver createNetListener(){
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i("TEST", "Best protocol: " + best.toString());
+                Toast.makeText(NuubitApplication.getInstance(), "Best protocol: " + best.toString(), Toast.LENGTH_LONG);
+                testerRunner();
+            }
+        };
+    }
 }

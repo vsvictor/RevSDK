@@ -98,10 +98,11 @@ public class Configurator extends IntentService {
             ex.printStackTrace();
         }
 */
+        HTTPCode resCode = HTTPCode.UNDEFINED;
         try {
             response = client.newCall(req).execute();
             if (response == null) throw new IOException("Response null");
-            HTTPCode resCode = HTTPCode.create(response.code());
+            resCode = HTTPCode.create(response.code());
             if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
                 result = response.body().string();
             } else {
@@ -125,7 +126,8 @@ public class Configurator extends IntentService {
                 Log.i(TAG, defJSON);
                 configIntent.putExtra(NuubitConstants.CONFIG, defJSON);
             } else {
-                configIntent.putExtra(NuubitConstants.HTTP_RESULT, 400);
+                configIntent.putExtra(NuubitConstants.CONFIG,resCode.getMessage());
+                configIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
             }
             sendBroadcast(configIntent);
             ex.printStackTrace();

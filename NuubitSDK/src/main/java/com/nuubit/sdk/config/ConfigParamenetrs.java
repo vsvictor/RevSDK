@@ -86,6 +86,9 @@ public class ConfigParamenetrs {
         edge_failures_failover_threshold_percent = 80;
     }
 
+    public ConfigParamenetrs(boolean isEmpty){
+    }
+
     public String getSdkReleaseVersion() {
         return sdk_release_version;
     }

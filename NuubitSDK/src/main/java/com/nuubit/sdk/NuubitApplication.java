@@ -23,6 +23,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.nuubit.sdk.config.Config;
 import com.nuubit.sdk.config.OperationMode;
@@ -82,7 +83,7 @@ public class NuubitApplication extends Application implements
     private String sdkKey;
     private String version;
     private Config config;
-
+    private boolean handChange = false;
     private SharedPreferences share;
     private Protocol best = new StandardProtocol();
 
@@ -467,6 +468,7 @@ public class NuubitApplication extends Application implements
             @Override
             public void onReceive(final Context context, Intent intent) {
                 Bundle result = intent.getExtras();
+                handChange = false;
                 if (result != null) {
                     HTTPCode httpCode = HTTPCode.create(result.getInt(NuubitConstants.HTTP_RESULT, HTTPCode.UNDEFINED.getCode()));
                     if (httpCode.getType() == HTTPCode.Type.SUCCESSFULL) {
@@ -480,8 +482,8 @@ public class NuubitApplication extends Application implements
                             try {
                                 Config c = null;
                                 c = gson.fromJson(newConfig, Config.class);
-                                if (c != null) config = c;
-                                config = c;
+                                if (c == null || c.getAppName().isEmpty() || c.getAppName().equals(NuubitConstants.UNDEFINED)) throw new JsonParseException("Invalid config");
+                                //config = c;
                                 Log.i(TAG, "Deserialized");
                                 Log.i(TAG, "Parce to POJO");
                                 config.save(newConfig, share);
@@ -521,6 +523,14 @@ public class NuubitApplication extends Application implements
                                 configuratorRunner(false);
                                 //testerRunner();
                                 ex.printStackTrace();
+                            } catch (JsonParseException ex){
+                                configCounters.addFailConfig();
+                                configCounters.setReasonLastFail("JSON parse error");
+                                configCounters.setTimeLastFail(System.currentTimeMillis());
+                                configCounters.setRealMode(tester.getRealOperatiomMode());
+                                configuratorRunner(false);
+                                //testerRunner();
+                                ex.printStackTrace();
                             }
 
                         } else {
@@ -529,17 +539,20 @@ public class NuubitApplication extends Application implements
                             configCounters.setTimeLastFail(System.currentTimeMillis());
                         }
                     } else {
-                        if((httpCode.getCode() == 503)||(httpCode.getCode() == 400)){
-                            getConfig().getParam().get(0).setOperationMode(OperationMode.off);
-                            sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
-                        }
+                        //if(httpCode.getCode() == 503){
+                        //    getConfig().getParam().get(0).setOperationMode(OperationMode.off);
+                        //    sendBroadcast(new Intent(NuubitActions.CONFIG_LOADED));
+                        //    handChange = true;
+                        //}
                         configCounters.addFailConfig();
                         configCounters.setReasonLastFail("Fail receive from server");
                         configCounters.setTimeLastFail(System.currentTimeMillis());
                     }
                 }
                 //configCounters.setAbOn(tester.getPercent() != 0);
-                configCounters.setRealMode(tester.getRealOperatiomMode());
+                if(!handChange) {
+                    configCounters.setRealMode(tester.getRealOperatiomMode());
+                }
                 configuratorRunner(false);
                 testerRunner();
             }
@@ -598,7 +611,7 @@ public class NuubitApplication extends Application implements
                     lmMonitorCounters.setLastFailReason(bundle.getString(NuubitConstants.LAST_FAIL_REASON, NuubitConstants.UNDEFINED));
                     if (bundle != null) {
                         String sProtocol = bundle.getString(NuubitConstants.TEST_PROTOCOL);
-                        if (!sProtocol.equalsIgnoreCase(NuubitConstants.NO_PROTOCOL)) {
+                        if (!sProtocol.equalsIgnoreCase(NuubitConstants.NO_PROTOCOL) && !sProtocol.isEmpty()) {
                             best = EnumProtocol.createInstance(EnumProtocol.fromString(sProtocol));
                             Log.i("TEST", "Best protocol: " + best.toString());
                         } else {

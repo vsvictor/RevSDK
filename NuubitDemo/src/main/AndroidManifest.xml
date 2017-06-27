@@ -19,7 +19,7 @@
 
         <meta-data
             android:name="com.nuubit.key"
-            android:value="5f0cbda0-108c-434d-9ebf-d4ecd88e6d6c" />
+            android:value="ed9071e7-7dc0-40ee-97bd-39b355fa5b92"/>                                                                                                                                                                                                                                                                                                                                                                                                                                                cd88e6d6c" />
 
         <activity
             android:name=".MainActivity"

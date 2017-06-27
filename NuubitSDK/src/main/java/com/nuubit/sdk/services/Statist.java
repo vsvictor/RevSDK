@@ -54,6 +54,7 @@ public class Statist extends IntentService {
     public Statist(){
         this("Statist");
     }
+
     public Statist(String name) {
         super(name);
     }
@@ -63,19 +64,40 @@ public class Statist extends IntentService {
         int timeOut = NuubitConstants.DEFAULT_TIMEOUT_SEC;
         String url = null;
 
-        Log.i(TAG, "Statist running...");
+        Log.i(TAG, "Statist running 0...");
 
         long lastTimeSuccess = 0;
+        Log.i(TAG, "Statist running 1...");
         long lastTimeFail = 0;
-        HTTPCode resCode = HTTPCode.UNDEFINED;
+        Log.i(TAG, "Statist running 2...");
+        //HTTPCode resCode = HTTPCode.UNDEFINED;
+        int resCode = -1;
+        Log.i(TAG, "Statist running 3...");
         long count = 0;
+        Log.i(TAG, "Statist running 4...");
         String reason = NuubitConstants.UNDEFINED;
+        Log.i(TAG, "Statist running 5...");
 
-        statistic = new Statistic(getApplicationContext());
+        //statistic = new Statistic(getApplicationContext());
+        Log.i(TAG, "Load statistic...");
+        String st = intent.getExtras().getString("stat");
+        String stat;
+        if(st != null) {
+            Log.i(TAG, "Begin...");
+            statistic = NuubitSDK.gsonCreate().fromJson(st, Statistic.class);
+            Log.i(TAG,"End");
+            stat = st;
+            Log.i(TAG, "Stat loaded");
+        } else{
+            Log.i(TAG, "Create statistic...");
+            statistic = new Statistic(getApplicationContext());
+            stat = NuubitSDK.gsonCreate().toJson(statistic);
+        }
+        Log.i(TAG, "Statistic created");
 
-        if(statistic.getRequests().size()>0) {
+        //if(statistic.getRequests().size()>0) {
 
-            String stat = NuubitSDK.gsonCreate().toJson(statistic);
+            //stat = NuubitSDK.gsonCreate().toJson(statistic);
             Log.i(TAG + " stat", "\n\n" + stat);
 
             if (intent != null) {
@@ -97,8 +119,11 @@ public class Statist extends IntentService {
             Response response;
             try {
                 response = client.newCall(req).execute();
-                resCode = HTTPCode.create(response.code());
-                if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                //resCode = HTTPCode.create(response.code());
+                resCode = response.code();
+                Log.i(TAG, "Response code: "+resCode);
+                //if (resCode.getType() == HTTPCode.Type.SUCCESSFULL) {
+                if (resCode<400) {
                     ArrayList<RequestOne> rows = statistic.getRequests();
                     ContentValues values = new ContentValues();
                     values.put(RequestTable.Columns.SENT, 1);
@@ -113,22 +138,23 @@ public class Statist extends IntentService {
                     lastTimeSuccess = System.currentTimeMillis();
                 }
             } catch (NullPointerException ex) {
-                resCode = HTTPCode.BAD_REQUEST;
+                //resCode = HTTPCode.BAD_REQUEST;
                 lastTimeFail = System.currentTimeMillis();
                 reason = "Null response";
                 ex.printStackTrace();
             } catch (IOException ex) {
-                resCode = HTTPCode.BAD_REQUEST;
+                //resCode = HTTPCode.BAD_REQUEST;
                 lastTimeFail = System.currentTimeMillis();
                 reason = "I/O exception";
                 ex.printStackTrace();
             }
-        } {
-            reason = NuubitConstants.STAT_NO_REQUEST;
-            resCode = HTTPCode.OK;
-        }
+//        }
+        reason = NuubitConstants.STAT_NO_REQUEST;
+        //resCode = HTTPCode.OK;
+        resCode = 200;
         Intent statIntent = new Intent(NuubitActions.STAT_ACTION);
-        statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
+        //statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode.getCode());
+        statIntent.putExtra(NuubitConstants.HTTP_RESULT, resCode);
         statIntent.putExtra(NuubitConstants.STAT_REQUESTS_COUNT, count);
         statIntent.putExtra(NuubitConstants.STATISTIC, String.valueOf(statistic.getRequests().size()+" requests sent"));
         statIntent.putExtra(NuubitConstants.STAT_LAST_TIME_SUCCESS, lastTimeSuccess);

@@ -3,41 +3,32 @@ package com.nuubit.sdk;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.test.ApplicationTestCase;
-import android.test.ServiceTestCase;
 import android.util.Log;
 
 import com.nuubit.sdk.database.DBHelper;
 import com.nuubit.sdk.database.RequestTable;
-import com.nuubit.sdk.interseptor.NuubitInterceptor;
 import com.nuubit.sdk.protocols.EnumProtocol;
 import com.nuubit.sdk.services.Statist;
-import com.nuubit.sdk.statistic.Statistic;
 import com.nuubit.sdk.statistic.sections.RequestOne;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okio.Buffer;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StatService extends ApplicationTestCase<NuubitApplication> {
-    private final static String TAG = StatService.class.getName();
+public class StatService500 extends ApplicationTestCase<NuubitApplication> {
+    private final static String TAG = StatService500.class.getName();
     private NuubitApplication application;
 
 
-    public StatService() {
+    public StatService500() {
         super(NuubitApplication.class);
     }
 
@@ -112,7 +103,7 @@ public class StatService extends ApplicationTestCase<NuubitApplication> {
         Statist statist = new Statist("Mock");
         Intent intent = new Intent(application, Statist.class);
         intent.putExtra(NuubitConstants.TIMEOUT, 10);
-        intent.putExtra(NuubitConstants.STATISTIC, "http://httpbin.org/status/400");
+        intent.putExtra(NuubitConstants.STATISTIC, "http://httpbin.org/status/500");
         statist.onHandleIntent(intent);
         Log.i("Statist","Unsent count:"+dbHelper.getUnsent().getCount());
         assertEquals(unsent, dbHelper.getUnsent().getCount()-1);

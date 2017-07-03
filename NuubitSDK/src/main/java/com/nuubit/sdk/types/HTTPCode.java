@@ -73,7 +73,7 @@ public enum HTTPCode {
 
     private HTTPCode(int code, int id_http) {
         this.code = code;
-        this.message = NuubitApplication.getInstance().getApplicationContext().getResources().getString(id_http);
+        this.message = NuubitApplication.getInstance().getResources().getString(id_http);
     }
 
     public static HTTPCode create(int code) {

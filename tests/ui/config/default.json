@@ -1,0 +1,105 @@
+{
+  "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
+  "appId": "58d535b8519150d22ab102b4",
+  "appIdTester": "58d535b8519150d22ab102b4",
+  "accountId": "585296f11ea9bb3c3f90e05b",
+  "statsReportingIntervalSeconds82": 82,
+  "statsReportingIntervalSeconds83": 83,
+  "statsReportingIntervalSeconds84": 84,
+  "statsReportingIntervalSeconds85": 85,
+  "statsReportingIntervalSeconds86": 86,
+  "statsReportingIntervalSeconds87": 87,
+  "statsReportingIntervalSeconds60": 60,
+  "configurationRefreshIntervalMilliSec": 60000,
+  "defaultConfigValues": {
+    "stats_reporting_interval_sec": "300",
+    "stats_reporting_level": "\"debug\"",
+    "edge_failures_failover_threshold_percent": "80",
+    "edge_quic_udp_port": "443",
+    "edge_data_receive_timeout_sec": "60",
+    "app_name": "_",
+    "internal_domains_black_list": "[]",
+    "a_b_testing_origin_offload_ratio": "0",
+    "sdk_release_version": "\"1\"",
+    "transport_monitoring_url": "\"https://monitor.revsw.net/test-cache.js\""
+  },
+  "defaultConfigVars": {
+    "stats_reporting_interval_sec": "stats_reporting_interval_sec",
+    "stats_reporting_level": "stats_reporting_level",
+    "edge_failures_failover_threshold_percent": "edge_failures_failover_threshold_percent",
+    "edge_quic_udp_port": "edge_quic_udp_port",
+    "edge_data_receive_timeout_sec": "edge_data_receive_timeout_sec",
+    "app_name": "app_name",
+    "internal_domains_black_list": "internal_domains_black_list",
+    "a_b_testing_origin_offload_ratio": "a_b_testing_origin_offload_ratio",
+    "sdk_release_version": "sdk_release_version",
+    "transport_monitoring_url": "transport_monitoring_url"
+  },
+  "encoding": {
+    "russian": {
+      "site": "https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%88%D0%B5%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D1%85%D0%BE%D0%B4",
+      "value": "Fußgängerübergang"
+    },
+    "german": {
+      "site": "https://de.wikipedia.org/wiki/Fu%C3%9Fg%C3%A4nger%C3%BCbergang",
+      "value": "Пешеходный переход"
+    },
+    "turkish": {
+      "site": "https://tr.wikipedia.org/wiki/Yaya_ge%C3%A7idi",
+      "value": "Yaya geçidi"
+    },
+    "chinese": {
+      "site": "https://zh.wikipedia.org/wiki/%E8%A1%8C%E4%BA%BA%E7%A9%BF%E8%B6%8A%E9%81%93",
+      "value": "行人穿越道"
+    },
+    "polish": {
+      "site": "https://pl.wikipedia.org/wiki/Przej%C5%9Bcie_dla_pieszych",
+      "value": "Przejście dla pieszych"
+    },
+    "arabic": {
+      "site": "https://ar.wikipedia.org/wiki/%D9%85%D8%B9%D8%A8%D8%B1_%D9%85%D8%B4%D8%A7%D8%A9",
+      "value": "معبر مشاة"
+    }
+  },
+  "operationMode": {
+    "off": "off",
+    "transfer_and_report": "transfer_and_report",
+    "report_only": "report_only",
+    "transfer_only": "transfer_only"
+  },
+  "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
+  "appsOptionPublish": "?options=publish",
+  "describeTimeout": 300000,
+  "implicitWaitTimeout": 6000,
+  "waitForResponseSecs": 10000,
+  "waitForListSecs": 2000,
+  "waitForResponseStatusCodeSecs": 20000,
+  "successHttpStatusCode": 200,
+  "SDKkeyTester": "80bed752-6da6-4f47-8e95-f61de59e599d",
+  "headerRevSDK": ".revsdk.net",
+  "headerRev": "rev-",
+  "httpWebsite": "http://appium.io",
+  "httpsWebsite": "https://www.wikipedia.org",
+  "domainsWhiteList": ["bs.to", "jetbrains.com"],
+  "domainsBlackList": ["jenkins.io", "protractortest.org"],
+  "domainsProvisionedList": ["google.com"],
+  "domainsInternalBlackList": ["www.dell.com/sts/passive/commercial/v1/us/en/uscorp1/Premier/Login/Anonymous?wa=wsignin1.0&wtrealm=http%253a%252f%252fwww.dell.com&wreply=https%253a%252f%252fwww.dell.com%252fidentity%252fv2%252fredirect%252f&wctx=cht%253dlogin%2526%257eck%253dmn"],
+  "allowedProtocolsStandard": ["standard"],
+  "URLWithQueryString": "https://www.google.com.ua/search?client=ubuntu&channel=fs&q=httpbin+is+it+working&ie=utf-8&oe=utf-8&gfe_rd=cr&ei=RtQiWYbGAc3i8AfvqYiADA#channel=fs&q=httpbin",
+  "httpBinWebsiteStatuses": {
+    "400": "httpbin.org/status/400",
+    "402": "httpbin.org/status/402",
+    "404": "httpbin.org/status/404",
+    "300": "httpbin.org/status/300",
+    "301": "httpbin.org/status/301",
+    "302": "httpbin.org/status/302"
+  },
+  "httpBinStatuses": {
+    "400": "400",
+    "402": "402",
+    "404": "404",
+    "300": "300",
+    "301": "301",
+    "302": "302"
+  }
+}

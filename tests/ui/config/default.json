@@ -79,6 +79,7 @@
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",
+  "statsApi": "https://stats-api.revsw.net/",
   "httpsWebsite": "https://www.wikipedia.org",
   "domainsWhiteList": ["bs.to", "jetbrains.com"],
   "domainsBlackList": ["jenkins.io", "protractortest.org"],

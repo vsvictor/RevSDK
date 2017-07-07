@@ -53,6 +53,12 @@ var Counters = {
             });
     },
 
+    getTotalStatsRequestUploaded: function (driver) {
+        return driver
+            .waitForResponse(driver)
+            .elementsByXPath(Counters.list.drawer).at(58);
+    },
+
     // Function getCounterTotalRequestsStandard scrolls down the counters and returns value of the totalRequestsStandard
     getCounterTotalRequestsStandard: function (driver) {
         var totalRequestsStandard = undefined;

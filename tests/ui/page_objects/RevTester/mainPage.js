@@ -25,6 +25,7 @@ var App = {
         button: 'android.widget.ImageView'
     },
     menuOptions: {
+        main: '//android.widget.TextView[@text=\'Main\']',
         configurationView: '//android.widget.TextView[@text=\'Configuration view\']',
         statsView: '//android.widget.TextView[@text=\'Statistic view\']',
         openDrawer: '//android.widget.TextView[@text=\'Open drawer\']'
@@ -62,12 +63,24 @@ var App = {
             .click();
     },
 
+    getMainPage: function (driver) {
+        return driver
+            .elementByClassName(App.menuBtn.button)
+            .click()
+            .sleep(2000)
+            .elementByXPath(App.menuOptions.main)
+            .click()
+            .sleep(2000);
+    },
+
     getConfigurationPage: function (driver) {
         return driver
             .elementByClassName(App.menuBtn.button)
             .click()
+            .sleep(2000)
             .elementByXPath(App.menuOptions.configurationView)
-            .click();
+            .click()
+            .sleep(2000);
     },
 
     getStatsPage: function (driver) {
@@ -84,10 +97,10 @@ var App = {
         return driver
             .elementByClassName(App.menuBtn.button)
             .click()
-            .sleep(1000)
+            .sleep(2000)
             .elementByXPath(App.menuOptions.openDrawer)
             .click()
-            .sleep(1000);
+            .sleep(2000);
     },
 
     closeCountersPage: function (driver) {

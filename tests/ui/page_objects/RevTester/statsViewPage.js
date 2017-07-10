@@ -9,7 +9,7 @@ var Stats = {
 
     getStatsList: function (driver) {
         return driver
-            .elementsByXPath(Config.list.config);
+            .elementsByXPath(Stats.list.config);
     },
 
     getSdkKey: function (driver) {
@@ -18,10 +18,15 @@ var Stats = {
             .elementsByXPath(Stats.list.config)
             .at(7);
     },
-    getOriginRequests: function (driver) {
+    getOriginRequests: function (driver, position) {
+        var request = undefined;
         return driver
-            .sleep(3000)
-            .elementsByXPath(Stats.list.config).at(152);
+            .waitForResponse(driver)
+            .elementsByXPath(Stats.list.config)
+            .then(function (countersList) {
+                request = countersList[position || 47].text();
+                return request;
+            });
     }
 };
 

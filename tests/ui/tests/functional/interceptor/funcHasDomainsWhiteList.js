@@ -41,8 +41,8 @@ var wd = require("wd"),
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
-wd.addPromiseChainMethod('getDomainsBlackList', Config.getDomainsBlackList);
-wd.addPromiseChainMethod('getOriginRequests', Stats.getOriginRequests);
+wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
+wd.addPromiseChainMethod('getRevRequests', Stats.getRevRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
@@ -62,7 +62,7 @@ describe("Smoke: config survival", function () {
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var serverConfig = serverConfigs.local;
-    var domainsBlackList = config.get('domainsBlackList');
+    var domainsWhiteList = config.get('domainsWhiteList');
     var appIdTester = config.get('appIdTester');
 
     driver = wd.promiseChainRemote(serverConfig);
@@ -84,44 +84,44 @@ describe("Smoke: config survival", function () {
             .quit();
     });
 
-    it("if domain is listed in 'domains_black_list' of "+
+    it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' item", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            [],  domainsBlackList, []);
+            domainsWhiteList,  [], []);
 
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)
-            .getDomainsBlackList(driver)
+            .getDomainsWhiteList(driver)
             .then(function (domainsList) {
 
-                 return domainsList.text().then(function (domains) {
+                return domainsList.text().then(function (domains) {
 
-                     // if there is the domain
-                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) !== -1) {
-                         return driver
-                             .getMainPage(driver)
-                             .getCountersPage(driver)
-                             .getOriginRequests(driver)
-                             .then(function (valueFirst) {
-                                 return driver
-                                     .closeCountersPage(driver)
-                                     .setModeTransferOnly(driver)
-                                     .sendRequestOnURL(driver, domainsBlackList[1])
-                                     .then(function () {
-                                         return driver
-                                             .getCountersPage(driver)
-                                             .getOriginRequests(driver)
-                                             .then(function (valueLast) {
-                                                 return valueFirst < valueLast;
-                                             }).should.become(true);
-                                     });
-                             });
-                     } else {
-                         return false;
-                     }
+                    // if there is the domain
+                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
+                        return driver
+                            .getMainPage(driver)
+                            .getCountersPage(driver)
+                            .getRevRequests(driver)
+                            .then(function (valueFirst) {
+                                return driver
+                                    .closeCountersPage(driver)
+                                    .setModeTransferOnly(driver)
+                                    .sendRequestOnURL(driver, domainsWhiteList[1])
+                                    .then(function () {
+                                        return driver
+                                            .getCountersPage(driver)
+                                            .getRevRequests(driver)
+                                            .then(function (valueLast) {
+                                                return valueFirst < valueLast;
+                                            }).should.become(true);
+                                    });
+                            });
+                    } else {
+                        return false;
+                    }
 
-                 }).should.become(true);
+                }).should.become(true);
             });
 
     });

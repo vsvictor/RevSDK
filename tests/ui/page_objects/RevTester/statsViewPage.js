@@ -27,6 +27,16 @@ var Stats = {
                 request = countersList[position || 47].text();
                 return request;
             });
+    },
+    getRevRequests: function (driver, position) {
+        var request = undefined;
+        return driver
+            .waitForResponse(driver)
+            .elementsByXPath(Stats.list.config)
+            .then(function (countersList) {
+                request = countersList[position || 45].text();
+                return request;
+            });
     }
 };
 

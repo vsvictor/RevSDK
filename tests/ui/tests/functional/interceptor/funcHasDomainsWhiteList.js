@@ -118,10 +118,10 @@ describe("Smoke: config survival", function () {
                                     });
                             });
                     } else {
-                        return false;
+                        console.log("Hasn't domains in 'domains_white_list'!!!");
+                        return domains;
                     }
-
-                }).should.become(true);
+                }).should.become(domainsWhiteList);
             });
 
     });

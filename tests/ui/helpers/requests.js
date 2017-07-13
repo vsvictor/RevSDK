@@ -104,7 +104,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "comment":"dsfs"
         }
     }, function (error, response, body){
-  //      console.log(body);
+       // console.log('ERROR ===>>> ', error);
     });
 };
 

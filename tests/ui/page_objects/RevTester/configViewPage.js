@@ -52,6 +52,12 @@ var Config = {
             .at(26);
     },
 
+    getInitialTransportProtocol: function (driver) {
+        return driver
+            .elementsByXPath(Config.list.config)
+            .at(48);
+    },
+
     getConfigVariables: function (driver) {
         var configVariables = [];
         return driver

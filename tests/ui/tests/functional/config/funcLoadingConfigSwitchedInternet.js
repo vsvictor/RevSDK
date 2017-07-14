@@ -47,7 +47,7 @@ wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Smoke: interceptor. operation mode transfer_only stats collecting", function () {
+describe("Functional => config: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

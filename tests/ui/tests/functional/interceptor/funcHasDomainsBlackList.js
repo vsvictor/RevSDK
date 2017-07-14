@@ -52,7 +52,7 @@ wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
 
-describe("Smoke: config survival", function () {
+describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

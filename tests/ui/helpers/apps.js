@@ -1,5 +1,7 @@
-exports.androidTester = "/home/larik/Node_Sample/sample-code/sample-code/examples/node/apks/NuubitTester-debug.apk";
-exports.androidTesterInvalidSDKkey = "/home/larik/Node_Sample/sample-code/sample-code/examples/node/apks/NuubitTesterInvalidSDKkey.apk";
-//exports.androidTester = "/home/larik/StudioProjects/revsw-sdk-android13/NuubitTester/build/outputs/apk/NuubitTester-debug.apk";
+
+var currentFolder = __dirname.replace(/local\/.*/g, '');
+exports.androidTester = currentFolder + "local/apps-android/apks/NuubitTester-debug.apk";
+exports.androidTesterInvalidSDKkey = currentFolder + "local/apps-android/apks/NuubitTesterInvalidSDKkey.apk";
+//exports.androidTester = currentFolder + "local/apps-android/apks/apk/NuubitTester-debug.apk";
 
 

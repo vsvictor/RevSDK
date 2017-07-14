@@ -43,7 +43,7 @@ wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCou
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 
-describe("Smoke: interceptor. operation mode transfer_only stats collecting", function () {
+describe("Smoke => Stats: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

@@ -37,7 +37,7 @@ wd.addPromiseChainMethod('getStatsPage', App.getStatsPage);
 wd.addPromiseChainMethod('getStatsReportingInterval', Config.getStatsReportingInterval);
 wd.addPromiseChainMethod('getSdkKey', Stats.getSdkKey);
 
-describe("Smoke: config survival", function () {
+describe("Smoke => Stats: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

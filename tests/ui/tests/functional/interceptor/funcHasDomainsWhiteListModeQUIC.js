@@ -42,6 +42,7 @@ wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
+wd.addPromiseChainMethod('getInitialTransportProtocol', Config.getInitialTransportProtocol);
 wd.addPromiseChainMethod('getRevRequests', Stats.getRevRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
@@ -85,44 +86,55 @@ describe("Function => interceptor: ", function () {
     });
 
     it("if domain is listed in 'domains_white_list' of "+
-        "'Configuration view' item", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
+        "'Configuration view' item in mode 'QUIC'", function () {
 
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)
-            .getDomainsWhiteList(driver)
-            .then(function (domainsList) {
 
-                return domainsList.text().then(function (domains) {
+            .getInitialTransportProtocol(driver)
+            .then(function (valueMode) {
+                return valueMode.text().then(function (value) {
 
-                    // if there is the domain
-                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
+                    // must be 'QUIC' mode
+                    if (/QUIC/.test(value)) {
                         return driver
-                            .getMainPage(driver)
-                            .getCountersPage(driver)
-                            .getRevRequests(driver)
-                            .then(function (valueFirst) {
-                                return driver
-                                    .closeCountersPage(driver)
-                                    .setModeTransferOnly(driver)
-                                    .sendRequestOnURL(driver, domainsWhiteList[1])
-                                    .then(function () {
+                            .getDomainsWhiteList(driver)
+                            .then(function (domainsList) {
+
+                                return domainsList.text().then(function (domains) {
+
+                                    // if there is the domain
+                                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
                                         return driver
+                                            .getMainPage(driver)
                                             .getCountersPage(driver)
                                             .getRevRequests(driver)
-                                            .then(function (valueLast) {
-                                                return valueFirst < valueLast;
-                                            }).should.become(true);
-                                    });
+                                            .then(function (valueFirst) {
+                                                return driver
+                                                    .closeCountersPage(driver)
+                                                    .setModeTransferOnly(driver)
+                                                    .sendRequestOnURL(driver, domainsWhiteList[1])
+                                                    .then(function () {
+                                                        return driver
+                                                            .getCountersPage(driver)
+                                                            .getRevRequests(driver)
+                                                            .then(function (valueLast) {
+                                                                return valueFirst < valueLast;
+                                                            }).should.become(true);
+                                                    });
+                                            });
+                                    } else {
+                                        console.log("Hasn't domains in 'domains_white_list'!!!");
+                                        return domains;
+                                    }
+                                }).should.become(domainsWhiteList);
                             });
                     } else {
-                        console.log("Hasn't domains in 'domains_white_list'!!!");
-                        return domains;
+                        return value;
                     }
-                }).should.become(domainsWhiteList);
-            });
+                })
+            }).should.become('QUIC');
 
     });
 

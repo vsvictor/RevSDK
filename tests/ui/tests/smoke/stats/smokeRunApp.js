@@ -41,7 +41,7 @@ wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBody
 wd.addPromiseChainMethod('getTotalStatsRequestUploaded', Counters.getTotalStatsRequestUploaded);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 
-describe("Smoke: stats collecting", function () {
+describe("Smoke => Stats: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

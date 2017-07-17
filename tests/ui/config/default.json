@@ -1,7 +1,7 @@
 {
   "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
-  "appId": "5964d7f8389c4ff31f300e22",
-  "appIdTester": "5964d7f8389c4ff31f300e22",
+  "appId": "58d178e86fb2cf516722e958",
+  "appIdTester": "58d178e86fb2cf516722e958",
   "accountId": "585296f11ea9bb3c3f90e05c",
   "statsReportingIntervalSeconds82": 82,
   "statsReportingIntervalSeconds83": 83,
@@ -67,6 +67,9 @@
     "report_only": "report_only",
     "transfer_only": "transfer_only"
   },
+  "massages": {
+    "noDomainExists": " > No domain exists!!!"
+  },
   "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
   "appsOptionPublish": "?options=publish",
   "describeTimeout": 300000,
@@ -75,7 +78,7 @@
   "waitForListSecs": 2000,
   "waitForResponseStatusCodeSecs": 20000,
   "successHttpStatusCode": 200,
-  "SDKkeyTester": "55b521e9-a79c-4018-83a5-7695e2f2e784",
+  "SDKkeyTester": "ed9071e7-7dc0-40ee-97bd-39b355fa5b92",
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",

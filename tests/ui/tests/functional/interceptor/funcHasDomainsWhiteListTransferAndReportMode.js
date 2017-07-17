@@ -22,6 +22,7 @@
 "use strict";
 
 require("./../../../helpers/setup");
+var colors = require('colors');
 var wd = require("wd"),
     _ = require('underscore'),
     config = require("config"),
@@ -39,7 +40,7 @@ var wd = require("wd"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
-wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
+wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
 wd.addPromiseChainMethod('getRevRequests', Stats.getRevRequests);
@@ -64,6 +65,7 @@ describe("Function => interceptor: ", function () {
     var serverConfig = serverConfigs.local;
     var domainsWhiteList = config.get('domainsWhiteList');
     var appIdTester = config.get('appIdTester');
+    var massages = config.get('massages');
 
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
@@ -85,7 +87,7 @@ describe("Function => interceptor: ", function () {
     });
 
     it("if domain is listed in 'domains_white_list' of "+
-        "'Configuration view' item", function () {
+        "'Configuration view' for 'transfer and report' mode", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             domainsWhiteList,  [], []);
 
@@ -106,22 +108,22 @@ describe("Function => interceptor: ", function () {
                             .then(function (valueFirst) {
                                 return driver
                                     .closeCountersPage(driver)
-                                    .setModeTransferOnly(driver)
+                                    .setModeTransferAndReport(driver)
                                     .sendRequestOnURL(driver, domainsWhiteList[1])
                                     .then(function () {
                                         return driver
                                             .getCountersPage(driver)
                                             .getRevRequests(driver)
                                             .then(function (valueLast) {
-                                                return valueFirst < valueLast;
+                                                return ~~valueFirst < ~~valueLast;
                                             }).should.become(true);
                                     });
                             });
                     } else {
-                        console.log("Hasn't domains in 'domains_white_list'!!!");
-                        return domains;
+                        console.log(colors.red(massages.noDomainExists));
+                        return domainsList.text().should.become(domainsWhiteList);
                     }
-                }).should.become(domainsWhiteList);
+                });
             });
 
     });

@@ -22,6 +22,7 @@
 "use strict";
 
 require("./../../../helpers/setup");
+var colors = require('colors');
 var wd = require("wd"),
     _ = require('underscore'),
     config = require("config"),
@@ -64,6 +65,7 @@ describe("Functional => interceptor: ", function () {
     var serverConfig = serverConfigs.local;
     var domainsBlackList = config.get('domainsBlackList');
     var appIdTester = config.get('appIdTester');
+    var massages = config.get('massages');
 
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
@@ -85,7 +87,7 @@ describe("Functional => interceptor: ", function () {
     });
 
     it("if domain is listed in 'domains_black_list' of "+
-        "'Configuration view' item", function () {
+        "'Configuration view' for 'transfer only' mode", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             [],  domainsBlackList, []);
 
@@ -98,7 +100,7 @@ describe("Functional => interceptor: ", function () {
                  return domainsList.text().then(function (domains) {
 
                      // if there is the domain
-                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) !== -1) {
+                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) === -1) {
                          return driver
                              .getMainPage(driver)
                              .getCountersPage(driver)
@@ -113,15 +115,16 @@ describe("Functional => interceptor: ", function () {
                                              .getCountersPage(driver)
                                              .getOriginRequests(driver)
                                              .then(function (valueLast) {
-                                                 return valueFirst < valueLast;
+                                                 return ~~valueFirst < ~~valueLast;
                                              }).should.become(true);
                                      });
                              });
                      } else {
-                         return false;
+                         console.log(colors.red(massages.noDomainExists));
+                         return domainsList.text().should.become(domainsBlackList);
                      }
 
-                 }).should.become(true);
+                 });
             });
 
     });

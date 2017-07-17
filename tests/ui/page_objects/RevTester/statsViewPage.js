@@ -18,24 +18,24 @@ var Stats = {
             .elementsByXPath(Stats.list.config)
             .at(7);
     },
-    getOriginRequests: function (driver, position) {
-        var request = undefined;
+    getOriginRequests: function (driver) {
         return driver
             .waitForResponse(driver)
             .elementsByXPath(Stats.list.config)
             .then(function (countersList) {
-                request = countersList[position || 47].text();
-                return request;
+                return countersList[47].text().then(function (value) {
+                    return value === 'originRequests' ? countersList[48].text() : countersList[47].text();
+                });
             });
     },
-    getRevRequests: function (driver, position) {
-        var request = undefined;
+    getRevRequests: function (driver) {
         return driver
             .waitForResponse(driver)
             .elementsByXPath(Stats.list.config)
             .then(function (countersList) {
-                request = countersList[position || 45].text();
-                return request;
+                return countersList[45].text().then(function (value) {
+                    return value === 'revRequests' ? countersList[46].text() : countersList[45].text();
+                });
             });
     }
 };

@@ -19,10 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data android:name="com.nuubit.key" android:value="cc354414-65ea-4003-8e92-1a3e3ec9374a"/>
+<!--
         <meta-data
             android:name="com.nuubit.key"
             android:value="ed9071e7-7dc0-40ee-97bd-39b355fa5b92" />
-
+-->
 <!--
         <meta-data
             android:name="com.nuubit.key"

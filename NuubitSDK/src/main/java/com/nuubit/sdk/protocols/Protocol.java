@@ -172,6 +172,7 @@ public abstract class Protocol implements OnFuncProtocol {
         }
         count++;
         Log.i("REDIRECT","N "+String.valueOf(count)+" code:"+response.code()+" "+response.headers().toString());
+        /*
         if(response.isRedirect()){
             String location = response.header("location");
             Log.i("REDIRECT", "N "+String.valueOf(count)+" Redirect from: "+response.request().url().toString()+" code:"+String.valueOf(response.code())+" to "+location);
@@ -184,6 +185,7 @@ public abstract class Protocol implements OnFuncProtocol {
                 e.printStackTrace();
             }
         }
+        */
         return response;
     }
 

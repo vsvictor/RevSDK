@@ -40,9 +40,13 @@ captures/
 *.jks
 
 /revsdk
-/.idea
+
+.idea/
+tests/ui/.idea/
 
 Tests/npm-debug.log*
+
+tests/ui/node_modules/
 
 ./hs_err_pid30138.pid
 ./hs_err_pid30296.pid

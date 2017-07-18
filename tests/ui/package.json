@@ -1,0 +1,64 @@
+{
+  "name": "appium-rev-android-tests",
+  "version": "1.0.0",
+  "description": "Appium tests Code",
+  "main": "index.js",
+  "license": "Apache 2",
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "chai-as-promised": "^5.0.0",
+    "colors": "^1.0.3",
+    "express": "^4.12.3",
+    "mocha": "^2.4.5",
+    "q": "^2.0.2",
+    "should": "^11.2.1",
+    "underscore": "^1.8.3",
+    "wd": "^0.3.11"
+  },
+  "scripts": {
+    "smokeConfigLoading": "mocha ./tests/smoke/config/smokeConfigLoading.js",
+    "smokeConfigRefreshInterval": "mocha ./tests/smoke/config/smokeConfigRefreshInterval.js",
+    "smokeConfigSurvival": "mocha ./tests/smoke/config/smokeConfigSurvival.js",
+    "smokeConfigDefault": "mocha ./tests/smoke/config/smokeConfigDefault.js",
+    "smokeConfigTwoAppsSameDevice": "mocha ./tests/smoke/config/smokeConfigTwoAppsSameDevice.js",
+
+    "smokeHttpMethods": "mocha ./tests/smoke/interceptor/smokeHttpMethods.js",
+    "smokeDomainLists": "mocha ./tests/smoke/interceptor/smokeDomainLists.js",
+    "smokeOperationModesStatsCollecting": "mocha ./tests/smoke/interceptor/smokeOperationModesStatsCollecting.js",
+    "smokeOperationModes": "mocha ./tests/smoke/interceptor/smokeOperationModes.js",
+
+    "smokeStatsCollecting": "mocha ./tests/smoke/stats/smokeStatsCollecting.js",
+    "smokeStatsSurvival": "mocha ./tests/smoke/stats/smokeStatsSurvival.js",
+
+    "funcNewConfigUsed": "mocha ./tests/functional/config/funcNewConfigUsed.js",
+    "funcNewConfigUsedAfterRefreshInterval": "mocha ./tests/functional/config/funcNewConfigUsedAfterRefreshInterval.js",
+    "funcReportModeOnInitialization": "mocha ./tests/functional/config/funcReportModeOnInitialization.js",
+
+    "funcHttpsMethods": "mocha ./tests/functional/interceptor/funcHttpsMethods.js",
+    "funcDomainLists": "mocha ./tests/functional/interceptor/funcDomainLists.js",
+    "funcBlackListPrecedence": "mocha ./tests/functional/interceptor/funcBlackListPrecedence.js",
+    "funcOperationModesDomainOutOfWhiteList": "mocha ./tests/functional/interceptor/funcOperationModesDomainOutOfWhiteList.js",
+    "funcOperationModesEmptyWhiteList": "mocha ./tests/functional/interceptor/funcOperationModesEmptyWhiteList.js",
+    "funcSDKkeyHeader": "mocha ./tests/functional/interceptor/funcSDKkeyHeader.js",
+    "funcSymbolsEncoding": "mocha ./tests/functional/interceptor/funcSymbolsEncoding.js",
+    "funcQueryStringInRequest": "mocha ./tests/functional/interceptor/funcQueryStringInRequest.js",
+
+    "negHandlingHttpResponseCodes": "mocha ./tests/negative/interceptor/negHandlingHttpResponseCodes.js",
+    "negToGetConfigJson": "mocha ./tests/negative/config/failToGetConfigJson.js",
+
+    "allowedProtocols": "mocha ./tests/functional/protocolTester/allowedProtocols.js",
+
+    "smoke": "mocha ./tests/smoke/**/*.js",
+    "functional": "mocha ./tests/functional/**/*.js",
+    "regression": "mocha ./tests/**/**/*.js",
+
+    "example": "mocha ./tests/functional/stats/example.js"
+  },
+  "dependencies": {
+    "adbkit-logcat": "^1.1.0",
+    "config": "^1.25.1",
+    "selenium-webdriver": "^3.0.0-beta-3",
+    "wd-bridge": "0.0.2",
+    "yiewd": "^0.6.0"
+  }
+}

@@ -30,20 +30,29 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
+wd.addPromiseChainMethod('getOriginRequests', Counters.getOriginRequests);
+wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
+wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Smoke: stats collecting", function () {
+
+
+describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
-    var statsApi = config.get('statsApi');
+    var domainsInternalBlackList = config.get('domainsInternalBlackList');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var appId = config.get('appId');
     var portalAPIKey = config.get('portalAPIKey');
@@ -67,16 +76,48 @@ describe("Smoke: stats collecting", function () {
             .quit();
     });
 
-    it("Send data request", function () {
+
+    it("Check internal black list for 'transfer and report' mode"+
+        " and use interval (60s)", function () {
         return driver
+            .waitForResponse(driver)
             .setModeTransferAndReport(driver)
-            .sendRequestOnURL(driver, statsApi)
-            .getResponseBodyFieldValue(driver)
-            .then(function (responseBody) {
-                return responseBody.text().then(function (value) {
-                    return /\<body\>ok\<\/body\>/.test(value);
-                }).should.become(true);
+            .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .then(function () {
+                return driver
+                    .getCountersPage(driver)
+                    .getCounterRequestCount(driver)
+                    .then(function (valueRequestCountFirst) {
+                        return driver
+                            .closeCountersPage(driver)
+                            .sleep(59000)
+                            .getCountersPage(driver)
+                            .getCounterRequestCount(driver)
+                            .then(function (valueRequestCountLast) {
+                                return driver
+                                    .getRevRequests(driver)
+                                    .then(function (valueRevRequests) {
+                                        return driver
+                                            .getOriginRequests(driver)
+                                            .then(function (valueOriginRequests) {
+                                                var rev = ~~valueRevRequests;
+                                                var origin = ~~valueOriginRequests;
+                                                var valueFirst = ~~valueRequestCountFirst;
+                                                var valueLast = ~~valueRequestCountLast;
+                                                if (rev > 0 && rev === origin && origin > 0 && valueLast > valueFirst) {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            }).should.become(true);
+                                    });
+                            })
+
+                    })
+
+
             });
+
     });
 });
 

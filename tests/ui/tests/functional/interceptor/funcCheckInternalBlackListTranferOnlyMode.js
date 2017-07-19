@@ -32,20 +32,27 @@ var wd = require("wd"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
-wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
+wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
-wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
 wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
+wd.addPromiseChainMethod('getOriginRequests', Counters.getOriginRequests);
+wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 
-describe("Smoke: stats collecting", function () {
+
+
+describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
-    var httpWebsite = config.get('httpWebsite');
+    var domainsInternalBlackList = config.get('domainsInternalBlackList');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var appId = config.get('appId');
     var portalAPIKey = config.get('portalAPIKey');
@@ -69,17 +76,46 @@ describe("Smoke: stats collecting", function () {
             .quit();
     });
 
-    it("should collect stats when we send requests", function () {
+    it("Check internal black list for 'transfer only' mode", function () {
         return driver
-            .setModeTransferAndReport(driver)
-            .sendRequestOnURL(driver, httpWebsite)
-            .getResponseHeadersFieldValue(driver)
-            .getCountersPage(driver)
-            .getRevRequests(driver)
-            .then(function (revRequests) {
-                revRequests = Number(revRequests);
-                return revRequests.should.be.above(0);
+            .waitForResponse(driver)
+            .setModeTransferOnly(driver)
+            .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .then(function () {
+                return driver
+                    .getCountersPage(driver)
+                    .getCounterRequestCount(driver)
+                    .then(function (valueRequestCountFirst) {
+                        return driver
+                            .closeCountersPage(driver)
+                            .sleep(10000)
+                            .getCountersPage(driver)
+                            .getCounterRequestCount(driver)
+                            .then(function (valueRequestCountLast) {
+                                return driver
+                                    .getRevRequests(driver)
+                                    .then(function (valueRevRequests) {
+                                        return driver
+                                            .getOriginRequests(driver)
+                                            .then(function (valueOriginRequests) {
+                                                var rev = ~~valueRevRequests;
+                                                var origin = ~~valueOriginRequests;
+                                                var valueFirst = ~~valueRequestCountFirst;
+                                                var valueLast = ~~valueRequestCountLast;
+                                                if (rev > 0 && rev === origin && origin > 0 && valueLast === valueFirst) {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            }).should.become(true);
+                                    });
+                            })
+
+                    })
+
+
             });
+
     });
 });
 

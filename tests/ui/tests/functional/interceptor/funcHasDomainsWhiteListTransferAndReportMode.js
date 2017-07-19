@@ -33,7 +33,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
-    Stats = require("./../../../page_objects/RevTester/statsViewPage"),
+    Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Waits = require("./../../../page_objects/RevTester/waits"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
@@ -43,7 +43,7 @@ wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
-wd.addPromiseChainMethod('getRevRequests', Stats.getRevRequests);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);

@@ -30,15 +30,24 @@ var Counters = {
         drawer: '//android.widget.TextView'
     },
 
-    // Function getCounterRevRequests waits till we get list and returns value of the revRequestsCounter
-    getCounterRevRequests: function (driver) {
-        var revRequestsCounter = undefined;
+    getOriginRequests: function (driver) {
         return driver
             .waitForResponse(driver)
             .elementsByXPath(Counters.list.drawer)
             .then(function (countersList) {
-                revRequestsCounter = countersList[45].text();
-                return revRequestsCounter;
+                return countersList[47].text().then(function (value) {
+                    return value === 'originRequests' ? countersList[48].text() : countersList[47].text();
+                });
+            });
+    },
+    getRevRequests: function (driver) {
+        return driver
+            .waitForResponse(driver)
+            .elementsByXPath(Counters.list.drawer)
+            .then(function (countersList) {
+                return countersList[45].text().then(function (value) {
+                    return value === 'revRequests' ? countersList[46].text() : countersList[45].text();
+                });
             });
     },
 

@@ -50,15 +50,14 @@ var Counters = {
                 });
             });
     },
-
-    getCounterRequestCount: function (driver, position) {
-        var requestCount = undefined;
+    getCounterRequestCount: function (driver) {
         return driver
             .waitForResponse(driver)
             .elementsByXPath(Counters.list.drawer)
             .then(function (countersList) {
-                requestCount = countersList[position || 62].text();
-               return requestCount;
+                return countersList[62].text().then(function (value) {
+                    return value === 'Request count' ? countersList[63].text() : countersList[62].text();
+                });
             });
     },
 

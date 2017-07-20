@@ -93,14 +93,14 @@ describe("Smoke: interceptor. operation mode transfer_only stats collecting", fu
                     .then(function () {
                         return driver
                             .getCountersPage(driver)
-                            .getCounterRequestCount(driver, 63)
+                            .getCounterRequestCount(driver)
                             .then(function (requestCountTwo) {
                                 return (requestCountOne !== requestCountTwo) ?
                                         driver
                                         .closeCountersPage(driver)
                                         .sleep(59000)
                                         .getCountersPage(driver)
-                                        .getCounterRequestCount(driver, 63)
+                                        .getCounterRequestCount(driver)
                                         .then(function (requestCountThree) {
                                             return requestCountTwo !== requestCountThree;
                                         })

@@ -68,7 +68,8 @@
     "transfer_only": "transfer_only"
   },
   "massages": {
-    "noDomainExists": " > No domain exists!!!"
+    "noDomainExists": " > No domain exists!!!",
+    "domainExists": " > Domain exists!!!"
   },
   "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
   "appsOptionPublish": "?options=publish",

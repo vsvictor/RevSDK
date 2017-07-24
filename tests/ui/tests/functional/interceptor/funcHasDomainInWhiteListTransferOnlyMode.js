@@ -121,7 +121,7 @@ describe("Function => interceptor: ", function () {
                             });
                     } else {
                         console.log(colors.red(massages.noDomainExists));
-                        return domainsList.text().should.become(domainsBlackList);
+                        return domainsList.text().should.become(domainsWhiteList);
                     }
                 });
             });

@@ -40,6 +40,10 @@ wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
+wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
+wd.addPromiseChainMethod('openSettings', actions.openSettings);
+wd.addPromiseChainMethod('openSystemSettings', actions.openSystemSettings);
+
 
 describe("Smoke: stats collecting", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -69,40 +73,25 @@ describe("Smoke: stats collecting", function () {
             .quit();
     });
 
-    // TODO: in progress
     it("Run Application. Restart App earlier than in "+
         "stats_reporting_interval seconds.", function () {
         return driver
-            //.sleep(10000)
             .getCountersPage(driver)
-            .sleep(2000)
             .getCounterRequestCount(driver)
             .then(function (responseCountFirst) {
                 return driver
-                    //.runAppInBackground(10)
-                    // .closeApp()
-                    // .launchApp()
-                    .getCountersPage(driver)
-                    .getCounterRequestCount(driver)
-                    .then(function (responseCountLast) {
-                        console.log('responseCountFirst => ', responseCountFirst);
-                        console.log('responseCountLast => ', responseCountLast);
+                    .closeCountersPage(driver)
+                    .openSettings()
+                    .openSystemSettings(driver)
+                    .then(function () {
+                        return driver
+                            .back()
+                            .getCountersPage(driver)
+                            .getCounterRequestCount(driver)
+                            .then(function (responseCountLast) {
+                                return ~~responseCountFirst < ~~responseCountLast;
+                            }).should.become(true);
                     });
-                //console.log('CHECK =>> ', responseCountFirst);
-                // responseCountFirst.text().then(function (valueFirst) {
-                //     console.log('CHECK ==>> ', valueFirst);
-                //     // return driver
-                //     //     .closeApp()
-                //     //     .launchApp()
-                //     //     .getCountersPage(driver)
-                //     //     .getCounterRequestCount(driver)
-                //     //     .then(function (responseCountLast) {
-                //     //         return responseCountLast.text()
-                //     //             .then(function (valueLast) {
-                //     //                 return valueLast > valueFirst;
-                //     //             }).should.become(true);
-                //     //     });
-                // });
             });
     });
 });

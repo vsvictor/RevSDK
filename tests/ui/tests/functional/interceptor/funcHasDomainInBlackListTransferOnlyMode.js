@@ -100,7 +100,7 @@ describe("Functional => interceptor: ", function () {
                  return domainsList.text().then(function (domains) {
 
                      // if there is the domain
-                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) === -1) {
+                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) !== -1) {
                          return driver
                              .getMainPage(driver)
                              .getCountersPage(driver)

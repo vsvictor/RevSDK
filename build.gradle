@@ -50,8 +50,8 @@ allprojects {
             url "http://homedevelopment.bintray.com/nuubit"
         }
     }
-}
 
+}
 sonarqube {
     properties {
         property "sonar.host.url", "https://sonar.x2link.co"

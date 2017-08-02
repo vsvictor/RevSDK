@@ -52,6 +52,12 @@ var Config = {
             .at(26);
     },
 
+    getDomainsProvisionedList: function (driver) {
+        return driver
+            .elementsByXPath(Config.list.config)
+            .at(58);
+    },
+
     getInitialTransportProtocol: function (driver) {
         return driver
             .elementsByXPath(Config.list.config)

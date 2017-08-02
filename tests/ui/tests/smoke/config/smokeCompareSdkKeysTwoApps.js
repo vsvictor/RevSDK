@@ -18,20 +18,20 @@
 
 "use strict";
 
-require("./../../../helpers/setup");
+require("../../../helpers/setup");
 var wd = require("wd"),
     _ = require('underscore'),
     config = require("config"),
-    actions = require("./../../../helpers/actions"),
-    serverConfigs = require('./../../../helpers/appium-servers'),
-    logging = require("./../../../helpers/logging"),
-    apps = require("./../../../helpers/apps"),
-    caps = require("./../../../helpers/caps"),
-    App = require("./../../../page_objects/RevTester/mainPage"),
-    Config = require("./../../../page_objects/RevTester/configViewPage"),
-    Stats = require("./../../../page_objects/RevTester/statsViewPage"),
-    Functions = require("./../../../page_objects/RevTester/functions"),
-    request = require("./../../../helpers/requests");
+    actions = require("../../../helpers/actions"),
+    serverConfigs = require('../../../helpers/appium-servers'),
+    logging = require("../../../helpers/logging"),
+    apps = require("../../../helpers/apps"),
+    caps = require("../../../helpers/caps"),
+    App = require("../../../page_objects/RevTester/mainPage"),
+    Config = require("../../../page_objects/RevTester/configViewPage"),
+    Stats = require("../../../page_objects/RevTester/statsViewPage"),
+    Functions = require("../../../page_objects/RevTester/functions"),
+    request = require("../../../helpers/requests");
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('getStatsPage', App.getStatsPage);
 wd.addPromiseChainMethod('getStatsReportingInterval', Config.getStatsReportingInterval);

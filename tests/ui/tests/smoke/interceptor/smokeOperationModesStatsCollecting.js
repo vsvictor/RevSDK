@@ -38,7 +38,7 @@ var wd = require("wd"),
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
-wd.addPromiseChainMethod('getCounterRevRequests', Counters.getCounterRevRequests);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 
 describe("Smoke: interceptor. operation mode transfer_only stats collecting", function () {
@@ -81,7 +81,7 @@ describe("Smoke: interceptor. operation mode transfer_only stats collecting", fu
             .sendRequestOnURL(driver, domainsWhiteList[0])
             .getResponseHeadersFieldValue(driver)
             .getCountersPage(driver)
-            .getCounterRevRequests(driver)
+            .getRevRequests(driver)
             .then(function (revRequests) {
                 revRequests = Number(revRequests);
                 return revRequests.should.equal(0);

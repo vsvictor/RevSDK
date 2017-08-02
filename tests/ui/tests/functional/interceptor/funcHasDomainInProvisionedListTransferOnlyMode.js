@@ -33,27 +33,29 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
-    Stats = require("./../../../page_objects/RevTester/statsViewPage"),
+    Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Waits = require("./../../../page_objects/RevTester/waits"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
-wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
+wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
-wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
-wd.addPromiseChainMethod('getRevRequests', Stats.getRevRequests);
+wd.addPromiseChainMethod('getDomainsProvisionedList', Config.getDomainsProvisionedList);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
+wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
+wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 
 
 
-describe("Function => interceptor: ", function () {
+describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -63,7 +65,7 @@ describe("Function => interceptor: ", function () {
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var serverConfig = serverConfigs.local;
-    var domainsWhiteList = config.get('domainsWhiteList');
+    var domainsProvisionedList = config.get('domainsProvisionedList');
     var appIdTester = config.get('appIdTester');
     var massages = config.get('massages');
 
@@ -86,43 +88,60 @@ describe("Function => interceptor: ", function () {
             .quit();
     });
 
-    it("if domain is listed in 'domains_white_list' of "+
-        "'Configuration view' for 'transfer and report' mode", function () {
+    it("if domain is listed in 'domains_provisioned_list' of "+
+        "'Configuration view' for 'transfer only' mode", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
+            [],  [], domainsProvisionedList);
 
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)
-            .getDomainsWhiteList(driver)
-            .then(function (domainsList) {
+            .getDomainsProvisionedList(driver)
+            .then(function (provisionedList) {
 
-                return domainsList.text().then(function (domains) {
+                return provisionedList.text().then(function (domains) {
 
                     // if there is the domain
-                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
+                    if (JSON.parse(domains).indexOf(domainsProvisionedList[0]) !== -1) {
                         return driver
                             .getMainPage(driver)
                             .getCountersPage(driver)
-                            .getRevRequests(driver)
-                            .then(function (valueFirst) {
+                            .getCounterRequestCount(driver)
+                            .then(function (valueRequestCountFirst) {
                                 return driver
                                     .closeCountersPage(driver)
-                                    .setModeTransferAndReport(driver)
-                                    .sendRequestOnURL(driver, domainsWhiteList[1])
-                                    .then(function () {
+                                    .getCountersPage(driver)
+                                    .getRevRequests(driver)
+                                    .then(function (valueFirst) {
                                         return driver
-                                            .getCountersPage(driver)
-                                            .getRevRequests(driver)
-                                            .then(function (valueLast) {
-                                                return ~~valueFirst < ~~valueLast;
-                                            }).should.become(true);
+                                            .closeCountersPage(driver)
+                                            .setModeTransferOnly(driver)
+                                            .sendRequestOnURL(driver, domainsProvisionedList[0])
+                                            .then(function () {
+                                                return driver
+                                                    .clickSendStatsBtn(driver)
+                                                    .then(function () {
+                                                        return driver
+                                                            .getCountersPage(driver)
+                                                            .getCounterRequestCount(driver)
+                                                            .then(function (valueRequestCountLast) {
+                                                                return driver
+                                                                    .getRevRequests(driver)
+                                                                    .then(function (valueLast) {
+                                                                        return (~~valueFirst + 3) === ~~valueLast
+                                                                            && ~~valueRequestCountFirst === ~~valueRequestCountLast;
+                                                                    }).should.become(true);
+                                                            });
+                                                    });
+                                            });
                                     });
                             });
+
                     } else {
                         console.log(colors.red(massages.noDomainExists));
-                        return domainsList.text().should.become(domainsWhiteList);
+                        return provisionedList.text().should.become(domainsProvisionedList);
                     }
+
                 });
             });
 

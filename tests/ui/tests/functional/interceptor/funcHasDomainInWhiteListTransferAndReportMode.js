@@ -33,17 +33,17 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
-    Stats = require("./../../../page_objects/RevTester/statsViewPage"),
+    Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Waits = require("./../../../page_objects/RevTester/waits"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
-wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
+wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
-wd.addPromiseChainMethod('getDomainsBlackList', Config.getDomainsBlackList);
-wd.addPromiseChainMethod('getOriginRequests', Stats.getOriginRequests);
+wd.addPromiseChainMethod('getDomainsWhiteList', Config.getDomainsWhiteList);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
@@ -53,7 +53,7 @@ wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
 
-describe("Functional => interceptor: ", function () {
+describe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -63,7 +63,7 @@ describe("Functional => interceptor: ", function () {
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var serverConfig = serverConfigs.local;
-    var domainsBlackList = config.get('domainsBlackList');
+    var domainsWhiteList = config.get('domainsWhiteList');
     var appIdTester = config.get('appIdTester');
     var massages = config.get('massages');
 
@@ -86,45 +86,44 @@ describe("Functional => interceptor: ", function () {
             .quit();
     });
 
-    it("if domain is listed in 'domains_black_list' of "+
-        "'Configuration view' for 'transfer only' mode", function () {
+    it("if domain is listed in 'domains_white_list' of "+
+        "'Configuration view' for 'transfer and report' mode", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            [],  domainsBlackList, []);
+            domainsWhiteList,  [], []);
 
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)
-            .getDomainsBlackList(driver)
+            .getDomainsWhiteList(driver)
             .then(function (domainsList) {
 
-                 return domainsList.text().then(function (domains) {
+                return domainsList.text().then(function (domains) {
 
-                     // if there is the domain
-                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) === -1) {
-                         return driver
-                             .getMainPage(driver)
-                             .getCountersPage(driver)
-                             .getOriginRequests(driver)
-                             .then(function (valueFirst) {
-                                 return driver
-                                     .closeCountersPage(driver)
-                                     .setModeTransferOnly(driver)
-                                     .sendRequestOnURL(driver, domainsBlackList[1])
-                                     .then(function () {
-                                         return driver
-                                             .getCountersPage(driver)
-                                             .getOriginRequests(driver)
-                                             .then(function (valueLast) {
-                                                 return ~~valueFirst < ~~valueLast;
-                                             }).should.become(true);
-                                     });
-                             });
-                     } else {
-                         console.log(colors.red(massages.noDomainExists));
-                         return domainsList.text().should.become(domainsBlackList);
-                     }
-
-                 });
+                    // if there is the domain
+                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
+                        return driver
+                            .getMainPage(driver)
+                            .getCountersPage(driver)
+                            .getRevRequests(driver)
+                            .then(function (valueFirst) {
+                                return driver
+                                    .closeCountersPage(driver)
+                                    .setModeTransferAndReport(driver)
+                                    .sendRequestOnURL(driver, domainsWhiteList[1])
+                                    .then(function () {
+                                        return driver
+                                            .getCountersPage(driver)
+                                            .getRevRequests(driver)
+                                            .then(function (valueLast) {
+                                                return ~~valueFirst < ~~valueLast;
+                                            }).should.become(true);
+                                    });
+                            });
+                    } else {
+                        console.log(colors.red(massages.noDomainExists));
+                        return domainsList.text().should.become(domainsWhiteList);
+                    }
+                });
             });
 
     });

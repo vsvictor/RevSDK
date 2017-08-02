@@ -91,7 +91,7 @@ describe("Smoke: interceptor. operation mode transfer_only stats collecting", fu
                     .clickSendStatsBtn(driver)
                     .then(function () {
                         return driver.getCountersPage(driver)
-                            .getCounterRequestCount(driver, 63)
+                            .getCounterRequestCount(driver)
                             .then(function (requestCountLast) {
                                 return requestCountFirst === requestCountLast;
                             }).should.become(true);

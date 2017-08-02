@@ -32,24 +32,27 @@ var wd = require("wd"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
-wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
+wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
+wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
+wd.addPromiseChainMethod('getOriginRequests', Counters.getOriginRequests);
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
-wd.addPromiseChainMethod('openSettings', actions.openSettings);
-wd.addPromiseChainMethod('openSystemSettings', actions.openSystemSettings);
 
 
-describe("Smoke: stats collecting", function () {
+
+describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
-    var statsApi = config.get('statsApi');
+    var domainsInternalBlackList = config.get('domainsInternalBlackList');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var appId = config.get('appId');
     var portalAPIKey = config.get('portalAPIKey');
@@ -73,26 +76,46 @@ describe("Smoke: stats collecting", function () {
             .quit();
     });
 
-    it("Run Application. Restart App earlier than in "+
-        "stats_reporting_interval seconds.", function () {
+    it("Check internal black list for 'transfer only' mode", function () {
         return driver
-            .getCountersPage(driver)
-            .getCounterRequestCount(driver)
-            .then(function (responseCountFirst) {
+            .waitForResponse(driver)
+            .setModeTransferOnly(driver)
+            .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .then(function () {
                 return driver
-                    .closeCountersPage(driver)
-                    .openSettings()
-                    .openSystemSettings(driver)
-                    .then(function () {
+                    .getCountersPage(driver)
+                    .getCounterRequestCount(driver)
+                    .then(function (valueRequestCountFirst) {
                         return driver
-                            .back()
+                            .closeCountersPage(driver)
+                            .sleep(10000)
                             .getCountersPage(driver)
                             .getCounterRequestCount(driver)
-                            .then(function (responseCountLast) {
-                                return ~~responseCountFirst < ~~responseCountLast;
-                            }).should.become(true);
-                    });
+                            .then(function (valueRequestCountLast) {
+                                return driver
+                                    .getRevRequests(driver)
+                                    .then(function (valueRevRequests) {
+                                        return driver
+                                            .getOriginRequests(driver)
+                                            .then(function (valueOriginRequests) {
+                                                var rev = ~~valueRevRequests;
+                                                var origin = ~~valueOriginRequests;
+                                                var valueFirst = ~~valueRequestCountFirst;
+                                                var valueLast = ~~valueRequestCountLast;
+                                                if (rev > 0 && rev === origin && origin > 0 && valueLast === valueFirst) {
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            }).should.become(true);
+                                    });
+                            })
+
+                    })
+
+
             });
+
     });
 });
 

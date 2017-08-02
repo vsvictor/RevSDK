@@ -1,7 +1,7 @@
 {
   "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
-  "appId": "58d178e86fb2cf516722e958",
-  "appIdTester": "58d178e86fb2cf516722e958",
+  "appId": "596d8813c92b92c25f3e4c10",
+  "appIdTester": "596d8813c92b92c25f3e4c10",
   "accountId": "585296f11ea9bb3c3f90e05c",
   "statsReportingIntervalSeconds82": 82,
   "statsReportingIntervalSeconds83": 83,
@@ -68,7 +68,8 @@
     "transfer_only": "transfer_only"
   },
   "massages": {
-    "noDomainExists": " > No domain exists!!!"
+    "noDomainExists": " > No domain exists!!!",
+    "domainExists": " > Domain exists!!!"
   },
   "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
   "appsOptionPublish": "?options=publish",
@@ -78,7 +79,7 @@
   "waitForListSecs": 2000,
   "waitForResponseStatusCodeSecs": 20000,
   "successHttpStatusCode": 200,
-  "SDKkeyTester": "ed9071e7-7dc0-40ee-97bd-39b355fa5b92",
+  "SDKkeyTester": "cc354414-65ea-4003-8e92-1a3e3ec9374a",
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",
@@ -87,7 +88,7 @@
   "domainsWhiteList": ["bs.to", "jetbrains.com"],
   "domainsBlackList": ["jenkins.io", "protractortest.org"],
   "domainsProvisionedList": ["google.com"],
-  "domainsInternalBlackList": ["www.dell.com/sts/passive/commercial/v1/us/en/uscorp1/Premier/Login/Anonymous?wa=wsignin1.0&wtrealm=http%253a%252f%252fwww.dell.com&wreply=https%253a%252f%252fwww.dell.com%252fidentity%252fv2%252fredirect%252f&wctx=cht%253dlogin%2526%257eck%253dmn"],
+  "domainsInternalBlackList": ["www.dell.com"],
   "allowedProtocolsStandard": ["standard"],
   "URLWithQueryString": "https://www.google.com.ua/search?client=ubuntu&channel=fs&q=httpbin+is+it+working&ie=utf-8&oe=utf-8&gfe_rd=cr&ei=RtQiWYbGAc3i8AfvqYiADA#channel=fs&q=httpbin",
   "httpBinWebsiteStatuses": {

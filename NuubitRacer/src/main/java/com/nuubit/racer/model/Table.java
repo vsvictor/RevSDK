@@ -30,7 +30,7 @@ import java.util.Comparator;
  *
  * /
  */
-
+@SuppressWarnings("deprecation")
 public class Table extends ArrayList<Row> implements Comparator<Row> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -45,6 +45,7 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         return builder.toString();
     }
 
+    @SuppressWarnings("deprecation")
     public long average() {
         long sum = 0;
         for (Row r : this) {
@@ -54,6 +55,7 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         else return sum / this.size();
     }
 
+    @SuppressWarnings("deprecation")
     public long median() {
         if (this.size() == 0) return 0;
         else if (this.size() == 1) return this.get(0).getTimeInMillis();
@@ -71,18 +73,21 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public long min() {
         if (this.size() == 0) return 0;
         Row r = Collections.min(this, this);
         return r.getTimeInMillis();
     }
 
+    @SuppressWarnings("deprecation")
     public long max() {
         if (this.size() == 0) return 0;
         Row r = Collections.max(this, this);
         return r.getTimeInMillis();
     }
 
+    @SuppressWarnings("deprecation")
     public long disperse() {
         if (this.size() == 0) return 0;
         long rr = max() - average();
@@ -94,11 +99,13 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         return (new Double(dd)).longValue();
     }
 
+    @SuppressWarnings("deprecation")
     public long standDeviation() {
         if (this.size() == 0) return 0;
         return (new Double(Math.sqrt(disperse()))).longValue();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int compare(Row o1, Row o2) {
         if (o1.getTimeInMillis() == o2.getTimeInMillis()) return 0;
@@ -106,6 +113,7 @@ public class Table extends ArrayList<Row> implements Comparator<Row> {
         else return -1;
     }
 
+    @SuppressWarnings("deprecation")
     public static String toTable(Context context, Table real, Table original, int mode, String url, String method) {
         StringBuilder builder = new StringBuilder();
         builder.append("Mode: ");

@@ -6,7 +6,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     splits {
         abi {
-            enable true
+            enable false
             reset()
             include 'x86', 'armeabi-v7a'
             universalApk true

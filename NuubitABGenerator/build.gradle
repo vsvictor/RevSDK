@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     splits {
         abi {
-            enable true
+            enable false
             reset()
             include 'x86', 'armeabi-v7a'
             universalApk true

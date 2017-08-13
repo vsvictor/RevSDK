@@ -1,21 +1,11 @@
 package com.nuubit.sdk.protocols;
 
-import android.content.Intent;
 import android.util.Log;
 
-import com.nuubit.sdk.NuubitActions;
-import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
-import com.nuubit.sdk.config.OperationMode;
-import com.nuubit.sdk.database.RequestTable;
-import com.nuubit.sdk.interseptor.ProgressResponseBody;
-import com.nuubit.sdk.statistic.counters.ProtocolCounters;
-import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.types.Tag;
-
-import org.chromium.net.UrlRequest;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -24,16 +14,11 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okio.Buffer;
 
-import static com.nuubit.sdk.NuubitSDK.isFree;
-import static com.nuubit.sdk.NuubitSDK.isStatistic;
-import static com.nuubit.sdk.NuubitSDK.isSystem;
+//import org.chromium.net.UrlRequest;
 
 /*
  * ************************************************************************

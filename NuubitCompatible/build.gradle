@@ -4,6 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     useLibrary 'org.apache.http.legacy'
+/*
     splits {
         abi {
             enable false
@@ -12,6 +13,7 @@ android {
             universalApk true
         }
     }
+*/
     defaultConfig {
         applicationId "com.nuubit.compatible"
         minSdkVersion 18

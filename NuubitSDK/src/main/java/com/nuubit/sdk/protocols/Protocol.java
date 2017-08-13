@@ -1,16 +1,13 @@
 package com.nuubit.sdk.protocols;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.nuubit.sdk.NuubitActions;
 import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.config.OperationMode;
 import com.nuubit.sdk.database.RequestTable;
-import com.nuubit.sdk.statistic.counters.ProtocolCounters;
 import com.nuubit.sdk.statistic.sections.RequestOne;
 import com.nuubit.sdk.types.HTTPCode;
 
@@ -23,7 +20,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okio.Buffer;
 
 import static com.nuubit.sdk.NuubitSDK.isFree;
 import static com.nuubit.sdk.NuubitSDK.isSystem;
@@ -69,7 +65,7 @@ public abstract class Protocol implements OnFuncProtocol {
 
     public static Protocol fromString(@NonNull String proto) {
         if (proto.equalsIgnoreCase("rmp")) return new RMPProtocol();
-        else if (proto.equalsIgnoreCase("quic")) return new QUICProtocol();
+        /*else if (proto.equalsIgnoreCase("quic")) return new QUICProtocol();*/
         else return new StandardProtocol();
     }
 

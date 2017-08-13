@@ -26,7 +26,14 @@ ext {
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
-
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a'
+            universalApk true
+        }
+    }
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 25

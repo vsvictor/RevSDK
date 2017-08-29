@@ -96,7 +96,8 @@ describe("Function => interceptor: ", function () {
         //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            .setModeTransferAndReport(driver)
+            //.setModeTransferAndReport(driver)
+            .sleep(10000)
             .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)

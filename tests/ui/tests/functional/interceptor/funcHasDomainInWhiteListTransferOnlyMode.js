@@ -50,7 +50,7 @@ wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
-
+wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 
 
 describe("Function => interceptor: ", function () {
@@ -92,10 +92,11 @@ describe("Function => interceptor: ", function () {
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
+        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+        //     domainsWhiteList,  [], []);
 
         return driver
+            .setModeTransferAndReport(driver)
             .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)

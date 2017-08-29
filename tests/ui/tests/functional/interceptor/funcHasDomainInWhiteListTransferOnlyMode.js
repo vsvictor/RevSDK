@@ -100,6 +100,7 @@ describe("Function => interceptor: ", function () {
                 return domainsList.text().then(function (domains) {
 
                     // if there is the domain
+                    console.log('CHECK ===>>> ', domains);
                     if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
                         return driver
                             .getMainPage(driver)

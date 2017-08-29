@@ -79,7 +79,7 @@
   "waitForListSecs": 2000,
   "waitForResponseStatusCodeSecs": 20000,
   "successHttpStatusCode": 200,
-  "SDKkeyTester": "80bed752-6da6-4f47-8e95-f61de59e599d",
+  "SDKkeyTester": "a3b01cc2-9dcd-4ec4-88cc-1109ce0c5812",
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",

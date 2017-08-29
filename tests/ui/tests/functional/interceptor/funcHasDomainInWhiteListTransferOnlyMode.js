@@ -76,8 +76,8 @@ describe("Function => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
             .init(desired)
@@ -85,15 +85,15 @@ describe("Function => interceptor: ", function () {
     });
 
     afterEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        //request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
             .quit();
     });
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
             .setModeTransferAndReport(driver)

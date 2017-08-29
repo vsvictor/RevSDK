@@ -74,22 +74,22 @@ describe("Function => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        //request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     afterEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+       // request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
             .quit();
     });
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
+        //request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+           // domainsWhiteList,  [], []);
 
         return driver
             .waitForResponse(driver)

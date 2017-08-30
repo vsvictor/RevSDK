@@ -92,12 +92,10 @@ describe("Function => interceptor: ", function () {
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            //.setModeTransferAndReport(driver)
-            .sleep(10000)
             .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)

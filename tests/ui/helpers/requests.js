@@ -61,7 +61,7 @@ exports.putConfig = function(appId, portalAPIKey, accountId, statsReportingInter
             "comment":"dsfs"
         }
     }, function (error, response, body){
-    //    console.log(body);
+        //console.log('CALLBACK ===>>> ', error, response, body);
     });
 };
 
@@ -77,7 +77,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "Rev Tester Android SDK QA",
+            "app_name": "NuubitTester",
             "account_id": accountId,
             "configs": [
                 {
@@ -104,7 +104,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "comment":"dsfs"
         }
     }, function (error, response, body){
-       // console.log('ERROR ===>>> ', error);
+       console.log('CALLBACK ===>>> ', error, response, body);
     });
 };
 

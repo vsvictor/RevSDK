@@ -69,22 +69,16 @@ describe("Function => interceptor: ", function () {
     var domainsBlackList = config.get('domainsBlackList');
     var domainsProvisionedList = config.get('domainsProvisionedList');
 
-    // driver = wd.promiseChainRemote(serverConfig);
-    // logging.configure(driver);
-    // var desired = _.clone(caps.android19);
-    // desired.app = apps.androidTester;
-    // var implicitWaitTimeout = config.get('implicitWaitTimeout');
+    driver = wd.promiseChainRemote(serverConfig);
+    logging.configure(driver);
+    var desired = _.clone(caps.android19);
+    desired.app = apps.androidTester;
+    var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
-        var serverConfig = serverConfigs.local;
-        driver = wd.promiseChainRemote(serverConfig);
-        logging.configure(driver);
-        var desired = _.clone(caps.android19);
-        desired.app = apps.androidTester;
-        var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
@@ -98,12 +92,12 @@ describe("Function => interceptor: ", function () {
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
             .waitForResponse(driver)
-            .sleep(49000)
+            .sleep(60000)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

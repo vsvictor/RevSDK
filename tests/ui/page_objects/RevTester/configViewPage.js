@@ -49,7 +49,7 @@ var Config = {
     getDomainsWhiteList: function (driver) {
         return driver
             .elementsByXPath(Config.list.config)
-            .at(26);
+            .at(25);
     },
 
     getDomainsProvisionedList: function (driver) {

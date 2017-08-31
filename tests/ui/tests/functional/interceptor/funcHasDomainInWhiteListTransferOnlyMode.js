@@ -96,8 +96,8 @@ describe("Function => interceptor: ", function () {
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            .waitForResponse(driver)
-            .sleep(60000)
+            //.waitForResponse(driver)
+            .sleep(59000)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

@@ -51,6 +51,7 @@ wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
+wd.addPromiseChainMethod('clickConfigViewButton', App.clickConfigViewButton);
 
 
 describe("Function => interceptor: ", function () {
@@ -96,7 +97,8 @@ describe("Function => interceptor: ", function () {
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            //.waitForResponse(driver)
+            .waitForResponse(driver)
+            .clickConfigViewButton(driver)
             .sleep(59000)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)

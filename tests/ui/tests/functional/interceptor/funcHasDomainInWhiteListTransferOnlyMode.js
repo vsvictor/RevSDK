@@ -52,23 +52,30 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 //wd.addPromiseChainMethod('clickFetchConfigBtn', App.clickFetchConfigBtn);
+var appIdTester = config.get('appIdTester');
+var portalAPIKey = config.get('portalAPIKey');
+var accountId = config.get('accountId');
+    var domainsWhiteList = config.get('domainsWhiteList');
+    var domainsBlackList = config.get('domainsBlackList');
+    var domainsProvisionedList = config.get('domainsProvisionedList');
+        var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
 
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
 describe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
-    var portalAPIKey = config.get('portalAPIKey');
+    
     var appId = config.get('appId');
-    var accountId = config.get('accountId');
-    var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
+    
+
     var serverConfig = serverConfigs.local;
-    var appIdTester = config.get('appIdTester');
+    
     var massages = config.get('massages');
-    var domainsWhiteList = config.get('domainsWhiteList');
-    var domainsBlackList = config.get('domainsBlackList');
-    var domainsProvisionedList = config.get('domainsProvisionedList');
+
 
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
@@ -93,8 +100,8 @@ describe("Function => interceptor: ", function () {
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList, domainsProvisionedList);
+        // request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+        //     domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
             .waitForResponse(driver)

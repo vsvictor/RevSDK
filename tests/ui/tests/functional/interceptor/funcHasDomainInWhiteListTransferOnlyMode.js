@@ -98,7 +98,6 @@ describe("Function => interceptor: ", function () {
 
         return driver
             //.waitForResponse(driver)
-            .sleep(10000)
             .clickFetchConfigBtn(driver)
             .sleep(59000)
             .getConfigurationPage(driver)

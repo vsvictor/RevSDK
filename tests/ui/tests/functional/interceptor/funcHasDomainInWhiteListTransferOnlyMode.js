@@ -51,7 +51,7 @@ wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
-wd.addPromiseChainMethod('clickFetchConfigBtn', App.clickFetchConfigBtn);
+//wd.addPromiseChainMethod('clickFetchConfigBtn', App.clickFetchConfigBtn);
 
 
 describe("Function => interceptor: ", function () {
@@ -98,8 +98,8 @@ describe("Function => interceptor: ", function () {
 
         return driver
             .waitForResponse(driver)
-            .clickFetchConfigBtn(driver)
-            .sleep(59000)
+            //.clickFetchConfigBtn(driver)
+            //.sleep(59000)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

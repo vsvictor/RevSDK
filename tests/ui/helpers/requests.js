@@ -105,8 +105,9 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
         }
     }, function (error, response, body){
         console.log('ERROR ===>>> ', error);
-        //console.log('RESPONSE ===>>> ', response);
         console.log('BODY ===>>> ', body);
+        console.log('RESPONSE ===>>> ', response);
+        console.log('======================================================================================');
     });
 };
 

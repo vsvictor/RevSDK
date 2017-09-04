@@ -81,7 +81,7 @@ describe("Function => interceptor: ", function () {
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            .sleep(10000)
+            //.sleep(10000)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });

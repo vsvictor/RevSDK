@@ -81,7 +81,6 @@ describe("Function => interceptor: ", function () {
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
-            .sleep(10000)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -109,7 +108,7 @@ describe("Function => interceptor: ", function () {
 
                     // if there is the domain
                     console.log('CHECK ===>>> ', domains);
-                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
+                    //if (JSON.parse(domains).indexOf(domainsWhiteList[1]) !== -1) {
                         return driver
                             .getMainPage(driver)
                             .getCountersPage(driver)
@@ -128,10 +127,10 @@ describe("Function => interceptor: ", function () {
                                             }).should.become(true);
                                     });
                             });
-                    } else {
-                        console.log(colors.red(massages.noDomainExists));
-                        return domainsList.text().should.become(domainsWhiteList);
-                    }
+                   //} else {
+                       // console.log(colors.red(massages.noDomainExists));
+                       // return domainsList.text().should.become(domainsWhiteList);
+                    //}
                 });
             });
 

@@ -74,8 +74,8 @@ public enum EnumProtocol {
         switch (inst) {
             case STANDARD:
                 return new StandardProtocol();
-/*            case QUIC:
-                return new QUICProtocol();*/
+            case QUIC:
+                return new QUICProtocol();
             case RMP:
                 return new RMPProtocol();
         }

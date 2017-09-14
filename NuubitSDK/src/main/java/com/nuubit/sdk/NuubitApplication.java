@@ -483,7 +483,7 @@ public class NuubitApplication extends Application implements
                                 Config c = null;
                                 c = gson.fromJson(newConfig, Config.class);
                                 if (c == null || c.getAppName().isEmpty() || c.getAppName().equals(NuubitConstants.UNDEFINED)) throw new JsonParseException("Invalid config");
-                                //config = c;
+                                config = c;
                                 Log.i(TAG, "Deserialized");
                                 Log.i(TAG, "Parce to POJO");
                                 config.save(newConfig, share);
@@ -500,7 +500,7 @@ public class NuubitApplication extends Application implements
                                 }
 
                                 //allowed_protocols.clear();
-                                allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size());
+                                allowed_protocols = new ArrayBlockingQueue<Protocol>(config.getParam().get(0).getAllowedTransportProtocols().size() + 1);
                                 Log.i("ALLOWED", "" + config.getParam().get(0).getAllowedTransportProtocols().size());
                                 lmMonitorCounters.getAvailableProtocol().clear();
                                 for (EnumProtocol sProto : config.getParam().get(0).getAllowedTransportProtocols()) {

@@ -26,16 +26,12 @@ ext {
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
-/*
-    splits {
-        abi {
-            enable false
-            reset()
-            include 'x86', 'armeabi-v7a'
-            universalApk true
+    sourceSets {
+        testLocal {
+            java.srcDir file('src/test/java')
+            resources.srcDir file('src/test/res')
         }
     }
-*/
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 25

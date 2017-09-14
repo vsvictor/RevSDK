@@ -77,7 +77,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "Rev Tester Android SDK QA",
+            "app_name": "NuubitTester",
             "account_id": accountId,
             "configs": [
                 {
@@ -104,7 +104,10 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "comment":"dsfs"
         }
     }, function (error, response, body){
-       // console.log('ERROR ===>>> ', error);
+        console.log('ERROR ===>>> ', error);
+        console.log('BODY ===>>> ', body);
+        //console.log('RESPONSE ===>>> ', response);
+        //console.log('======================================================================================');
     });
 };
 

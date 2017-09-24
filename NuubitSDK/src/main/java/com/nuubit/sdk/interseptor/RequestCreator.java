@@ -114,9 +114,14 @@ public class RequestCreator {
                     valueBuilder.append(".");
                     valueBuilder.append(NuubitApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
                     builder.add(NuubitConstants.HOST_HEADER_NAME, valueBuilder.toString());
+                } else if ("https".equalsIgnoreCase(original.url().scheme())) {
+                    valueBuilder.append(NuubitApplication.getInstance().getSDKKey());
+                    valueBuilder.append(".");
+                    valueBuilder.append(NuubitApplication.getInstance().getConfig().getParam().get(0).getEdgeSdkDomain());
+                    builder.add(NuubitConstants.HOST_HEADER_NAME, valueBuilder.toString());
+                    builder.add(NuubitConstants.HOST_REV_HEADER_NAME, original.url().host());
+                    builder.add(NuubitConstants.PROTOCOL_REV_HEADER_NAME, original.url().scheme());
                 }
-                builder.add(NuubitConstants.HOST_REV_HEADER_NAME, original.url().host());
-                builder.add(NuubitConstants.PROTOCOL_REV_HEADER_NAME, original.url().scheme());
             } else if (checker.isWhite(original)) {
                 valueBuilder.append(NuubitApplication.getInstance().getSDKKey());
                 valueBuilder.append(".");

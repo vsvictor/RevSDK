@@ -36,7 +36,6 @@ import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
 import com.nuubit.sdk.config.OperationMode;
-import com.nuubit.sdk.protocols.HTTPException;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.tester.NuubitApp;
 import com.nuubit.tester.R;
@@ -420,8 +419,10 @@ public class MainFragment extends Fragment {
                 try {
                     //response = runRequest(client, url, "GET", null);
                     Request.Builder builder = new Request.Builder();
+                    method = "GET";
                     builder.url(qURL);
-                    if (qMethod.equalsIgnoreCase("GET")) {
+                    if (!qMethod.equalsIgnoreCase("GET")) {
+                        method = qMethod;
                         builder.method(method, RequestBody.create(MediaType.parse("application/json"), qBody));
                     }
                     final Call callback = client.newCall(builder.build());

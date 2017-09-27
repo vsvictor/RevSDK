@@ -74,7 +74,8 @@ describe("Function => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList,  [], []);
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
@@ -88,9 +89,6 @@ describe("Function => interceptor: ", function () {
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer and report' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
-
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)

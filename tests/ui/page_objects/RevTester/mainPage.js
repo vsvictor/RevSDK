@@ -121,19 +121,22 @@ var App = {
     clickMenuButton: function (driver) {
         return driver
             .elementByClassName(App.menuBtn.button)
-            .click();
+            .click()
+            .sleep(2000);
     },
 
     clickConfigViewButton: function (driver) {
         return driver
             .elementByXPath(App.menuOptions.configurationView)
-            .click();
+            .click()
+            .sleep(2000);
     },
 
      clickStatsViewButton: function (driver) {
          return driver
              .elementByXPath(App.menuOptions.statsView)
-             .click();
+             .click()
+             .sleep(2000);
      }
 };
 

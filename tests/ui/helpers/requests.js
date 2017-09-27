@@ -149,3 +149,44 @@ exports.putConfigWithAllowedProtocols = function(appId, portalAPIKey, accountId,
     });
 };
 
+exports.putConfigWithConfigStaleTimeoutSec = function(appId, portalAPIKey, accountId, configStaleTimeoutSec) {
+    request({
+        url: urlAppsAPI + appId + appsOptionPublish,
+        method: "PUT",
+        json: true,
+        headers: {
+            "Accept": "application/json",
+            "Authorization": portalAPIKey
+        },
+        body: {
+            "app_name": "Rev Demo Android SDK QA",
+            "account_id": accountId,
+            "configs": [
+                {
+                    "sdk_release_version": 0,
+                    "logging_level": "debug",
+                    "configuration_refresh_interval_sec": 60,
+                    "configuration_stale_timeout_sec": configStaleTimeoutSec,
+                    "operation_mode": "transfer_and_report",
+                    "allowed_transport_protocols": [
+                        "rmp",
+                        "quic",
+                        "standard"
+                    ],
+                    "initial_transport_protocol": "standard",
+                    "stats_reporting_interval_sec": 60,
+                    "stats_reporting_level": "debug",
+                    "stats_reporting_max_requests_per_report": 500,
+                    "domains_provisioned_list": [],
+                    "domains_white_list": [],
+                    "domains_black_list": [],
+                    "a_b_testing_origin_offload_ratio": 0
+                }
+            ],
+            "comment":"dsfs"
+        }
+    }, function (error, response, body){
+    //    console.log(body);
+    });
+};
+

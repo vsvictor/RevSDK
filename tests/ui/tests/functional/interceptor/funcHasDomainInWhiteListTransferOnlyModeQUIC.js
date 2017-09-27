@@ -52,8 +52,8 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
-
-describe("Function => interceptor: ", function () {
+// waiting for QUIC protocol to get implemented
+xdescribe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -85,7 +85,7 @@ describe("Function => interceptor: ", function () {
             .quit();
     });
 
-    it("if domain is listed in 'domains_white_list' of "+
+    xit("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' item in mode 'QUIC'", function () {
 
         return driver

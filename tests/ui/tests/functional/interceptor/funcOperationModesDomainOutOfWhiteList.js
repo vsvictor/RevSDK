@@ -56,6 +56,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
     before(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
+
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -75,6 +76,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
 
    it("should check that if domain is not included in 'WHITE' list it won't return Rev Headers. transfer_only", function () {
         return driver
+        
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, httpsWebsite)
             .getResponseHeadersFieldValue(driver)

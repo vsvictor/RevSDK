@@ -63,7 +63,6 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
-            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -76,6 +75,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
 
     it("should check that domain from 'WHITE' list will return Rev Headers", function () {
         return driver
+            .waitForResponse(driver)
             .setModeTransferAndReport(driver)
             .sendRequestOnURL(driver, domainsWhiteList[0])
             .getResponseHeadersFieldValue(driver)
@@ -86,6 +86,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
 
     it("should check that domain from 'BLACK' list won't return Rev Headers", function () {
         return driver
+            .waitForResponse(driver)
             .setModeTransferAndReport(driver)
             .sendRequestOnURL(driver, domainsBlackList[0])
             .getResponseHeadersFieldValue(driver)
@@ -107,6 +108,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
 
     it("should check that domain from 'internal BLACK' list won't return Rev Headers", function () {
         return driver
+            .waitForResponse(driver)
             .setModeTransferAndReport(driver)
             .sendRequestOnURL(driver, domainsInternalBlackList[0])
             .getResponseHeadersFieldValue(driver)

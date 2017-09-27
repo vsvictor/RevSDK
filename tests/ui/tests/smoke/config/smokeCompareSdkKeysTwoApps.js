@@ -51,11 +51,11 @@ describe("Smoke => Stats: ", function () {
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
     var desired = _.clone(caps.android19);
-    desired.app = apps.androidTester;
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        desired.app = apps.androidTester;
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
@@ -68,27 +68,31 @@ describe("Smoke => Stats: ", function () {
     });
 
     it("Two apps with the same SDK key. Run first app - check config."+
-        " Run second app - check config", function () {
+        "Run second app - check config", function () {
         return driver
             .getStatsPage(driver)
             .getSdkKey(driver)
             .then(function (sdkKeyFirstApp) {
-                return driver
-                    .closeApp()
-                    .launchApp()
-                    .getStatsPage(driver)
-                    .getSdkKey(driver)
-                    .then(function (sdkKeyLastApp) {
-                        sdkKeyLastApp.text().then(function (value) {
-                            return sdkKeyFirstApp.text().should.become(value);
+                return sdkKeyFirstApp.text().then(function (valueFirst) {
+                    desired.app = apps.androidTesterSameSDKKey;
+                    return driver
+                        .quit().then(function () {
+                            return driver
+                                .init(desired)
+                                .getStatsPage(driver)
+                                .getSdkKey(driver)
+                                .then(function (sdkKeyLastApp) {
+                                    return sdkKeyLastApp.text().then(function (valueLast) {
+                                       return sdkKeyFirstApp.text().should.become(valueLast);
+                                    });
+                                });
                         });
-                    })
+                });
             });
     });
 
-
     it("Two apps with different SDK keys. Run first app - check config."+
-        " Run second app - check config", function () {
+        "Run second app - check config", function () {
         return driver
             .getStatsPage(driver)
             .getSdkKey(driver)
@@ -110,9 +114,5 @@ describe("Smoke => Stats: ", function () {
                 });
             });
     });
-
-
-
-
 });
 

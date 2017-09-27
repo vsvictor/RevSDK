@@ -19,8 +19,12 @@
 "use strict";
 
 var wd = require("wd"),
+    config = require("config"),
     actions = require("./../../helpers/actions"),
-    Waits = require("./../../page_objects/RevTester/waits");
+    Waits = require("./../../page_objects/RevTester/waits"),
+    Functions = require("./functions");
+
+var defaultStatsVars = config.get('defaultStatsVars');
 
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
@@ -29,6 +33,7 @@ var Counters = {
     list: {
         drawer: '//android.widget.TextView'
     },
+
 
     getOriginRequests: function (driver) {
         return driver
@@ -40,6 +45,7 @@ var Counters = {
                 });
             });
     },
+
     getRevRequests: function (driver) {
         return driver
             .waitForResponse(driver)
@@ -50,6 +56,7 @@ var Counters = {
                 });
             });
     },
+
     getCounterRequestCount: function (driver) {
         return driver
             .waitForResponse(driver)
@@ -64,7 +71,10 @@ var Counters = {
     getTotalStatsRequestUploaded: function (driver) {
         return driver
             .waitForResponse(driver)
-            .elementsByXPath(Counters.list.drawer).at(58);
+            .elementsByXPath(Counters.list.drawer)
+            .then(function (countersList) {
+                return countersList[58].text();
+            });
     },
 
     // Function getCounterTotalRequestsStandard scrolls down the counters and returns value of the totalRequestsStandard
@@ -77,7 +87,7 @@ var Counters = {
             .scrollDown()
             .elementsByXPath(Counters.list.drawer)
             .then(function (countersList) {
-                totalRequestsStandard = countersList[54].text();
+                totalRequestsStandard = countersList[52].text();
                 return totalRequestsStandard;
             });
     }

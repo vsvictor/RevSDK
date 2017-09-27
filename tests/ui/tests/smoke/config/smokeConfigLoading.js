@@ -67,13 +67,11 @@ describe("Smoke: configuration loading", function () {
             .quit();
     });
 
-
     it("should load config on first initialization", function () {
         return driver
             .getConfigurationPage(driver)
-            .getStatsReportingInterval(driver)
-            .then(function (statsReportingInterval) {
-                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds82 + "");
+            .getStatsReportingInterval(driver).then(function(element) {
+                 return element.text().should.become(statsReportingIntervalSeconds82 + '');
             });
     });
 
@@ -90,34 +88,34 @@ describe("Smoke: configuration loading", function () {
                 return configVariables;
             })
             .then(function () {
-                return configVariables[0].should.become(defaultConfigVars.stats_reporting_interval_sec);
+                return configVariables[0].should.become(defaultConfigVars.domains_black_list);
             })
             .then(function () {
-                return configVariables[1].should.become(defaultConfigVars.stats_reporting_level);
+                return configVariables[1].should.become(defaultConfigVars.a_b_testing_origin_offload_ratio);
             })
             .then(function () {
-                return configVariables[2].should.become(defaultConfigVars.edge_failures_failover_threshold_percent);
+                return configVariables[2].should.become(defaultConfigVars.stats_reporting_interval_sec);
             })
             .then(function () {
-                return configVariables[3].should.become(defaultConfigVars.edge_quic_udp_port);
+                return configVariables[3].should.become(defaultConfigVars.stats_reporting_level);
             })
             .then(function () {
-                return configVariables[4].should.become(defaultConfigVars.edge_data_receive_timeout_sec);
+                return configVariables[4].should.become(defaultConfigVars.domains_provisioned_list);
             })
             .then(function () {
-                return configVariables[5].should.become(defaultConfigVars.app_name);
+                return configVariables[5].should.become(defaultConfigVars.allowed_transport_protocols);
             })
             .then(function () {
-                return configVariables[6].should.become(defaultConfigVars.internal_domains_black_list);
+                return configVariables[6].should.become(defaultConfigVars.configuration_stale_timeout_sec);
             })
             .then(function () {
-                return configVariables[7].should.become(defaultConfigVars.a_b_testing_origin_offload_ratio);
+                return configVariables[7].should.become(defaultConfigVars.edge_failures_monitoring_interval_sec);
             })
             .then(function () {
-                return configVariables[8].should.become(defaultConfigVars.sdk_release_version);
+                return configVariables[8].should.become(defaultConfigVars.configuration_api_url);
             })
             .then(function () {
-                return configVariables[9].should.become(defaultConfigVars.transport_monitoring_url);
+                return configVariables[9].should.become(defaultConfigVars.edge_quic_udp_port);
             });
     });
 });

@@ -52,8 +52,6 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 
-
-
 describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
@@ -62,11 +60,11 @@ describe("Functional => interceptor: ", function () {
     var appId = config.get('appId');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var serverConfig = serverConfigs.local;
     var domainsProvisionedList = config.get('domainsProvisionedList');
     var appIdTester = config.get('appIdTester');
     var massages = config.get('massages');
+    var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
 
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
@@ -75,77 +73,53 @@ describe("Functional => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            [],  [], domainsProvisionedList);
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     afterEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
             .quit();
     });
 
     it("if domain is listed in 'domains_provisioned_list' of "+
         "'Configuration view' for 'transfer and report' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            [],  [], domainsProvisionedList);
-
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsProvisionedList(driver)
-            .then(function (provisionedList) {
-
-                return provisionedList.text().then(function (domains) {
-
+            .then(function (domainsList) {
+                return domainsList.text().then(function (domains) {
                     // if there is the domain
                     if (JSON.parse(domains).indexOf(domainsProvisionedList[0]) !== -1) {
                         return driver
                             .getMainPage(driver)
                             .getCountersPage(driver)
-                            .getCounterRequestCount(driver)
-                            .then(function (valueRequestCountFirst) {
+                            .getRevRequests(driver)
+                            .then(function (valueFirst) {
                                 return driver
                                     .closeCountersPage(driver)
-                                    .sleep(59000)
-                                    .getCountersPage(driver)
-                                    .getCounterRequestCount(driver)
-                                    .then(function (valueRequestCountLast) {
+                                    .setModeTransferAndReport(driver)
+                                    .sendRequestOnURL(driver, domainsProvisionedList[0])
+                                    .then(function () {
                                         return driver
+                                            .getCountersPage(driver)
                                             .getRevRequests(driver)
-                                            .then(function (valueFirst) {
-                                                return driver
-                                                    .closeCountersPage(driver)
-                                                    .setModeTransferAndReport(driver)
-                                                    .sendRequestOnURL(driver, domainsProvisionedList[0])
-                                                    .then(function () {
-                                                        return driver
-                                                            .getCountersPage(driver)
-                                                            .getRevRequests(driver)
-                                                            .then(function (valueLast) {
-                                                                return (~~valueFirst + 3) === ~~valueLast
-                                                                    && ~~valueRequestCountFirst < ~~valueRequestCountLast;
-                                                            }).should.become(true);
-                                                    });
-                                            });
+                                            .then(function (valueLast) {
+                                                return ~~valueFirst < ~~valueLast;
+                                            }).should.become(true);
                                     });
                             });
-
                     } else {
                         console.log(colors.red(massages.noDomainExists));
-                        return provisionedList.text().should.become(domainsProvisionedList);
+                        return domainsList.text().should.become(domainsProvisionedList);
                     }
-
                 });
             });
-
     });
-
-
-
-
 });
 
 

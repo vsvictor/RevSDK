@@ -53,12 +53,11 @@ describe("Smoke: default configuration", function () {
     var appId = config.get('appId');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
-    var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
     var configurationRefreshIntervalMilliSec = config.get('configurationRefreshIntervalMilliSec');
     var defaultConfigValues = config.get('defaultConfigValues');
 
     before(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds82);
+        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         //Run Rev Tester first time, turn on off the network, quit RevTester
         return driver
             .init(desired)
@@ -92,34 +91,34 @@ describe("Smoke: default configuration", function () {
                 return configValues;
             })
             .then(function () {
-                return configValues[0].should.become(defaultConfigValues.stats_reporting_interval_sec);
+                return configValues[0].should.become(defaultConfigValues.domains_black_list);
             })
             .then(function () {
-                return configValues[1].should.become(defaultConfigValues.stats_reporting_level);
+                return configValues[1].should.become(defaultConfigValues.a_b_testing_origin_offload_ratio);
             })
             .then(function () {
-                return configValues[2].should.become(defaultConfigValues.edge_failures_failover_threshold_percent);
+                return configValues[2].should.become(defaultConfigValues.stats_reporting_interval_sec);
             })
             .then(function () {
-                return configValues[3].should.become(defaultConfigValues.edge_quic_udp_port);
+                return configValues[3].should.become(defaultConfigValues.stats_reporting_level);
             })
             .then(function () {
-                return configValues[4].should.become(defaultConfigValues.edge_data_receive_timeout_sec);
+                return configValues[4].should.become(defaultConfigValues.domains_provisioned_list);
             })
             .then(function () {
-                return configValues[5].should.become(defaultConfigValues.app_name);
+                return configValues[5].should.become(defaultConfigValues.allowed_transport_protocols);
             })
             .then(function () {
-                return configValues[6].should.become(defaultConfigValues.internal_domains_black_list);
+                return configValues[6].should.become(defaultConfigValues.configuration_stale_timeout_sec);
             })
             .then(function () {
-                return configValues[7].should.become(defaultConfigValues.a_b_testing_origin_offload_ratio);
+                return configValues[7].should.become(defaultConfigValues.edge_failures_monitoring_interval_sec);
             })
             .then(function () {
-                return configValues[8].should.become(defaultConfigValues.sdk_release_version);
+                return configValues[8].should.become(defaultConfigValues.configuration_api_url);
             })
             .then(function () {
-                return configValues[9].should.become(defaultConfigValues.transport_monitoring_url);
+                return configValues[9].should.become(defaultConfigValues.edge_quic_udp_port);
             });
     });
 });

@@ -61,6 +61,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -69,11 +70,11 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList , domainsProvisionedList, domainsProvisionedList);
 
         return driver
-            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsProvisionedList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -85,11 +86,11 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList,  domainsWhiteList, domainsProvisionedList);
 
         return driver
-            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsWhiteList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -101,11 +102,11 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsInternalBlackList,  domainsBlackList, domainsProvisionedList);
 
         return driver
-            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -117,11 +118,11 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList,  domainsBlackList, domainsInternalBlackList);
 
         return driver
-            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)

@@ -53,8 +53,6 @@ wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 
-
-
 describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
@@ -76,7 +74,9 @@ describe("Functional => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            [],  [], domainsProvisionedList);
+
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
@@ -90,66 +90,40 @@ describe("Functional => interceptor: ", function () {
 
     it("if domain is listed in 'domains_provisioned_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            [],  [], domainsProvisionedList);
-
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsProvisionedList(driver)
-            .then(function (provisionedList) {
-
-                return provisionedList.text().then(function (domains) {
-
+            .then(function (domainsList) {
+                return domainsList.text().then(function (domains) {
                     // if there is the domain
                     if (JSON.parse(domains).indexOf(domainsProvisionedList[0]) !== -1) {
                         return driver
                             .getMainPage(driver)
                             .getCountersPage(driver)
-                            .getCounterRequestCount(driver)
-                            .then(function (valueRequestCountFirst) {
+                            .getRevRequests(driver)
+                            .then(function (valueFirst) {
                                 return driver
                                     .closeCountersPage(driver)
-                                    .getCountersPage(driver)
-                                    .getRevRequests(driver)
-                                    .then(function (valueFirst) {
+                                    .setModeTransferOnly(driver)
+                                    .sendRequestOnURL(driver, domainsProvisionedList[0])
+                                    .then(function () {
                                         return driver
-                                            .closeCountersPage(driver)
-                                            .setModeTransferOnly(driver)
-                                            .sendRequestOnURL(driver, domainsProvisionedList[0])
-                                            .then(function () {
-                                                return driver
-                                                    .clickSendStatsBtn(driver)
-                                                    .then(function () {
-                                                        return driver
-                                                            .getCountersPage(driver)
-                                                            .getCounterRequestCount(driver)
-                                                            .then(function (valueRequestCountLast) {
-                                                                return driver
-                                                                    .getRevRequests(driver)
-                                                                    .then(function (valueLast) {
-                                                                        return (~~valueFirst + 3) === ~~valueLast
-                                                                            && ~~valueRequestCountFirst === ~~valueRequestCountLast;
-                                                                    }).should.become(true);
-                                                            });
-                                                    });
-                                            });
+                                            .getMainPage(driver)
+                                            .getCountersPage(driver)
+                                            .getRevRequests(driver)
+                                            .then(function (valueLast) {
+                                                return ~~valueFirst < ~~valueLast;
+                                            }).should.become(true);
                                     });
                             });
-
                     } else {
                         console.log(colors.red(massages.noDomainExists));
-                        return provisionedList.text().should.become(domainsProvisionedList);
+                        return domainsList.text().should.become(domainsProvisionedList);
                     }
-
                 });
             });
 
     });
-
-
-
-
 });
 
 

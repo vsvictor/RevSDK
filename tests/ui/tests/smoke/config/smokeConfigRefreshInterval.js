@@ -33,6 +33,8 @@ var wd = require("wd"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
     request = require("./../../../helpers/requests");
 wd.addPromiseChainMethod('getStatsReportingInterval', Config.getStatsReportingInterval);
+wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
+
 wd.addPromiseChainMethod('clickMenuButton', App.clickMenuButton);
 wd.addPromiseChainMethod('clickConfigViewButton', App.clickConfigViewButton);
 wd.addPromiseChainMethod('waitHalfConfigRefreshInterval', Waits.waitHalfConfigRefreshInterval);
@@ -77,12 +79,12 @@ describe("Smoke: configuration refresh interval", function () {
                 request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds83);
             })
             //check that sdk will load new config after config_refresh interval secs
-            .clickMenuButton(driver)
-            .waitHalfConfigRefreshInterval(driver)
-            .clickConfigViewButton(driver)
-            .getStatsReportingInterval(driver)
-            .then(function (statsReportingInterval) {
-                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds60.toString());
+           .clickMenuButton(driver)
+           .waitHalfConfigRefreshInterval(driver)
+           .clickConfigViewButton(driver)
+           .getStatsReportingInterval(driver)
+           .then(function (statsReportingInterval) {
+                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds83.toString());
             });
     });
 
@@ -104,7 +106,7 @@ describe("Smoke: configuration refresh interval", function () {
             .clickConfigViewButton(driver)
             .getStatsReportingInterval(driver)
             .then(function (statsReportingInterval) {
-                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds87.toString());
+                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds84.toString());
             });
     });
 

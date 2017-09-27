@@ -60,6 +60,7 @@ describe("Functional => interceptor: ", function () {
 
     before(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -88,7 +89,7 @@ describe("Functional => interceptor: ", function () {
                     .then(function (valueRequestCountFirst) {
                         return driver
                             .closeCountersPage(driver)
-                            .sleep(10000)
+                            .waitForResponse(driver)
                             .getCountersPage(driver)
                             .getCounterRequestCount(driver)
                             .then(function (valueRequestCountLast) {

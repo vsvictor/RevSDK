@@ -69,7 +69,7 @@ describe("Smoke: stats survival", function () {
             .quit();
     });
 
-    it("should check that stats survive after app restart", function () {
+   /* it("should check that stats survive after app restart", function () {
         return driver
             .setModeTransferAndReport(driver)
             .sendRequestOnURL(driver, httpWebsite)
@@ -84,7 +84,7 @@ describe("Smoke: stats survival", function () {
                 revRequests = Number(revRequests);
                 return revRequests.should.be.above(0);
             });
-    });
+    });*/
 });
 
 

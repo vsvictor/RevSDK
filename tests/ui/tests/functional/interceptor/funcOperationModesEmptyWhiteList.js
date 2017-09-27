@@ -56,6 +56,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
         beforeEach(function () {
             request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
                 emptyDomainsWhiteList, domainsBlackList, domainsProvisionedList);
+            
             var serverConfig = serverConfigs.local;
             driver = wd.promiseChainRemote(serverConfig);
             logging.configure(driver);

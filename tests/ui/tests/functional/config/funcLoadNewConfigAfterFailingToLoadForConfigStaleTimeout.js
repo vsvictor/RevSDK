@@ -33,6 +33,7 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
+    Config = require("./../../../page_objects/RevTester/configViewPage"),
     request = require("./../../../helpers/requests"),
     Waits = require("./../../../page_objects/RevTester/waits");
 
@@ -43,6 +44,8 @@ wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
 wd.addPromiseChainMethod('getTotalStatsRequestUploaded', Counters.getTotalStatsRequestUploaded);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
+wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
+wd.addPromiseChainMethod('getStatsReportingInterval', Config.getStatsReportingInterval);
 wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
@@ -55,14 +58,16 @@ describe("Functional => config: ", function () {
     var portalAPIKey = config.get('portalAPIKey');
     var appIdTester = config.get('appIdTester');
     var accountId = config.get('accountId');
+    var configurationStaleTimeoutSec140 = config.get('configurationStaleTimeoutSec140');
+    var statsReportingIntervalSeconds82 = config.get('statsReportingIntervalSeconds82');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var domainsWhiteList = config.get('domainsWhiteList');
     var domainsBlackList = undefined;
     var domainsProvisionedList = undefined;
+    var quaterOfConfigStaleTimeoutMilisecs = configurationStaleTimeoutSec140 / 4 * 1000;
 
     before(function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList = [], domainsProvisionedList = []);
+        request.putConfigWithConfigStaleTimeoutSec(appIdTester, portalAPIKey, accountId, configurationStaleTimeoutSec140);
 
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
@@ -83,28 +88,41 @@ describe("Functional => config: ", function () {
 
     it("Loading config when switched internet to 'off' after interval (60s)", function () {
         return driver
-            .waitForResponse(driver)
+            //turn off the internet
             .toggleNetwork(driver)
+            //we are waiting for config_stale-timeout-secs with turned off internet
+            // to fail config getting
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
             .getCountersPage(driver)
-            .getTotalStatsRequestUploaded(driver)
-            .then(function (daraFirst) {
-                return daraFirst.text()
-                    .then(function (valueFirst) {
-                        return driver
-                            .closeCountersPage(driver)
-                            .clickFetchConfigBtn(driver)
-                            .sleep(59000)
-                            .getCountersPage(driver)
-                            .getTotalStatsRequestUploaded(driver)
-                            .then(function (dataLast) {
-                                return dataLast.text()
-                                    .then(function (valueLast) {
-                                        return valueFirst === valueLast;
-                                    }).should.become(true)
-                            }).toggleNetwork(driver);
-                    })
-
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .closeCountersPage(driver)
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .getCountersPage(driver)
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .closeCountersPage(driver)
+            // change config and set statsReportingInterval = 82 secs
+            .then(function () {
+                request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds82);
             })
+            
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .waitForResponse(driver)
+
+            //turn on the internet
+            .toggleNetwork(driver)
+            // wait for config refresh interval to load new config
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .getCountersPage(driver)
+            .sleep(quaterOfConfigStaleTimeoutMilisecs)
+            .closeCountersPage(driver)
+            // check that stats_report_interval will be 82, so new config is loaded
+            .then(function () {
+                return driver
+                    .getConfigurationPage(driver)
+                    .getStatsReportingInterval(driver)
+                    .then(function (statsReportingInterval) {
+                        return statsReportingInterval.text().should.become(statsReportingIntervalSeconds82 + "");
+                    }); 
+            });
     });
 });
-

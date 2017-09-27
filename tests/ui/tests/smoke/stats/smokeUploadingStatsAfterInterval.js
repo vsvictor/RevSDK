@@ -39,13 +39,13 @@ wd.addPromiseChainMethod('setModeReportOnly', Modes.setModeReportOnly);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
-wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
+wd.addPromiseChainMethod('getTotalStatsRequestUploaded', Counters.getTotalStatsRequestUploaded);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
 
 describe("Smoke => Stats: ", function () {
     var describeTimeout = config.get('describeTimeout');
-    this.timeout(describeTimeout);
+    this.timeout(describeTimeout * 2);
     var driver = undefined;
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
     var portalAPIKey = config.get('portalAPIKey');
@@ -80,7 +80,7 @@ describe("Smoke => Stats: ", function () {
     it("Uploading stats again after stats_reporting_interval (60s)", function () {
         return driver
             .getCountersPage(driver)
-            .getCounterRequestCount(driver)
+            .getTotalStatsRequestUploaded(driver)
             .then(function (requestCountOne) {
                 return driver
                     .closeCountersPage(driver)
@@ -88,14 +88,17 @@ describe("Smoke => Stats: ", function () {
                     .then(function () {
                         return driver
                             .getCountersPage(driver)
-                            .getCounterRequestCount(driver)
+                            .getTotalStatsRequestUploaded(driver)
                             .then(function (requestCountTwo) {
                                 return (requestCountTwo > requestCountOne) ?
                                     driver
                                         .closeCountersPage(driver)
-                                        .sleep(59000)
+                                        .sleep(statsReportingIntervalSeconds60 * 500)
                                         .getCountersPage(driver)
-                                        .getCounterRequestCount(driver)
+                                        .closeCountersPage(driver)
+                                        .sleep(statsReportingIntervalSeconds60 * 500)
+                                        .getCountersPage(driver)
+                                        .getTotalStatsRequestUploaded(driver)
                                         .then(function (requestCountThree) {
                                             return requestCountThree > requestCountTwo;
                                         })

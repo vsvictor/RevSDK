@@ -109,7 +109,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
             .sendRequestOnURL(driver, domainsProvisionedList[0])
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
-                return headers.text().should.not.eventually.include(headerRev)
+                return headers.text().should.eventually.include(headerRev)
             })
     });
 });

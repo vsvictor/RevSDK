@@ -52,8 +52,6 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 
-
-
 describe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
@@ -64,9 +62,10 @@ describe("Function => interceptor: ", function () {
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
     var statsReportingIntervalSeconds85 = config.get('statsReportingIntervalSeconds85');
     var serverConfig = serverConfigs.local;
-    var domainsWhiteList = config.get('domainsWhiteList');
     var appIdTester = config.get('appIdTester');
+    var domainsWhiteList = config.get('domainsWhiteList');
     var massages = config.get('massages');
+    var httpWebsite = config.get('httpWebsite');
 
     driver = wd.promiseChainRemote(serverConfig);
     logging.configure(driver);
@@ -75,7 +74,8 @@ describe("Function => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList,  [], []);
         return driver
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
@@ -89,9 +89,6 @@ describe("Function => interceptor: ", function () {
 
     it("Check 'domains_white_list' when it insn't empty "+
         "and doesn't include requested domain at 'transfer and report' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
-
         return driver
             .waitForResponse(driver)
             .getConfigurationPage(driver)
@@ -101,49 +98,31 @@ describe("Function => interceptor: ", function () {
                 return domainsList.text().then(function (domains) {
 
                     // if there isn't the domain
-                    if (JSON.parse(domains).indexOf(domainsWhiteList[1]) === -1) {
+                if (JSON.parse(domains).indexOf(httpWebsite) === -1) {
+                return driver
+                    .getMainPage(driver)
+                    .getCountersPage(driver)
+                    .getRevRequests(driver)
+                    .then(function (valueFirst) {
                         return driver
-                            .getMainPage(driver)
-                            .getCountersPage(driver)
-                            .getCounterRequestCount(driver)
-                            .then(function (valueRequestCountFirst) {
+                            .closeCountersPage(driver)
+                            .setModeTransferAndReport(driver)
+                            .sendRequestOnURL(driver, httpWebsite)
+                            .then(function () {
                                 return driver
+                                    .getCountersPage(driver)
                                     .getRevRequests(driver)
-                                    .then(function (valueFirst) {
-                                        return driver
-                                            .closeCountersPage(driver)
-                                            .setModeTransferAndReport(driver)
-                                            .sendRequestOnURL(driver, domainsWhiteList[1])
-                                            .then(function () {
-                                                return driver
-                                                    .getCountersPage(driver)
-                                                    .getCounterRequestCount(driver)
-                                                    .then(function (valueRequestCountLast) {
-                                                        return driver
-                                                            .getRevRequests(driver)
-                                                            .then(function (valueLast) {
-                                                                return ~~valueFirst === ~~valueLast &&
-                                                                       ~~valueRequestCountFirst < ~~valueRequestCountLast;
-                                                            }).should.become(true);
-                                                    });
-
-                                            });
-                                    });
+                                    .then(function (valueLast) {
+                                        return ~~valueFirst === ~~valueLast;
+                                    }).should.become(true);
                             });
-
-                    } else {
+                    });
+                            
+                } else {
                         console.log(colors.red(massages.domainExists));
-                        return domainsList.text().should.become(domainsWhiteList);
+                        return domainsList.text().should.become(httpWebsite);
                     }
                 });
             });
-
     });
-
-
-
-
 });
-
-
-

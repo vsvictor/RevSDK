@@ -52,7 +52,6 @@ wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
-//wd.addPromiseChainMethod('clickFetchConfigBtn', App.clickFetchConfigBtn);
 
 describe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -82,6 +81,7 @@ describe("Function => interceptor: ", function () {
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -89,15 +89,13 @@ describe("Function => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
         return driver
-            .waitForResponse(driver)
-            //.clickFetchConfigBtn(driver)
-            //.sleep(80000)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

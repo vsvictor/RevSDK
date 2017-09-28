@@ -76,7 +76,9 @@ describe("Function => interceptor: ", function () {
     beforeEach(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             domainsWhiteList,  [], []);
+
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -84,13 +86,13 @@ describe("Function => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
     it("Check 'domains_white_list' when it insn't empty "+
         "and doesn't include requested domain at 'transfer and report' mode", function () {
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

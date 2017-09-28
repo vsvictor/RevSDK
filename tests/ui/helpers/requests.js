@@ -61,7 +61,7 @@ exports.putConfig = function(appId, portalAPIKey, accountId, statsReportingInter
             "comment":"dsfs"
         }
     }, function (error, response, body){
-    //    console.log(body);
+        console.log(body);
     });
 };
 
@@ -186,7 +186,7 @@ exports.putConfigWithConfigStaleTimeoutSec = function(appId, portalAPIKey, accou
             "comment":"dsfs"
         }
     }, function (error, response, body){
-    //    console.log(body);
+        console.log(body);
     });
 };
 

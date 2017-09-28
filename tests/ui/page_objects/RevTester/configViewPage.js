@@ -48,6 +48,11 @@ var Config = {
             .getValueFromList(driver, defaultConfigVars.domains_black_list);
     },
 
+    getDomainsInternalBlackList: function (driver) {
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.domains_internal_black_list);
+    },
+
     getDomainsWhiteList: function (driver) {
         return Functions
             .getValueFromList(driver, defaultConfigVars.domains_white_list);

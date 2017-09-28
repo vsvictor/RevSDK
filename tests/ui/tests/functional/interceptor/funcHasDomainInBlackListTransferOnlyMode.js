@@ -73,7 +73,8 @@ describe("Functional => interceptor: ", function () {
     beforeEach(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             [],  domainsBlackList, []);  
-        return driver      
+        return driver   
+            .waitForResponse(driver)   
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -81,13 +82,13 @@ describe("Functional => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
     it("if domain is listed in 'domains_black_list' of "+
         "'Configuration view' for 'transfer only' mode", function () {
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsBlackList(driver)
             .then(function (domainsList) {

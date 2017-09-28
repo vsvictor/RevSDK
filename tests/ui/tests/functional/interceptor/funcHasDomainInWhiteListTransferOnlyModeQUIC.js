@@ -75,6 +75,7 @@ xdescribe("Function => interceptor: ", function () {
     beforeEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -82,6 +83,7 @@ xdescribe("Function => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -89,7 +91,6 @@ xdescribe("Function => interceptor: ", function () {
         "'Configuration view' item in mode 'QUIC'", function () {
 
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
 
             .getInitialTransportProtocol(driver)
@@ -137,10 +138,6 @@ xdescribe("Function => interceptor: ", function () {
             }).should.become('QUIC');
 
     });
-
-
-
-
 });
 
 

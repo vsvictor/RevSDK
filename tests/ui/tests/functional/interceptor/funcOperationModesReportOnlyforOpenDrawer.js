@@ -30,6 +30,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
@@ -42,6 +43,8 @@ wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseH
 wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+
 
 describe("Smoke: interceptor. operation mode transfer_only stats collecting", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -67,6 +70,7 @@ describe("Smoke: interceptor. operation mode transfer_only stats collecting", fu
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -74,6 +78,7 @@ describe("Smoke: interceptor. operation mode transfer_only stats collecting", fu
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

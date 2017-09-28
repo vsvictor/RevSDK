@@ -31,6 +31,7 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpMethods = require("./../../../page_objects/RevTester/httpMethods"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     Functions = require("./../../../page_objects/RevTester/functions");
 
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
@@ -45,6 +46,8 @@ wd.addPromiseChainMethod('setHttpMethodOPTIONS', httpMethods.setHttpMethodOPTION
 wd.addPromiseChainMethod('setHttpMethodCONNECT', httpMethods.setHttpMethodCONNECT);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+
 
 xdescribe("Functional: interceptor. check that response bodies with and without SDK are identical.", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -63,12 +66,14 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

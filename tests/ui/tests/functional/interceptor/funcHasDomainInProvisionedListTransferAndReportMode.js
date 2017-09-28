@@ -54,7 +54,7 @@ wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCou
 
 describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
-    this.timeout(describeTimeout);
+    this.timeout(describeTimeout*2);
     var driver = undefined;
     var portalAPIKey = config.get('portalAPIKey');
     var appId = config.get('appId');
@@ -76,6 +76,7 @@ describe("Functional => interceptor: ", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             [],  [], domainsProvisionedList);
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -83,6 +84,7 @@ describe("Functional => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -106,6 +108,7 @@ describe("Functional => interceptor: ", function () {
                                     .sendRequestOnURL(driver, domainsProvisionedList[0])
                                     .then(function () {
                                         return driver
+                                            .getMainPage(driver)
                                             .getCountersPage(driver)
                                             .getRevRequests(driver)
                                             .then(function (valueLast) {

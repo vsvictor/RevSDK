@@ -30,12 +30,14 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional: interceptor. Black-listed domains take precedence over all other domain configs", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -70,6 +72,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList , domainsProvisionedList, domainsProvisionedList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
@@ -86,6 +89,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList,  domainsWhiteList, domainsProvisionedList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
@@ -102,6 +106,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsInternalBlackList,  domainsBlackList, domainsProvisionedList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
@@ -118,6 +123,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             domainsWhiteList,  domainsBlackList, domainsInternalBlackList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)

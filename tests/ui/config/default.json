@@ -27,6 +27,7 @@
   "defaultConfigVars": {
     "domains_black_list": "domains_black_list",
     "domains_white_list": "domains_white_list",
+    "domains_internal_black_list": "internal_domains_black_list",
     "a_b_testing_origin_offload_ratio": "a_b_testing_origin_offload_ratio",
     "stats_reporting_interval_sec": "stats_reporting_interval_sec",
     "stats_reporting_level": "stats_reporting_level",
@@ -98,7 +99,7 @@
   "domainsProvisionedList": ["google.com"],
   "domainsInternalBlackList": ["just-a-test-domain-to-check-the-feature.revsw.com"],
   "allowedProtocolsStandard": ["standard"],
-  "URLWithQueryString": "https://www.google.com.ua/search?client=ubuntu&channel=fs&q=httpbin+is+it+working&ie=utf-8&oe=utf-8&gfe_rd=cr&ei=RtQiWYbGAc3i8AfvqYiADA#channel=fs&q=httpbin",
+  "URLWithQueryString": "https://www.google.com.ua/search?q=google+com+ua&oq=google+com&aqs=chrome.0.0j69i60l3j69i65l2.2411j0j4&sourceid=chrome&ie=UTF-8",
   "httpBinWebsiteStatuses": {
     "400": "httpbin.org/status/400",
     "402": "httpbin.org/status/402",
@@ -134,8 +135,8 @@
         "https": "https://httpbin.org/delete"
       },
       "HEAD": {
-        "http": "http://httpbin.org/head",
-        "https": "https://httpbin.org/head"
+        "http": "http://httpbin.org/headers",
+        "https": "https://httpbin.org/headers"
       },
       "PATCH": {
         "http": "http://httpbin.org/patch",

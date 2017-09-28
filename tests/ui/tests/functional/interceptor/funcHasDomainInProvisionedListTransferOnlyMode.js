@@ -78,6 +78,7 @@ describe("Functional => interceptor: ", function () {
             [],  [], domainsProvisionedList);
 
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -85,6 +86,7 @@ describe("Functional => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

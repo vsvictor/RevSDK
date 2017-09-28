@@ -30,12 +30,14 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseStatusCodeValue', httpFields.getResponseStatusCodeValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional Interceptor", function () {
     describe("Query string in request URL ", function () {
@@ -60,12 +62,14 @@ describe("Functional Interceptor", function () {
             desired.app = apps.androidTester;
             var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driver
+                .waitForResponse(driver)
                 .init(desired)
                 .setImplicitWaitTimeout(implicitWaitTimeout);
         });
 
         after(function () {
             return driver
+                .waitForResponse(driver)
                 .quit();
         });
 

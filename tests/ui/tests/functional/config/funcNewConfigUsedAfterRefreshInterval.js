@@ -70,6 +70,7 @@ describe("Functional: loaded config is used after refresh interval", function ()
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

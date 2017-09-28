@@ -31,11 +31,13 @@ var wd = require("wd"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional: interceptor. domain lists. transfer_and_report mode", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -63,6 +65,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -70,6 +73,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

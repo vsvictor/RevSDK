@@ -52,7 +52,7 @@ wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional => config: ", function () {
     var describeTimeout = config.get('describeTimeout');
-    this.timeout(describeTimeout);
+    this.timeout(describeTimeout*2);
     var driver = undefined;
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
     var portalAPIKey = config.get('portalAPIKey');
@@ -76,6 +76,7 @@ describe("Functional => config: ", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -83,6 +84,7 @@ describe("Functional => config: ", function () {
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -103,26 +105,34 @@ describe("Functional => config: ", function () {
             // change config and set statsReportingInterval = 82 secs
             .then(function () {
                 request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds82);
+
+                return driver .sleep(quaterOfConfigStaleTimeoutMilisecs)
+                    .waitForResponse(driver)
+
+                    //turn on the internet
+                    .toggleNetwork(driver)
+                    // wait for config refresh interval to load new config
+                    .sleep(quaterOfConfigStaleTimeoutMilisecs)
+                    .getCountersPage(driver)
+                    .sleep(quaterOfConfigStaleTimeoutMilisecs)
+                    .closeCountersPage(driver)
+                    .getCountersPage(driver)
+                    .sleep(quaterOfConfigStaleTimeoutMilisecs)
+                    .closeCountersPage(driver)
+                    .getCountersPage(driver)
+                    .sleep(quaterOfConfigStaleTimeoutMilisecs)
+                    .closeCountersPage(driver)
+                    // check that stats_report_interval will be 82, so new config is loaded
+                    .then(function () {
+                        return driver
+                            .getConfigurationPage(driver)
+                            .getStatsReportingInterval(driver)
+                            .then(function (statsReportingInterval) {
+                                return statsReportingInterval.text().should.become(statsReportingIntervalSeconds82 + "");
+                            }); 
+                    });
             })
             
-            .sleep(quaterOfConfigStaleTimeoutMilisecs)
-            .waitForResponse(driver)
-
-            //turn on the internet
-            .toggleNetwork(driver)
-            // wait for config refresh interval to load new config
-            .sleep(quaterOfConfigStaleTimeoutMilisecs)
-            .getCountersPage(driver)
-            .sleep(quaterOfConfigStaleTimeoutMilisecs)
-            .closeCountersPage(driver)
-            // check that stats_report_interval will be 82, so new config is loaded
-            .then(function () {
-                return driver
-                    .getConfigurationPage(driver)
-                    .getStatsReportingInterval(driver)
-                    .then(function (statsReportingInterval) {
-                        return statsReportingInterval.text().should.become(statsReportingIntervalSeconds82 + "");
-                    }); 
-            });
+            
     });
 });

@@ -83,6 +83,7 @@ describe("Functional => interceptor: ", function () {
     after(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

@@ -33,15 +33,17 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
 
-wd.addPromiseChainMethod('setModeReportOnly', Modes.setModeReportOnly);
+wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
 wd.addPromiseChainMethod('getTotalStatsRequestUploaded', Counters.getTotalStatsRequestUploaded);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('clickSendStatsBtn', App.clickSendStatsBtn);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Smoke => Stats: ", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -52,11 +54,20 @@ describe("Smoke => Stats: ", function () {
     var appIdTester = config.get('appIdTester');
     var accountId = config.get('accountId');
     var statsReportingIntervalSeconds60 = config.get('statsReportingIntervalSeconds60');
+    var httpWebsite = config.get('httpWebsite');
     var domainsWhiteList = config.get('domainsWhiteList');
     var domainsBlackList = undefined;
     var domainsProvisionedList = undefined;
+    
+    var fromTimeStamp = new Date();;
+    fromTimeStamp = fromTimeStamp.getTime();
+    var dateNow = new Date();
+    var dateNowPlusTwoMinutes = new Date();
+    dateNowPlusTwoMinutes.setMinutes(dateNow.getMinutes() + 3);
+    var toTimeStamp = dateNowPlusTwoMinutes;
+    toTimeStamp = toTimeStamp.getTime();
 
-    before(function () {
+    beforeEach(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             domainsWhiteList, domainsBlackList = [], domainsProvisionedList = []);
 
@@ -67,13 +78,15 @@ describe("Smoke => Stats: ", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
-    after(function () {
+    afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -106,6 +119,40 @@ describe("Smoke => Stats: ", function () {
                             }).should.become(true);
                     })
             });
+    });
+
+     it("Uploading stats on stats API after stats_reporting_interval", function () {
+        return driver
+        // send request on httpWebsite
+            .setModeTransferAndReport(driver)
+            .sendRequestOnURL(driver, httpWebsite)
+        // wait till stats are sent
+        // (the reason why we use some functions between sleeps is because when we are
+        // 'sleeping' during 60 secs or more appium losts connection with emulator)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+            .setModeTransferAndReport(driver)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+            .setModeTransferAndReport(driver)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+            .setModeTransferAndReport(driver)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+            .setModeTransferAndReport(driver)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+            .setModeTransferAndReport(driver)
+            .sleep(statsReportingIntervalSeconds60 * 1000 / 2)
+
+            .then(function () {
+            // get total hits from stats API for the last 3 minutes 
+            // and check that total hits is more than 0
+                request.getStatsOfAppDuringInterval(appIdTester, portalAPIKey, fromTimeStamp, toTimeStamp);
+                return driver
+                    .waitForResponse(driver)
+                    .then(function () {
+                        var responseBody = request.getResponseBodyFromStatsOfAppDuringInterval();
+                        return responseBody.data.hits > 0;
+                    })
+                    .should.become(true);
+            })
     });
 });
 

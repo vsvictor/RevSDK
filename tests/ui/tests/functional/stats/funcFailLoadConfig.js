@@ -45,7 +45,7 @@ wd.addPromiseChainMethod('getResponseStatusCodeValue', httpFields.getResponseSta
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 
-describe("Functional: ", function () {
+xdescribe("Functional: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;

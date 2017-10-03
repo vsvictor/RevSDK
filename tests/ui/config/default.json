@@ -81,6 +81,7 @@
     "domainExists": " > Domain exists!!!"
   },
   "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
+  "urlGetStatsAPI": "https://api.nuubit.net:443/v1/stats/sdk/",
   "appsOptionPublish": "?options=publish",
   "describeTimeout": 300000,
   "implicitWaitTimeout": 6000,

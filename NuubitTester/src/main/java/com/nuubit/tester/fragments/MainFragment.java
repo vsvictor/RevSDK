@@ -125,8 +125,8 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstance) {
         edQuery = (TextInputEditText) view.findViewById(R.id.edQuery);
         //edQuery.setText("stackoverflow.com/questions/3961589/android-webview-and-loaddata");
-        //edQuery.setText("google.com.ua");
-        edQuery.setText("http://httpbin.org/delay/12");
+        edQuery.setText("google.com.ua");
+        //edQuery.setText("http://httpbin.org/delay/12");
 
         wvMain = (WebView) view.findViewById(R.id.wvMain);
         wvMain.setWebViewClient(new WebViewClient());
@@ -410,20 +410,27 @@ public class MainFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             final String qURL = params[0];
-            final String qMethod = params[1];
-            String qBody = params[2];
+            String qBody = params[1];
             currURL = qURL;
             Response response = null;
-            String qody = null;
             if (qURL != null && !qURL.isEmpty()) {
                 try {
                     //response = runRequest(client, url, "GET", null);
                     Request.Builder builder = new Request.Builder();
-                    method = "GET";
                     builder.url(qURL);
-                    if (!qMethod.equalsIgnoreCase("GET")) {
-                        method = qMethod;
-                        builder.method(method, RequestBody.create(MediaType.parse("application/json"), qBody));
+                    if (!method.equalsIgnoreCase("GET")) {
+                        try {
+                            builder.method(method, RequestBody.create(MediaType.parse("application/json"), qBody));
+                        } catch (IllegalArgumentException e) {
+                            final Exception ex = e;
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
                     }
                     final Call callback = client.newCall(builder.build());
                     response = callback.execute();

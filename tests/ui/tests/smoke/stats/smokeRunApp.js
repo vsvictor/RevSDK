@@ -75,9 +75,7 @@ describe("Smoke => Stats: ", function () {
             .getCountersPage(driver)
             .getTotalStatsRequestUploaded(driver)
             .then(function (responseBody) {
-                return responseBody.text().then(function (value) {
-                    return value === '1';
-                }).should.become(true);
+                return responseBody === '1';    
             });
     });
 });

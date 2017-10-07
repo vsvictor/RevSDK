@@ -31,6 +31,7 @@ var wd = require("wd"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
+    Config = require("./../../../page_objects/RevTester/configViewPage"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
@@ -45,6 +46,9 @@ wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCou
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
+wd.addPromiseChainMethod('getDomainsInternalBlackList', Config.getDomainsInternalBlackList);
+wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
 
@@ -67,55 +71,50 @@ describe("Functional => interceptor: ", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
 
-    it("Check internal black list for 'transfer and report' mode"+
-        " and use interval (60s)", function () {
+    it("Check internal black list for 'transfer and report' mode", function () {
         return driver
-            .waitForResponse(driver)
-            .setModeTransferAndReport(driver)
-            .sendRequestOnURL(driver, domainsInternalBlackList[0])
-            .then(function () {
-                return driver
-                    .getCountersPage(driver)
-                    .getCounterRequestCount(driver)
-                    .then(function (valueRequestCountFirst) {
+            .getConfigurationPage(driver)
+            .getDomainsInternalBlackList(driver)
+            .then(function (domainsList) {
+                return domainsList.text().then(function (domains) {
+                    // if there is the domain
+                    if (JSON.parse(domains).indexOf(domainsInternalBlackList[0]) !== -1) {
                         return driver
-                            .closeCountersPage(driver)
-                            .sleep(59000)
+                            .getMainPage(driver)
                             .getCountersPage(driver)
-                            .getCounterRequestCount(driver)
-                            .then(function (valueRequestCountLast) {
+                            .getOriginRequests(driver)
+                            .then(function (originRequestsFirst) {
                                 return driver
-                                    .getRevRequests(driver)
-                                    .then(function (valueRevRequests) {
+                                    .closeCountersPage(driver)
+                                    .setModeTransferAndReport(driver)
+                                    .sendRequestOnURL(driver, domainsInternalBlackList[0])
+                                    .then(function () {
                                         return driver
+                                            .getMainPage(driver)
+                                            .getCountersPage(driver)
                                             .getOriginRequests(driver)
-                                            .then(function (valueOriginRequests) {
-                                                var rev = ~~valueRevRequests;
-                                                var origin = ~~valueOriginRequests;
-                                                var valueFirst = ~~valueRequestCountFirst;
-                                                var valueLast = ~~valueRequestCountLast;
-                                                if (rev > 0 && rev === origin && origin > 0 && valueLast > valueFirst) {
-                                                    return true;
-                                                } else {
-                                                    return false;
-                                                }
+                                            .then(function (originRequestsLast) {
+                                                return ~~originRequestsFirst < ~~originRequestsLast;
                                             }).should.become(true);
                                     });
-                            })
-
-                    })
-
-
+                            });
+                    } else {
+                        console.log(colors.red(massages.noDomainExists));
+                        return domainsList.text().should.become(domainsBlackList);
+                    }
+                });
             });
 
     });

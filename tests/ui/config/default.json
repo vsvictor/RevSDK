@@ -1,7 +1,7 @@
 {
   "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
-  "appId": "59a5c1f8d8cc605e513a573b",
-  "appIdTester": "59a5c1f8d8cc605e513a573b",
+  "appId": "58d535b8519150d22ab102b4",
+  "appIdTester": "58d535b8519150d22ab102b4",
   "accountId": "585296f11ea9bb3c3f90e05b",
   "statsReportingIntervalSeconds82": 82,
   "statsReportingIntervalSeconds83": 83,
@@ -10,30 +10,39 @@
   "statsReportingIntervalSeconds86": 86,
   "statsReportingIntervalSeconds87": 87,
   "statsReportingIntervalSeconds60": 60,
+  "configurationStaleTimeoutSec140": 140,
   "configurationRefreshIntervalMilliSec": 60000,
   "defaultConfigValues": {
-    "stats_reporting_interval_sec": "300",
-    "stats_reporting_level": "\"debug\"",
-    "edge_failures_failover_threshold_percent": "80",
-    "edge_quic_udp_port": "443",
-    "edge_data_receive_timeout_sec": "60",
-    "app_name": "_",
-    "internal_domains_black_list": "[]",
+    "domains_black_list": "[]",
     "a_b_testing_origin_offload_ratio": "0",
-    "sdk_release_version": "\"1\"",
-    "transport_monitoring_url": "\"https://monitor.revsw.net/test-cache.js\""
+    "stats_reporting_interval_sec": "60",
+    "stats_reporting_level": "\"debug\"",
+    "domains_provisioned_list": "[]",
+    "allowed_transport_protocols": "[\"rmp\",\"quic\",\"standard\"]",
+    "configuration_stale_timeout_sec": "36600",
+    "edge_failures_monitoring_interval_sec": "120",
+    "configuration_api_url": "\"https://sdk-config-api.revapm.net/v1/sdk/config\"",
+    "edge_quic_udp_port": "443"
   },
   "defaultConfigVars": {
+    "domains_black_list": "domains_black_list",
+    "domains_white_list": "domains_white_list",
+    "domains_internal_black_list": "internal_domains_black_list",
+    "a_b_testing_origin_offload_ratio": "a_b_testing_origin_offload_ratio",
     "stats_reporting_interval_sec": "stats_reporting_interval_sec",
     "stats_reporting_level": "stats_reporting_level",
-    "edge_failures_failover_threshold_percent": "edge_failures_failover_threshold_percent",
+    "domains_provisioned_list": "domains_provisioned_list",
+    "allowed_transport_protocols": "allowed_transport_protocols",
+    "configuration_stale_timeout_sec": "configuration_stale_timeout_sec",
+    "edge_failures_monitoring_interval_sec": "edge_failures_monitoring_interval_sec",
+    "configuration_api_url": "configuration_api_url",
     "edge_quic_udp_port": "edge_quic_udp_port",
-    "edge_data_receive_timeout_sec": "edge_data_receive_timeout_sec",
-    "app_name": "app_name",
-    "internal_domains_black_list": "internal_domains_black_list",
-    "a_b_testing_origin_offload_ratio": "a_b_testing_origin_offload_ratio",
-    "sdk_release_version": "sdk_release_version",
-    "transport_monitoring_url": "transport_monitoring_url"
+    "operation_mode": "operation_mode",
+    "initial_transport_protocol": "initial_transport_protocol"
+  },
+  "defaultStatsVars": {
+    "sdkKey": "sdkKey",
+    "totalStatsRequestUploaded": "Total stats request uploaded"
   },
   "encoding": {
     "russian": {
@@ -72,14 +81,15 @@
     "domainExists": " > Domain exists!!!"
   },
   "urlAppsAPI": "https://api.nuubit.net:443/v1/apps/",
+  "urlGetStatsAPI": "https://api.nuubit.net:443/v1/stats/sdk/",
   "appsOptionPublish": "?options=publish",
   "describeTimeout": 300000,
   "implicitWaitTimeout": 6000,
   "waitForResponseSecs": 10000,
-  "waitForListSecs": 2000,
+  "waitForListSecs": 3000,
   "waitForResponseStatusCodeSecs": 20000,
   "successHttpStatusCode": 200,
-  "SDKkeyTester": "a3b01cc2-9dcd-4ec4-88cc-1109ce0c5812",
+  "SDKkeyTester": "80bed752-6da6-4f47-8e95-f61de59e599d",
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",
@@ -88,9 +98,9 @@
   "domainsWhiteList": ["bs.to", "jetbrains.com"],
   "domainsBlackList": ["jenkins.io", "protractortest.org"],
   "domainsProvisionedList": ["google.com"],
-  "domainsInternalBlackList": ["www.dell.com"],
+  "domainsInternalBlackList": ["just-a-test-domain-to-check-the-feature.revsw.com"],
   "allowedProtocolsStandard": ["standard"],
-  "URLWithQueryString": "https://www.google.com.ua/search?client=ubuntu&channel=fs&q=httpbin+is+it+working&ie=utf-8&oe=utf-8&gfe_rd=cr&ei=RtQiWYbGAc3i8AfvqYiADA#channel=fs&q=httpbin",
+  "URLWithQueryString": "https://www.google.com.ua/search?q=google+com+ua&oq=google+com&aqs=chrome.0.0j69i60l3j69i65l2.2411j0j4&sourceid=chrome&ie=UTF-8",
   "httpBinWebsiteStatuses": {
     "400": "httpbin.org/status/400",
     "402": "httpbin.org/status/402",
@@ -99,12 +109,48 @@
     "301": "httpbin.org/status/301",
     "302": "httpbin.org/status/302"
   },
+  "websites": {
+    "methods": {
+      "GET": {
+        "http": "http://httpbin.org/get",
+        "https": "https://httpbin.org/get"
+      },
+      "TRACE": {
+        "http": "http://httpbin.org/anything",
+        "https": "https://httpbin.org/anything"
+      },
+      "OPTIONS": {
+        "http": "http://httpbin.org/anything",
+        "https": "https://httpbin.org/anything"
+      },
+      "PUT": {
+        "http": "http://httpbin.org/put",
+        "https": "https://httpbin.org/put"
+      },
+      "POST": {
+        "http": "http://httpbin.org/post",
+        "https": "https://httpbin.org/post"
+      },
+      "DELETE": {
+        "http": "http://httpbin.org/delete",
+        "https": "https://httpbin.org/delete"
+      },
+      "HEAD": {
+        "http": "http://httpbin.org/headers",
+        "https": "https://httpbin.org/headers"
+      },
+      "PATCH": {
+        "http": "http://httpbin.org/patch",
+        "https": "https://httpbin.org/patch"
+      }
+    }
+  },
   "httpBinStatuses": {
     "400": "400",
     "402": "402",
     "404": "404",
-    "300": "300",
-    "301": "301",
-    "302": "302"
+    "300": "100",
+    "301": "100",
+    "302": "100"
   }
 }

@@ -33,7 +33,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
-    Stats = require("./../../../page_objects/RevTester/statsViewPage"),
+    Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Waits = require("./../../../page_objects/RevTester/waits"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
@@ -43,15 +43,13 @@ wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('getDomainsBlackList', Config.getDomainsBlackList);
-wd.addPromiseChainMethod('getOriginRequests', Stats.getOriginRequests);
+wd.addPromiseChainMethod('getOriginRequests', Counters.getOriginRequests);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 wd.addPromiseChainMethod('scrollDown', actions.scrollDown);
 wd.addPromiseChainMethod('closeCountersPage', App.closeCountersPage);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
-
-
 
 describe("Functional => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -73,32 +71,30 @@ describe("Functional => interceptor: ", function () {
     desired.app = apps.androidTester;
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
-    beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+    before(function () {
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            [],  domainsBlackList, []);        
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
-    afterEach(function () {
+    after(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
     it("if domain is listed in 'domains_black_list' of "+
         "'Configuration view' for 'transfer and report' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            [],  domainsBlackList, []);
-
+        
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsBlackList(driver)
             .then(function (domainsList) {
-
                 return domainsList.text().then(function (domains) {
-
                     // if there is the domain
                     if (JSON.parse(domains).indexOf(domainsBlackList[1]) !== -1) {
                         return driver
@@ -112,6 +108,7 @@ describe("Functional => interceptor: ", function () {
                                     .sendRequestOnURL(driver, domainsBlackList[1])
                                     .then(function () {
                                         return driver
+                                            .getMainPage(driver)
                                             .getCountersPage(driver)
                                             .getOriginRequests(driver)
                                             .then(function (valueLast) {
@@ -123,15 +120,9 @@ describe("Functional => interceptor: ", function () {
                         console.log(colors.red(massages.noDomainExists));
                         return domainsList.text().should.become(domainsBlackList);
                     }
-
                 });
             });
-
     });
-
-
-
-
 });
 
 

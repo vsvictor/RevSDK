@@ -30,12 +30,16 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
+
 wd.addPromiseChainMethod('getConfigurationList', Config.getConfigurationList);
 wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getOperationMode', Config.getOperationMode);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Functional: config. report_only mode on initialization", function () {
+
+xdescribe("Functional: config. report_only mode on initialization", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -48,6 +52,7 @@ describe("Functional: config. report_only mode on initialization", function () {
 
     before(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
+        
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -55,16 +60,19 @@ describe("Functional: config. report_only mode on initialization", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
-   it("should check that SDK switches to report_only mode on the first initialization", function () {
+// should the sdk be switched to report_only??
+   xit("should check that SDK switches to report_only mode on the first initialization", function () {
         return driver
             .getConfigurationPage(driver)
             .getConfigurationList(driver)

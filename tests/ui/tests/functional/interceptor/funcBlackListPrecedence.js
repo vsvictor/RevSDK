@@ -30,12 +30,14 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional: interceptor. Black-listed domains take precedence over all other domain configs", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -61,6 +63,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -74,6 +77,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsProvisionedList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -90,6 +94,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsWhiteList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -106,6 +111,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)
@@ -122,6 +128,7 @@ describe("Functional: interceptor. Black-listed domains take precedence over all
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsInternalBlackList[0])
+            .waitForResponse(driver)
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(headerRev)

@@ -30,6 +30,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
@@ -37,6 +38,7 @@ wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional: interceptor. Operation modes transfer_and_report and transfer_only. domain is out of white list", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -56,6 +58,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
     before(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             domainsWhiteList, domainsBlackList, domainsProvisionedList);
+
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -63,6 +66,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -70,6 +74,7 @@ describe("Functional: interceptor. Operation modes transfer_and_report and trans
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

@@ -31,13 +31,17 @@ var wd = require("wd"),
     Config = require("./../../../page_objects/RevTester/configViewPage"),
     Stats = require("./../../../page_objects/RevTester/statsViewPage"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
+
 wd.addPromiseChainMethod('toggleNetwork', Functions.toggleNetwork);
 wd.addPromiseChainMethod('getStatsPage', App.getStatsPage);
 wd.addPromiseChainMethod('getStatsReportingInterval', Config.getStatsReportingInterval);
 wd.addPromiseChainMethod('getSdkKey', Stats.getSdkKey);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Functional => config: ", function () {
+
+xdescribe("Functional => config: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -57,6 +61,7 @@ describe("Functional => config: ", function () {
     beforeEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -64,6 +69,7 @@ describe("Functional => config: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

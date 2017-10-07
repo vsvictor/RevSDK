@@ -1,6 +1,9 @@
-
-
 "use strict";
+
+var Functions = require("./functions");
+var config = require('config');
+
+var defaultStatsVars = config.get('defaultStatsVars');
 
 var Stats = {
     list: {
@@ -13,10 +16,9 @@ var Stats = {
     },
 
     getSdkKey: function (driver) {
-        return driver
-            .sleep(2000)
-            .elementsByXPath(Stats.list.config)
-            .at(7);
+        driver.sleep(2000)
+        return Functions
+            .getValueFromList(driver, defaultStatsVars.sdkKey);
     }
 };
 

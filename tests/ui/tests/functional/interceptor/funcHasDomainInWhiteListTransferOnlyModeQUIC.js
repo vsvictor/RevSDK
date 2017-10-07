@@ -52,8 +52,8 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
-
-describe("Function => interceptor: ", function () {
+// waiting for QUIC protocol to get implemented
+xdescribe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -75,6 +75,7 @@ describe("Function => interceptor: ", function () {
     beforeEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -82,14 +83,14 @@ describe("Function => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
-    it("if domain is listed in 'domains_white_list' of "+
+    xit("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' item in mode 'QUIC'", function () {
 
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
 
             .getInitialTransportProtocol(driver)
@@ -137,10 +138,6 @@ describe("Function => interceptor: ", function () {
             }).should.become('QUIC');
 
     });
-
-
-
-
 });
 
 

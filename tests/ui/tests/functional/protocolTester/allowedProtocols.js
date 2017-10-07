@@ -32,12 +32,15 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     App = require("./../../../page_objects/RevTester/mainPage"),
     Counters = require("./../../../page_objects/RevTester/openDrawerPage"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 wd.addPromiseChainMethod('getCounterTotalRequestsStandard', Counters.getCounterTotalRequestsStandard);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+
 
 describe("Functional: allowed_transport_protocol 'standard' is used", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -61,6 +64,7 @@ describe("Functional: allowed_transport_protocol 'standard' is used", function (
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -68,10 +72,11 @@ describe("Functional: allowed_transport_protocol 'standard' is used", function (
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
-    it("should", function () {
+    it("should check that requests will be sent on url using Standard protocol", function () {
         return driver
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, httpWebsite)

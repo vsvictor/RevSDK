@@ -31,11 +31,13 @@ var wd = require("wd"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Functional: loaded config is used", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -52,7 +54,7 @@ describe("Functional: loaded config is used", function () {
 
     before(function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList, domainsBlackList, []);
+                    domainsWhiteList, domainsBlackList, []);
 
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
@@ -61,6 +63,7 @@ describe("Functional: loaded config is used", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -68,6 +71,7 @@ describe("Functional: loaded config is used", function () {
     after(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

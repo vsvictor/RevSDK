@@ -38,7 +38,7 @@ var wd = require("wd"),
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
-wd.addPromiseChainMethod('getRevRequests', Counters.getRevRequests);
+wd.addPromiseChainMethod('getCounterRequestCount', Counters.getCounterRequestCount);
 wd.addPromiseChainMethod('getCountersPage', App.getCountersPage);
 
 describe("Smoke: stats collecting", function () {
@@ -75,10 +75,10 @@ describe("Smoke: stats collecting", function () {
             .sendRequestOnURL(driver, httpWebsite)
             .getResponseHeadersFieldValue(driver)
             .getCountersPage(driver)
-            .getRevRequests(driver)
-            .then(function (revRequests) {
-                revRequests = Number(revRequests);
-                return revRequests.should.be.above(0);
+            .getCounterRequestCount(driver)
+            .then(function (requestCount) {
+                requestCount = Number(requestCount);
+                return requestCount.should.be.above(0);
             });
     });
 });

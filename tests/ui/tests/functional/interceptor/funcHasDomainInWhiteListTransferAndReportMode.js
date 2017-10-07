@@ -52,7 +52,6 @@ wd.addPromiseChainMethod('getConfigurationPage', App.getConfigurationPage);
 wd.addPromiseChainMethod('getMainPage', App.getMainPage);
 
 
-
 describe("Function => interceptor: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
@@ -74,8 +73,11 @@ describe("Function => interceptor: ", function () {
     var implicitWaitTimeout = config.get('implicitWaitTimeout');
 
     beforeEach(function () {
-        request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds85);
+        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
+            domainsWhiteList,  [], []);
+
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -83,16 +85,13 @@ describe("Function => interceptor: ", function () {
     afterEach(function () {
         request.putConfig(appId, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
     it("if domain is listed in 'domains_white_list' of "+
         "'Configuration view' for 'transfer and report' mode", function () {
-        request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
-            domainsWhiteList,  [], []);
-
         return driver
-            .waitForResponse(driver)
             .getConfigurationPage(driver)
             .getDomainsWhiteList(driver)
             .then(function (domainsList) {

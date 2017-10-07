@@ -31,11 +31,13 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     Functions = require("./../../../page_objects/RevTester/functions"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     request = require("./../../../helpers/requests");
 
 wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 describe("Smoke: interceptor domain lists. transfer_only mode", function () {
     var describeTimeout = config.get('describeTimeout');
@@ -63,6 +65,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
@@ -70,6 +73,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
     afterEach(function () {
         request.putConfig(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60);
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -103,7 +107,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
             });
     });
 
-    it("should check that domain from 'PROVISIONED' list won't return Rev Headers", function () {
+    xit("should check that domain from 'PROVISIONED' list won't return Rev Headers", function () {
         return driver
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsProvisionedList[0])

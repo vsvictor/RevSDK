@@ -18,6 +18,11 @@
 
 "use strict";
 
+var Functions = require("./functions");
+var config = require('config');
+
+var defaultConfigVars = config.get('defaultConfigVars');
+
 var Config = {
     list: {
         config: '//android.widget.TextView'
@@ -29,39 +34,38 @@ var Config = {
     },
 
     getStatsReportingInterval: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(2);
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.stats_reporting_interval_sec);
     },
 
     getOperationMode: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(28);
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.operation_mode);
     },
 
     getDomainsBlackList: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(42);
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.domains_black_list);
+    },
+
+    getDomainsInternalBlackList: function (driver) {
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.domains_internal_black_list);
     },
 
     getDomainsWhiteList: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(26);
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.domains_white_list);
     },
 
     getDomainsProvisionedList: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(58);
+        return Functions
+            .getValueFromList(driver, defaultConfigVars.domains_provisioned_list);
     },
 
     getInitialTransportProtocol: function (driver) {
-        return driver
-            .elementsByXPath(Config.list.config)
-            .at(48);
+       return Functions
+            .getValueFromList(driver, defaultConfigVars.initial_transport_protocol);
     },
 
     getConfigVariables: function (driver) {

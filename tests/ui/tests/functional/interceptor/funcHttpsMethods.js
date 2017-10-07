@@ -31,6 +31,7 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpMethods = require("./../../../page_objects/RevTester/httpMethods"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     Functions = require("./../../../page_objects/RevTester/functions");
 
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
@@ -45,15 +46,17 @@ wd.addPromiseChainMethod('setHttpMethodOPTIONS', httpMethods.setHttpMethodOPTION
 wd.addPromiseChainMethod('setHttpMethodCONNECT', httpMethods.setHttpMethodCONNECT);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Functional: interceptor. check that response bodies with and without SDK are identical.", function () {
+
+xdescribe("Functional: interceptor. check that response bodies with and without SDK are identical.", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
     var portalAPIKey = config.get('portalAPIKey');
     var appIdTester = config.get('appIdTester');
     var accountId = config.get('accountId');
-    var httpsWebsite = config.get('httpsWebsite');
+    var websites = config.get('websites');
 
     before(function () {
         var serverConfig = serverConfigs.local;
@@ -63,12 +66,14 @@ describe("Functional: interceptor. check that response bodies with and without S
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 
@@ -76,7 +81,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodGET(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.GET.https)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -85,7 +90,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodGET(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.GET.https)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -97,7 +102,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodPOST(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.POST.https)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -106,7 +111,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPOST(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.POST.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -118,7 +123,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodPUT(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.PUT.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -127,7 +132,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPUT(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.PUT.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -139,7 +144,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodDELETE(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.DELETE.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -148,7 +153,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodDELETE(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.DELETE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -160,7 +165,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodHEAD(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.HEAD.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -169,28 +174,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodHEAD(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
-                    .getResponseBodyFieldValue(driver)
-                    .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
-            });
-    });
-
-    it("should check HTTP Method CONNECT", function () {
-        return driver
-            .setModeTransferAndReport(driver)
-            .setHttpMethodCONNECT(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
-            .getResponseBodyFieldValue(driver)
-            .then(function (repsonseTransferMode) {
-                return repsonseTransferMode.text();
-            })
-            .then(function (repsonseTransferMode) {
-                return driver
-                    .setModeOff(driver)
-                    .setHttpMethodCONNECT(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.HEAD.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -202,7 +186,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodOPTIONS(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.OPTIONS.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -211,7 +195,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodOPTIONS(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.OPTIONS.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);
@@ -223,7 +207,7 @@ describe("Functional: interceptor. check that response bodies with and without S
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodTRACE(driver)
-            .sendRequestOnURL(driver, httpsWebsite)
+            .sendRequestOnURL(driver, websites.methods.TRACE.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
@@ -232,7 +216,7 @@ describe("Functional: interceptor. check that response bodies with and without S
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodTRACE(driver)
-                    .sendRequestOnURL(driver, httpsWebsite)
+                    .sendRequestOnURL(driver, websites.methods.TRACE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
                         return repsonseOffMode.text().should.become(repsonseTransferMode);

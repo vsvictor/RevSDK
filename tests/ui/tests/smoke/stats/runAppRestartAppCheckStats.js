@@ -75,6 +75,8 @@ describe("Smoke: stats collecting", function () {
 
     it("Run Application. Restart App earlier than in "+
         "stats_reporting_interval seconds.", function () {
+            // test actually checks if stats will be uploaded
+            // when app is in background
         return driver
             .getCountersPage(driver)
             .getCounterRequestCount(driver)
@@ -85,6 +87,7 @@ describe("Smoke: stats collecting", function () {
                     .openSystemSettings(driver)
                     .then(function () {
                         return driver
+                            .sleep(statsReportingIntervalSeconds60 / 2)
                             .back()
                             .getCountersPage(driver)
                             .getCounterRequestCount(driver)

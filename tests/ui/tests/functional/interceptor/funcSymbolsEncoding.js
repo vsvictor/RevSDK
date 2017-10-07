@@ -30,6 +30,7 @@ var wd = require("wd"),
     caps = require("./../../../helpers/caps"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     Functions = require("./../../../page_objects/RevTester/functions"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
     request = require("./../../../helpers/requests");
 
@@ -37,6 +38,8 @@ wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('setModeTransferAndReport', Modes.setModeTransferAndReport);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
+
 
 describe("Functional Interceptor", function () {
     describe("Different symbols in URL (Encoding)", function () {
@@ -60,12 +63,14 @@ describe("Functional Interceptor", function () {
             desired.app = apps.androidTester;
             var implicitWaitTimeout = config.get('implicitWaitTimeout');
             return driver
+                .waitForResponse(driver)
                 .init(desired)
                 .setImplicitWaitTimeout(implicitWaitTimeout);
         });
 
         after(function () {
             return driver
+                .waitForResponse(driver)
                 .quit();
         });
 

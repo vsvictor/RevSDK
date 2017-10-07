@@ -32,6 +32,7 @@ var wd = require("wd"),
     Modes = require("./../../../page_objects/RevTester/operationModes"),
     httpMethods = require("./../../../page_objects/RevTester/httpMethods"),
     httpFields = require("./../../../page_objects/RevTester/httpFields"),
+    Waits = require("./../../../page_objects/RevTester/waits"),
     Functions = require("./../../../page_objects/RevTester/functions");
 
 var request = require("request");
@@ -41,8 +42,10 @@ wd.addPromiseChainMethod('setModeTransferOnly', Modes.setModeTransferOnly);
 wd.addPromiseChainMethod('setHttpMethodPUT', httpMethods.setHttpMethodPUT);
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseStatusCodeValue', httpFields.getResponseStatusCodeValue);
+wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-describe("Functional: ", function () {
+
+xdescribe("Functional: ", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -62,12 +65,14 @@ describe("Functional: ", function () {
         desired.app = apps.androidTester;
         var implicitWaitTimeout = config.get('implicitWaitTimeout');
         return driver
+            .waitForResponse(driver)
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
     after(function () {
         return driver
+            .waitForResponse(driver)
             .quit();
     });
 

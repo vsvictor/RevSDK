@@ -37,7 +37,7 @@ exports.putConfig = function(appId, portalAPIKey, accountId, statsReportingInter
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "Rev Demo Android SDK QA",
+            "app_name": "Rev Demo Android SDK QA for appium tests",
             "account_id": accountId,
             "configs": [
                 {
@@ -80,7 +80,7 @@ exports.putConfigWithDomainsLists = function(appId, portalAPIKey, accountId, sta
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "NuubitTester",
+            "app_name": "Rev Demo Android SDK QA for appium tests",
             "account_id": accountId,
             "configs": [
                 {
@@ -125,7 +125,7 @@ exports.putConfigWithAllowedProtocols = function(appId, portalAPIKey, accountId,
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "Rev Tester Android SDK QA",
+            "app_name": "Rev Demo Android SDK QA for appium tests",
             "account_id": accountId,
             "configs": [
                 {
@@ -162,7 +162,7 @@ exports.putConfigWithConfigStaleTimeoutSec = function(appId, portalAPIKey, accou
             "Authorization": portalAPIKey
         },
         body: {
-            "app_name": "Rev Demo Android SDK QA",
+            "app_name": "Rev Demo Android SDK QA for appium tests",
             "account_id": accountId,
             "configs": [
                 {

@@ -49,7 +49,7 @@ wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBody
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
 
-xdescribe("Functional: interceptor. check that response bodies with and without SDK are identical.", function () {
+describe("Functional: interceptor. check that response bodies with and without SDK are identical.", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -58,7 +58,7 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
     var accountId = config.get('accountId');
     var websites = config.get('websites');
 
-    before(function () {
+    beforeEach(function () {
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -71,55 +71,85 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
-    after(function () {
+    afterEach(function () {
         return driver
             .waitForResponse(driver)
             .quit();
     });
 
-    it("should check HTTP Method GET", function () {
+     it("should check HTTP Method GET", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodGET(driver)
-            .sendRequestOnURL(driver, websites.methods.GET.https)
+            .sendRequestOnURL(driver, websites.methods.GET.http)
             .getResponseBodyFieldValue(driver)
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferMode) { 
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodGET(driver)
-                    .sendRequestOnURL(driver, websites.methods.GET.https)
+                    .sendRequestOnURL(driver, websites.methods.GET.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method POST", function () {
+    xit("should check HTTP Method POST", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodPOST(driver)
-            .sendRequestOnURL(driver, websites.methods.POST.https)
+            .sendRequestOnURL(driver, websites.methods.POST.http)
             .getResponseBodyFieldValue(driver)
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPOST(driver)
                     .sendRequestOnURL(driver, websites.methods.POST.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method PUT", function () {
+    xit("should check HTTP Method PUT", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodPUT(driver)
@@ -128,19 +158,33 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPUT(driver)
                     .sendRequestOnURL(driver, websites.methods.PUT.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method DELETE", function () {
+    xit("should check HTTP Method DELETE", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodDELETE(driver)
@@ -149,19 +193,33 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodDELETE(driver)
                     .sendRequestOnURL(driver, websites.methods.DELETE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method HEAD", function () {
+    xit("should check HTTP Method HEAD", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodHEAD(driver)
@@ -170,19 +228,34 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodHEAD(driver)
                     .sendRequestOnURL(driver, websites.methods.HEAD.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method OPTIONS", function () {
+    xit("should check HTTP Method OPTIONS", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodOPTIONS(driver)
@@ -191,19 +264,33 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodOPTIONS(driver)
                     .sendRequestOnURL(driver, websites.methods.OPTIONS.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode['Connection'] === responseBodyTransferMode['Connection']
+                            && responseBodyOffMode['Host'] === responseBodyTransferMode['Host']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
-    it("should check HTTP Method TRACE", function () {
+    xit("should check HTTP Method TRACE", function () {
         return driver
             .setModeTransferAndReport(driver)
             .setHttpMethodTRACE(driver)
@@ -212,15 +299,28 @@ xdescribe("Functional: interceptor. check that response bodies with and without 
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodTRACE(driver)
                     .sendRequestOnURL(driver, websites.methods.TRACE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode['Connection'] === responseBodyTransferMode['Connection']
+                            && responseBodyOffMode['Host'] === responseBodyTransferMode['Host']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 });

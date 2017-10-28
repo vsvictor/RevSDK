@@ -81,7 +81,7 @@ describe("Functional: interceptor. domain lists. transfer_and_report mode", func
         return driver
             .waitForResponse(driver)
             .setModeTransferAndReport(driver)
-            .sendRequestOnURL(driver, domainsWhiteList[0])
+            .sendRequestOnURL(driver, domainsWhiteList[1])
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.eventually.include(headerRev)

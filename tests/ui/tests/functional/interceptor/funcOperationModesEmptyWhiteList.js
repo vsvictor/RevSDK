@@ -40,7 +40,6 @@ wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseHeadersFieldValue', httpFields.getResponseHeadersFieldValue);
 wd.addPromiseChainMethod('waitForResponse', Waits.waitForResponse);
 
-
 describe("Functional: interceptor. Operation modes transfer_and_report and transfer_only. Empty white list", function () {
         var describeTimeout = config.get('describeTimeout');
         this.timeout(describeTimeout);

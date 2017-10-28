@@ -48,7 +48,7 @@ var Fields = {
     // Function getResponseBodyFieldValue waits till we get response and returns value of the Response Status Code  Field
     getResponseStatusCodeValue: function (driver, code) {
         return driver
-            .waitForResponseStatusCode(driver)
+            .waitForResponse(driver)
             .elementById(Fields.output.responseStatusCode);
     }
 };

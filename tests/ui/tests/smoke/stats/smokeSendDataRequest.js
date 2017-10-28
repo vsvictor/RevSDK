@@ -74,7 +74,7 @@ describe("Smoke: stats collecting", function () {
             .getResponseBodyFieldValue(driver)
             .then(function (responseBody) {
                 return responseBody.text().then(function (value) {
-                    return /\<body\>ok\<\/body\>/.test(value);
+                    return 'ok' === value;
                 }).should.become(true);
             });
     });

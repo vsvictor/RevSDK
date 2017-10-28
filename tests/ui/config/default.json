@@ -1,7 +1,7 @@
 {
   "portalAPIKey": "X-API-KEY 465618f8-dd75-4165-bfa2-70b10d955ad4",
-  "appId": "58d535b8519150d22ab102b4",
-  "appIdTester": "58d535b8519150d22ab102b4",
+  "appId": "59a5c1f8d8cc605e513a573b",
+  "appIdTester": "59a5c1f8d8cc605e513a573b",
   "accountId": "585296f11ea9bb3c3f90e05b",
   "statsReportingIntervalSeconds82": 82,
   "statsReportingIntervalSeconds83": 83,
@@ -47,11 +47,11 @@
   "encoding": {
     "russian": {
       "site": "https://ru.wikipedia.org/wiki/%D0%9F%D0%B5%D1%88%D0%B5%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D1%85%D0%BE%D0%B4",
-      "value": "Fußgängerübergang"
+      "value": "Пешеходный переход"
     },
     "german": {
       "site": "https://de.wikipedia.org/wiki/Fu%C3%9Fg%C3%A4nger%C3%BCbergang",
-      "value": "Пешеходный переход"
+      "value": "Fußgängerübergang"
     },
     "turkish": {
       "site": "https://tr.wikipedia.org/wiki/Yaya_ge%C3%A7idi",
@@ -85,11 +85,11 @@
   "appsOptionPublish": "?options=publish",
   "describeTimeout": 300000,
   "implicitWaitTimeout": 6000,
-  "waitForResponseSecs": 10000,
+  "waitForResponseSecs": 15000,
   "waitForListSecs": 3000,
   "waitForResponseStatusCodeSecs": 20000,
   "successHttpStatusCode": 200,
-  "SDKkeyTester": "80bed752-6da6-4f47-8e95-f61de59e599d",
+  "SDKkeyTester": "a3b01cc2-9dcd-4ec4-88cc-1109ce0c5812",
   "headerRevSDK": ".revsdk.net",
   "headerRev": "rev-",
   "httpWebsite": "http://appium.io",

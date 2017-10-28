@@ -46,7 +46,7 @@ wd.addPromiseChainMethod('setHttpMethodCONNECT', httpMethods.setHttpMethodCONNEC
 wd.addPromiseChainMethod('sendRequestOnURL', Functions.sendRequestOnURL);
 wd.addPromiseChainMethod('getResponseBodyFieldValue', httpFields.getResponseBodyFieldValue);
 
-xdescribe("Smoke: interceptor. check that response bodies with and without SDK are identical.", function () {
+describe("Smoke: interceptor. check that response bodies with and without SDK are identical.", function () {
     var describeTimeout = config.get('describeTimeout');
     this.timeout(describeTimeout);
     var driver = undefined;
@@ -55,7 +55,7 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
     var accountId = config.get('accountId');
     var websites = config.get('websites');
 
-    before(function () {
+    beforeEach(function () {
         var serverConfig = serverConfigs.local;
         driver = wd.promiseChainRemote(serverConfig);
         logging.configure(driver);
@@ -67,7 +67,7 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .setImplicitWaitTimeout(implicitWaitTimeout);
     });
 
-    after(function () {
+    afterEach(function () {
         return driver
             .quit();
     });
@@ -78,18 +78,33 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .setHttpMethodGET(driver)
             .sendRequestOnURL(driver, websites.methods.GET.http)
             .getResponseBodyFieldValue(driver)
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferMode) { 
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodGET(driver)
                     .sendRequestOnURL(driver, websites.methods.GET.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
@@ -102,15 +117,30 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPOST(driver)
                     .sendRequestOnURL(driver, websites.methods.POST.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
@@ -123,15 +153,29 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodPUT(driver)
                     .sendRequestOnURL(driver, websites.methods.PUT.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 
@@ -144,15 +188,29 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodDELETE(driver)
                     .sendRequestOnURL(driver, websites.methods.DELETE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 
@@ -165,15 +223,30 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodHEAD(driver)
                     .sendRequestOnURL(driver, websites.methods.HEAD.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode.Connection === responseBodyTransferMode.Connection
+                            && responseBodyOffMode.Host === responseBodyTransferMode.Host
+                            && responseBodyOffMode['User-Agent'] === responseBodyTransferMode['User-Agent']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
@@ -186,15 +259,29 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodOPTIONS(driver)
                     .sendRequestOnURL(driver, websites.methods.OPTIONS.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode['Connection'] === responseBodyTransferMode['Connection']
+                            && responseBodyOffMode['Host'] === responseBodyTransferMode['Host']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+
+                    }).should.become(true);
             });
     });
 
@@ -207,15 +294,28 @@ xdescribe("Smoke: interceptor. check that response bodies with and without SDK a
             .then(function (repsonseTransferMode) {
                 return repsonseTransferMode.text();
             })
-            .then(function (repsonseTransferMode) {
+            .then(function (repsonseTransferModeText){
+                var responseBodyTransferMode = JSON.parse(repsonseTransferModeText);
+                responseBodyTransferMode = responseBodyTransferMode.headers;
+                return responseBodyTransferMode;
+            })
+            .then(function (responseBodyTransferMode) {
                 return driver
                     .setModeOff(driver)
                     .setHttpMethodTRACE(driver)
                     .sendRequestOnURL(driver, websites.methods.TRACE.http)
                     .getResponseBodyFieldValue(driver)
                     .then(function (repsonseOffMode) {
-                        return repsonseOffMode.text().should.become(repsonseTransferMode);
-                    });
+                       return repsonseOffMode.text();
+                    })
+                    .then(function (repsonseOffModeText){
+                        var responseBodyOffMode = JSON.parse(repsonseOffModeText);
+                        responseBodyOffMode = responseBodyOffMode.headers;
+
+                        return (responseBodyOffMode['Connection'] === responseBodyTransferMode['Connection']
+                            && responseBodyOffMode['Host'] === responseBodyTransferMode['Host']
+                            && responseBodyOffMode['Accept-Encoding'] === responseBodyTransferMode['Accept-Encoding']);
+                    }).should.become(true);
             });
     });
 });

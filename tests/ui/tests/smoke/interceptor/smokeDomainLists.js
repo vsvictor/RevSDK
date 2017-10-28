@@ -80,7 +80,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
    it("should check that domain from 'WHITE' list will return Rev Headers", function () {
         return driver
             .setModeTransferOnly(driver)
-            .sendRequestOnURL(driver, domainsWhiteList[0])
+            .sendRequestOnURL(driver, domainsWhiteList[1])
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.eventually.include(headerRev)
@@ -107,7 +107,7 @@ describe("Smoke: interceptor domain lists. transfer_only mode", function () {
             });
     });
 
-    xit("should check that domain from 'PROVISIONED' list won't return Rev Headers", function () {
+    it("should check that domain from 'PROVISIONED' list won't return Rev Headers", function () {
         return driver
             .setModeTransferOnly(driver)
             .sendRequestOnURL(driver, domainsProvisionedList[0])

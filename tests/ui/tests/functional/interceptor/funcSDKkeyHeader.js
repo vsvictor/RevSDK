@@ -74,7 +74,7 @@ describe("Functional: interceptor. Adding SDK key to the headers. Transfer_only 
 
 // TODO: Victor has to fix bug. Provisioned list should not contain sdk key in headers
 
-   /* it("should check that domain from 'PROVISIONED' list won't return SDK key in headers.transfer_only", function () {
+    it("should check that domain from 'PROVISIONED' list won't return SDK key in headers.transfer_only", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
             emptyDomainsWhiteList, emptyDomainsBlackList, domainsProvisionedList);
 
@@ -105,7 +105,7 @@ describe("Functional: interceptor. Adding SDK key to the headers. Transfer_only 
             .then(function (headers) {
                 return headers.text().should.not.eventually.include(SDKkeyTester + headerRevSDK)
             })
-    });*/
+    });
 
     it("should check that domain from 'WHITE' list will return SDK key in headers.transfer_only", function () {
         request.putConfigWithDomainsLists(appIdTester, portalAPIKey, accountId, statsReportingIntervalSeconds60,
@@ -116,7 +116,7 @@ describe("Functional: interceptor. Adding SDK key to the headers. Transfer_only 
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferOnly(driver)
-            .sendRequestOnURL(driver, domainsWhiteList[0])
+            .sendRequestOnURL(driver, domainsWhiteList[1])
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.eventually.include(SDKkeyTester + headerRevSDK)
@@ -132,7 +132,7 @@ describe("Functional: interceptor. Adding SDK key to the headers. Transfer_only 
             .init(desired)
             .setImplicitWaitTimeout(implicitWaitTimeout)
             .setModeTransferAndReport(driver)
-            .sendRequestOnURL(driver, domainsWhiteList[0])
+            .sendRequestOnURL(driver, domainsWhiteList[1])
             .getResponseHeadersFieldValue(driver)
             .then(function (headers) {
                 return headers.text().should.eventually.include(SDKkeyTester + headerRevSDK)

@@ -11,5 +11,3 @@ exports.androidTesterInvalidSDKkey = currentFolder + "/apks/NuubitTesterInvalidS
 exports.androidTesterSameSDKKey = currentFolder + "/apks/NuubitTesterSameSDKKey.apk";
 
 //exports.androidTester = currentFolder + "apps-android/apks/apk/NuubitTester-debug.apk";
-
-

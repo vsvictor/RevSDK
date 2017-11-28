@@ -54,63 +54,15 @@ allprojects {
 }
 sonarqube {
     properties {
-        property "sonar.host.url", "https://sonar.x2link.co"
+        property "sonar.host.url", "http://testsjc20-build02.revsw.net:9000"
         property "sonar.projectName", "NuubitSDK"
-        property "sonar.projectKey", "vestern"
+        property "sonar.projectKey", "nuubit_android_sdk"
         property "sonar.sources", "src/main/java"
         property "sonar.language", "java"
         property "sonar.sourceEncoding", "UTF-8"
-        //property "sonar.binaries", "build/intermediates/classes/debug"
-        //property "sonar.java.binaries", "build/intermediates/classes/debug"
-        property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-//        property "sonar.exclusions", "src/main/java/com/foo/Foo.java"
+        property "sonar.projectBaseDir", "/home/jenkins/workspace/SDK_Android_Build"
     }
 }
-/*
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "NuubitSDK/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "NuubitDemo/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "NuubitRacer/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "NuubitCompatible/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-*/
-/*
-subprojects {
-    sonarqube {
-        properties {
-            property "sonar.sources", "NuubitTester/src/main/java"
-            property "sonar.projectBaseDir", "/home/victor/revsw-sdk-android"
-        }
-    }
-}
-*/
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

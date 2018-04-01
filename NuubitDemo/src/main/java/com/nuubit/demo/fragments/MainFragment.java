@@ -13,10 +13,8 @@ import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.nuubit.demo.R;
-import com.nuubit.sdk.NuubitApplication;
 import com.nuubit.sdk.NuubitConstants;
 import com.nuubit.sdk.NuubitSDK;
-import com.nuubit.sdk.protocols.HTTPException;
 import com.nuubit.sdk.types.HTTPCode;
 import com.nuubit.sdk.web.NuubitWebViewClient;
 
@@ -203,7 +201,7 @@ public class MainFragment extends Fragment {
 
                     body = response.body().string();
                     int i = 0;
-                    final String endURL = (location == null ? url : location);
+                    final String endURL = location; //(location == null ? url : location);
 
                     if(endURL != null && !endURL.isEmpty()) {
                         currURL = endURL;

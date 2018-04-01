@@ -278,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             }
         }
-        Log.i("Temp", "Loader " + loader == null ? "is null" : "not null");
         return loader;
     }
 
